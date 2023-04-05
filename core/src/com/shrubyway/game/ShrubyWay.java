@@ -21,6 +21,7 @@ public class ShrubyWay extends ApplicationAdapter {
 
 	@Override
 	public void render () {
+		ScreenUtils.clear(1,1,1,1);
         player.moveTo(InputProcessor.getMovementDirection());
 		batch.begin();
 		player.render(batch);
