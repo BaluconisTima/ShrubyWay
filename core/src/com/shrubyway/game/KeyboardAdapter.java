@@ -35,7 +35,7 @@ public class KeyboardAdapter extends InputAdapter{
         if(UpPressed) MovementDirection.add(0, 1);
         if(DownPressed) MovementDirection.add(0, -1);
         if((LeftPressed || RightPressed) && (UpPressed || DownPressed))
-            MovementDirection.scl(1.414213);
+            MovementDirection.scl((float) Math.sqrt(2));
         return MovementDirection;
 
     }
