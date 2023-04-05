@@ -12,7 +12,7 @@ public class Shraby {
     private byte lastFaceDirection = 0;
     private boolean lastIsMoving = false;
 
-    private final int Speed = 7;
+    private final int Speed = 10;
     Animation<TextureRegion> CurrentAnimation;
     float AnimationStateTime;
 

@@ -45,11 +45,15 @@ public class ShrubyWay extends ApplicationAdapter {
 	@Override
 	public void render () {
 		ScreenUtils.clear(1,1,1,1);
-		Vector2 temp = player.Position();
-		if(Math.abs((temp.x - CameraPosition.x)) > Gdx.graphics.getWidth() / 4)
-			temp.x -= Gdx.graphics.getWidth() / 4 + CameraPosition.x;
 
-		CameraPosition.lerp(new Vector2(temp.x, temp.y), 0.1f);
+
+
+
+
+		CameraPosition.lerp(new Vector2(player.Position().x, player.Position().y),
+				0.08f);
+
+
 		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
 		Camera.update();
 		batch.setProjectionMatrix(Camera.combined);
