@@ -14,7 +14,9 @@ public class Shraby {
     }
 
     public void render(Batch batch) {
-           batch.draw(texture, position.x, position.y);
+           batch.draw(texture,
+                   position.x - texture.getWidth() / 2,
+                   position.y - texture.getHeight() / 2);
     }
     public void moveTo(Vector2 direction) {
         position.add(direction.scl(Speed));
