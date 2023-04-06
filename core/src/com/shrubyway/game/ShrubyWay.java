@@ -3,8 +3,10 @@ package com.shrubyway.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -22,14 +24,18 @@ public class ShrubyWay extends ApplicationAdapter {
 	OrthographicCamera Camera;
 	Vector2 CameraPosition;
 	Texture TEST_OBJECT;
+	private BitmapFont font;
 
 	private KeyboardAdapter InputProcessor = new KeyboardAdapter();
 
 	@Override
 	public void create () {
+		font = new BitmapFont();
+		font.getData().setScale(3);
+
 		TEST_OBJECT = new Texture(Gdx.files.internal("Test.png"));
 		Gdx.graphics.setWindowedMode(1920, 1080);
-		CameraPosition = new Vector2(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+		CameraPosition = new Vector2(0, 0);
 		Graphics.DisplayMode currentDisplayMode = Gdx.graphics.getDisplayMode();
 		Gdx.graphics.setFullscreenMode(currentDisplayMode);
 		Camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -39,9 +45,9 @@ public class ShrubyWay extends ApplicationAdapter {
 
 		Gdx.input.setInputProcessor(InputProcessor);
 		batch = new SpriteBatch();
-		player = new Shraby(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
+		player = new Shraby(0, 0);
 
-		//Gdx.graphics.setVSync(true);
+		Gdx.graphics.setVSync(true);
 
 
 	}
@@ -70,7 +76,7 @@ public class ShrubyWay extends ApplicationAdapter {
 		ScreenUtils.clear(1,1,1,1);
 		correctPosition();
 		CameraPosition.lerp(new Vector2(player.Position().x, player.Position().y),
-				0.08f);
+				0.1f);
 
 
 		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
@@ -82,6 +88,11 @@ public class ShrubyWay extends ApplicationAdapter {
 		batch.begin();
 		background.render(batch,1,player.BottomPosition());
 		player.render(batch);
+		batch.end();
+		batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
+				Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+		batch.begin();
+		font.draw(batch, ""+player.Position(), 100, 100);
 		batch.end();
 
 	}

@@ -5,9 +5,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import java.lang.Math;
 
 public class Shraby {
     private final Vector2 position = new Vector2();
+
+    private final boolean DebugMode = true;
     private byte FaceDirection = 0;  // 0 - DOWN, 1 - UP, 2 - LEFT, 3 - RIGHT
     private boolean IsMoving = false;
     private byte lastFaceDirection = 0;
@@ -28,7 +32,7 @@ public class Shraby {
       position.set(x, y);
 
         CurrentAnimation = animator.toAnimation(AnimationList, 30, 0,0);
-        CurrentAnimation_inLiquid = animator.toAnimation(AnimationList, 30, 0, -50);
+        CurrentAnimation_inLiquid = animator.toAnimation(AnimationList, 30, 0, 50);
         AnimationStateTime = 0f;
         frameY = 0;
     }
@@ -50,8 +54,10 @@ public class Shraby {
                if(s != last_animation) {
                    last_animation = s;
                    AnimationList = new Texture(Gdx.files.internal(s));
-                   CurrentAnimation = animator.toAnimation(AnimationList, 30, 0, 0);
-                   CurrentAnimation_inLiquid = animator.toAnimation(AnimationList, 30, 0, -50);
+                   CurrentAnimation =
+                           animator.toAnimation(AnimationList, 30, 0, 0);
+                   CurrentAnimation_inLiquid =
+                           animator.toAnimation(AnimationList, 30, 0, 50);
                    AnimationStateTime = 0f;
                    frameY = currentFrame.getRegionHeight();
                }
@@ -61,7 +67,7 @@ public class Shraby {
            TextureRegion temp = new TextureRegion(currentFrame);
 
            if(inLiquid) {
-               currentFrame = CurrentAnimation_inLiquid.getKeyFrame(AnimationStateTime, true);
+               temp = CurrentAnimation_inLiquid.getKeyFrame(AnimationStateTime, true);
            }
            batch.draw(temp,
                    Math.round(position.x - currentFrame.getRegionWidth() / 2),
@@ -75,7 +81,7 @@ public class Shraby {
         else if(direction.x < 0) FaceDirection = 2;
         else if(direction.x > 0) FaceDirection = 3;
         int temp = 0; temp += (Speed);
-        if(inLiquid) temp = 7;
+        if(inLiquid) temp *= 0.7;
         position.add(direction.scl(temp));
     }
     public Vector2 Position() {
