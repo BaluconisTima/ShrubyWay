@@ -51,26 +51,33 @@ Texture Tile[][] = new Texture[4][2];
     }
     public void render(Batch batch, int level, Vector2 playerPosition) {
 
-          int x = 0; x += playerPosition.x; x /= 150;
-          int y = 0; y += playerPosition.y; y /= 150;
+          int x = 0; x += playerPosition.x;
+          x /= 150;
+          int y = 0; y += playerPosition.y;
+          y /= 150;
           for(int d = 0; d < 2; d++)
-              for (int i = x - 9; i < x + 10; i++)
-                  for (int j = y - 5; j < y + 6; j++) {
+              for (int i = x - 10; i < x + 10; i++)
+                  for (int j = y - 10; j < y + 10; j++) {
                       if (Math.abs(i + j) % 2 != d) continue;
                       int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
 
                       int tile = Background_map[level][i2][j2] - '0';
                       batch.draw(Tile[tile][d],
-                            (i * 150)- 25,
-                            (j * 150) - 175,
+                            (i * 150) - 25,
+                            (j * 150) - 25,
                             Tile[level][d].getWidth(),
                             Tile[level][d].getHeight());
 
                   }
     }
     public boolean checkLiquid(int level, Vector2 playerPosition) {
-        int x = 0; x += playerPosition.x / 150;
-        int y = 0; y += playerPosition.y / 150;
-        return (Background_map[level][(x + 256) % 256][(y + 256) % 256] - '0' == 0);
+        int xr = 0; xr += (playerPosition.x + 10) / 150;
+        int xl = 0; xl += (playerPosition.x - 10) / 150;
+        int yr = 0; yr += (playerPosition.y + 10) / 150;
+        int yl = 0; yl += (playerPosition.y - 10) / 150;
+        return (Background_map[level][(xr + 256) % 256][(yr + 256) % 256] == '0'
+              && Background_map[level][(xl + 256) % 256][(yr + 256) % 256] == '0' &&
+                Background_map[level][(xr + 256) % 256][(yl + 256) % 256] == '0'
+                && Background_map[level][(xl + 256) % 256][(yl + 256) % 256] == '0');
     }
 }

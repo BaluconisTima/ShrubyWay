@@ -13,9 +13,11 @@ public class Shraby {
     private byte lastFaceDirection = 0;
     private boolean lastIsMoving = false;
     private boolean inLiquid = false;
+    private String last_animation;
 
     private final int Speed = 10;
     Animation<TextureRegion> CurrentAnimation;
+    Animation<TextureRegion> CurrentAnimation_inLiquid;
     float AnimationStateTime;
 
     private Texture AnimationList = new Texture(Gdx.files.internal("SHRABY/AFK/DOWN.png"));
@@ -24,8 +26,10 @@ public class Shraby {
     TextureRegion currentFrame;
     public Shraby(float x, float y) {
       position.set(x, y);
+
+        CurrentAnimation = animator.toAnimation(AnimationList, 30, 0,0);
+        CurrentAnimation_inLiquid = animator.toAnimation(AnimationList, 30, 0, -50);
         AnimationStateTime = 0f;
-        CurrentAnimation = animator.toAnimation(AnimationList, 30);
         frameY = 0;
     }
 
@@ -43,22 +47,25 @@ public class Shraby {
                    case 3: s += "RIGHT"; break;
                }
                s += ".png";
-               AnimationList = new Texture(Gdx.files.internal(s));
-               AnimationStateTime = 0f;
-               CurrentAnimation = animator.toAnimation(AnimationList, 30);
-               frameY = currentFrame.getRegionHeight();
+               if(s != last_animation) {
+                   last_animation = s;
+                   AnimationList = new Texture(Gdx.files.internal(s));
+                   CurrentAnimation = animator.toAnimation(AnimationList, 30, 0, 0);
+                   CurrentAnimation_inLiquid = animator.toAnimation(AnimationList, 30, 0, -50);
+                   AnimationStateTime = 0f;
+                   frameY = currentFrame.getRegionHeight();
+               }
            }
            AnimationStateTime += Gdx.graphics.getDeltaTime();
            currentFrame = CurrentAnimation.getKeyFrame(AnimationStateTime, true);
            TextureRegion temp = new TextureRegion(currentFrame);
 
            if(inLiquid) {
-               temp = new TextureRegion(temp, 0, 0,
-                       temp.getRegionWidth(), temp.getRegionHeight() - 50);
+               currentFrame = CurrentAnimation_inLiquid.getKeyFrame(AnimationStateTime, true);
            }
            batch.draw(temp,
-                   position.x - currentFrame.getRegionWidth() / 2,
-                   position.y - currentFrame.getRegionHeight() / 2);
+                   Math.round(position.x - currentFrame.getRegionWidth() / 2),
+                   Math.round(position.y - currentFrame.getRegionHeight() / 2));
     }
     public void moveTo(Vector2 direction) {
         if(direction.x == 0 && direction.y == 0) IsMoving = false;
@@ -67,8 +74,8 @@ public class Shraby {
         else if(direction.y > 0) FaceDirection = 1;
         else if(direction.x < 0) FaceDirection = 2;
         else if(direction.x > 0) FaceDirection = 3;
-        int temp = Speed;
-        if(inLiquid) temp *= 0.7;
+        int temp = 0; temp += (Speed);
+        if(inLiquid) temp = 7;
         position.add(direction.scl(temp));
     }
     public Vector2 Position() {
@@ -78,8 +85,12 @@ public class Shraby {
         return new Vector2(position.x,
                 position.y - frameY/2);
     }
+
     public void LiquidStatus(boolean isLiquid) {
         inLiquid = isLiquid;
+    }
+    public void changePosition(Vector2 positionNew) {
+        position.set(positionNew);
     }
     public void dispose() {
       //  currentFrame.dispose();
