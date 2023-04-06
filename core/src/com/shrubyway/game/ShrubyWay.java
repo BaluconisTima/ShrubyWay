@@ -16,6 +16,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 
 public class ShrubyWay extends ApplicationAdapter {
 	private Shraby player;
+	private Background background;
 	SpriteBatch batch;
 	OrthographicCamera Camera;
 	Vector2 CameraPosition;
@@ -32,10 +33,11 @@ public class ShrubyWay extends ApplicationAdapter {
 		Gdx.graphics.setFullscreenMode(currentDisplayMode);
 		Camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
-
+        background = new Background();
 
 		Gdx.input.setInputProcessor(InputProcessor);
 		batch = new SpriteBatch();
+
 		player = new Shraby(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
 		//Gdx.graphics.setVSync(true);
 
@@ -60,7 +62,7 @@ public class ShrubyWay extends ApplicationAdapter {
         player.moveTo(InputProcessor.getMovementDirection());
 
 		batch.begin();
-		batch.draw(TEST_OBJECT, 0, 0);
+		background.render(batch,1,player.Position());
 		player.render(batch);
 		batch.end();
 
