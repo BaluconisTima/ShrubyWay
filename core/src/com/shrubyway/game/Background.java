@@ -7,11 +7,14 @@ import com.badlogic.gdx.math.Vector2;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Background {
 char Background_map[][][] = new char[2][256][256];
 char Decorations[][][] = new char[2][256][256];
 
+private int renderDistanceX = 10, renderDistanceY = 7;
     Bush tmp = new Bush(0,0);
 Texture Tile[][] = new Texture[4][2];
 
@@ -71,8 +74,8 @@ Texture Tile[][] = new Texture[4][2];
           int y = 0; y += playerPosition.y;
           y /= 150;
           for(int d = 0; d < 2; d++)
-              for (int i = x - 10; i < x + 10; i++)
-                  for (int j = y - 10; j < y + 10; j++) {
+              for (int i = x - renderDistanceX; i < x + renderDistanceX; i++)
+                  for (int j = y - renderDistanceY; j < y + renderDistanceY; j++) {
                       if (Math.abs(i + j) % 2 != d) continue;
                       int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
 
@@ -83,12 +86,6 @@ Texture Tile[][] = new Texture[4][2];
                             (j * 150) - 25,
                             Tile[level][d].getWidth(),
                             Tile[level][d].getHeight());
-
-
-                      if(Decorations[level][i2][j2] == '1') {
-                          //temp.
-                      }
-
                   }
     }
     public boolean checkLiquid(int level, Vector2 playerPosition) {
@@ -100,5 +97,22 @@ Texture Tile[][] = new Texture[4][2];
               && Background_map[level][(xl + 256) % 256][(yr + 256) % 256] == '0' &&
                 Background_map[level][(xr + 256) % 256][(yl + 256) % 256] == '0'
                 && Background_map[level][(xl + 256) % 256][(yl + 256) % 256] == '0');
+    }
+    public List<VisibleObject> decorationsList(int level, Vector2 playerPosition) {
+        List<VisibleObject> tmp = new ArrayList<>();
+        int x = 0; x += playerPosition.x;
+        x /= 150;
+        int y = 0; y += playerPosition.y;
+        y /= 150;
+        for (int i = x - renderDistanceX; i < x + renderDistanceX; i++)
+            for (int j = y - renderDistanceY; j < y + renderDistanceY; j++) {
+                int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
+                if(Decorations[level][i2][j2] == '1') {
+                    Bush temp = new Bush(i * 150, j * 150);
+                    tmp.add(temp);
+                }
+            }
+
+        return tmp;
     }
 }

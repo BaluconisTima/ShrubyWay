@@ -16,6 +16,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import jdk.incubator.vector.VectorOperators;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 
 public class ShrubyWay extends ApplicationAdapter {
 	private Shraby player;
@@ -23,6 +28,7 @@ public class ShrubyWay extends ApplicationAdapter {
 	SpriteBatch batch;
 	OrthographicCamera Camera;
 	Vector2 CameraPosition;
+	List<VisibleObject> renderingObjects;
 	Texture TEST_OBJECT;
 	private BitmapFont font;
 
@@ -79,21 +85,36 @@ public class ShrubyWay extends ApplicationAdapter {
 				0.1f);
 
 
+
+
 		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
 		Camera.update();
 		batch.setProjectionMatrix(Camera.combined);
         player.moveTo(InputProcessor.getMovementDirection());
-		player.LiquidStatus(background.checkLiquid(1,player.BottomPosition()));
+		player.LiquidStatus(background.checkLiquid(1,player.positionBottom()));
 
 		batch.begin();
-		background.render(batch,1,player.BottomPosition());
-		player.render(batch);
+		background.render(batch,1,player.positionBottom());
+
+		renderingObjects =
+				background.decorationsList(1, player.Position());
+		renderingObjects.add(player);
+		Collections.sort(renderingObjects);
+
+		System.out.println();
+		for (VisibleObject obj : renderingObjects) {
+			System.out.println(obj.position.y);
+			obj.Render(batch);
+		}
 		batch.end();
-		batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
-				Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+
+
+		/*batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
+
+		Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 		batch.begin();
 		font.draw(batch, ""+player.Position(), 100, 100);
-		batch.end();
+		batch.end(); */
 
 	}
 
