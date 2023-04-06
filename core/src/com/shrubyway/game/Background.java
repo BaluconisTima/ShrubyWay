@@ -10,11 +10,11 @@ import java.util.Scanner;
 
 public class Background {
 char Background_map[][][] = new char[2][256][256];
-Texture Tile[][] = new Texture[3][2];
+Texture Tile[][] = new Texture[4][2];
 
    public Background() {
 
-       for(int i = 1; i < 3; i++)
+       for(int i = 0; i < 4; i++)
            for(int j = 0; j < 2; j++){
               String s = "TILES/";
               switch (i) {
@@ -26,6 +26,9 @@ Texture Tile[][] = new Texture[3][2];
                     break;
                  case 2:
                     s += "SAND";
+                    break;
+                  case 3:
+                    s += "DIRT";
                     break;
               }
               s += (j) % 2 + ".png";
@@ -58,13 +61,16 @@ Texture Tile[][] = new Texture[3][2];
 
                       int tile = Background_map[level][i2][j2] - '0';
                       batch.draw(Tile[tile][d],
-                            (i * 150 - 100),
-                            (j * 150 - 100),
-                            Tile[1][d].getWidth(),
-                            Tile[1][d].getHeight());
+                            (i * 150)- 25,
+                            (j * 150) - 175,
+                            Tile[level][d].getWidth(),
+                            Tile[level][d].getHeight());
 
                   }
-
-
+    }
+    public boolean checkLiquid(int level, Vector2 playerPosition) {
+        int x = 0; x += playerPosition.x / 150;
+        int y = 0; y += playerPosition.y / 150;
+        return (Background_map[level][(x + 256) % 256][(y + 256) % 256] - '0' == 0);
     }
 }

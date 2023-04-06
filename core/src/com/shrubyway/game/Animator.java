@@ -2,12 +2,13 @@ package com.shrubyway.game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-
+import com.badlogic.gdx.graphics.Texture.TextureFilter;
 public class Animator {
     public Animator(){
 
     }
     public Animation<TextureRegion> toAnimation(Texture texture, int n) {
+        texture.setFilter(TextureFilter.Nearest, TextureFilter.Nearest);
         TextureRegion[] animation_frames = new TextureRegion[n];
         int index = 0;
         for (int i = 0; i < n; i++) {

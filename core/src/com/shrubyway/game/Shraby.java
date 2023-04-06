@@ -5,12 +5,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+
 public class Shraby {
     private final Vector2 position = new Vector2();
     private byte FaceDirection = 0;  // 0 - DOWN, 1 - UP, 2 - LEFT, 3 - RIGHT
     private boolean IsMoving = false;
     private byte lastFaceDirection = 0;
     private boolean lastIsMoving = false;
+    private boolean inLiquid = false;
 
     private final int Speed = 10;
     Animation<TextureRegion> CurrentAnimation;
@@ -18,11 +20,13 @@ public class Shraby {
 
     private Texture AnimationList = new Texture(Gdx.files.internal("SHRABY/AFK/DOWN.png"));
     Animator animator = new Animator();
+    float frameY;
     TextureRegion currentFrame;
     public Shraby(float x, float y) {
       position.set(x, y);
         AnimationStateTime = 0f;
         CurrentAnimation = animator.toAnimation(AnimationList, 30);
+        frameY = 0;
     }
 
     public void render(Batch batch) {
@@ -42,11 +46,17 @@ public class Shraby {
                AnimationList = new Texture(Gdx.files.internal(s));
                AnimationStateTime = 0f;
                CurrentAnimation = animator.toAnimation(AnimationList, 30);
-
+               frameY = currentFrame.getRegionHeight();
            }
            AnimationStateTime += Gdx.graphics.getDeltaTime();
            currentFrame = CurrentAnimation.getKeyFrame(AnimationStateTime, true);
-           batch.draw(currentFrame,
+           TextureRegion temp = new TextureRegion(currentFrame);
+
+           if(inLiquid) {
+               temp = new TextureRegion(temp, 0, 0,
+                       temp.getRegionWidth(), temp.getRegionHeight() - 50);
+           }
+           batch.draw(temp,
                    position.x - currentFrame.getRegionWidth() / 2,
                    position.y - currentFrame.getRegionHeight() / 2);
     }
@@ -57,14 +67,23 @@ public class Shraby {
         else if(direction.y > 0) FaceDirection = 1;
         else if(direction.x < 0) FaceDirection = 2;
         else if(direction.x > 0) FaceDirection = 3;
-        position.add(direction.scl(Speed));
+        int temp = Speed;
+        if(inLiquid) temp *= 0.7;
+        position.add(direction.scl(temp));
     }
     public Vector2 Position() {
         return position;
     }
-
+    public Vector2 BottomPosition() {
+        return new Vector2(position.x,
+                position.y - frameY/2);
+    }
+    public void LiquidStatus(boolean isLiquid) {
+        inLiquid = isLiquid;
+    }
     public void dispose() {
       //  currentFrame.dispose();
     }
+
 
 }

@@ -48,10 +48,6 @@ public class ShrubyWay extends ApplicationAdapter {
 	public void render () {
 		ScreenUtils.clear(1,1,1,1);
 
-
-
-
-
 		CameraPosition.lerp(new Vector2(player.Position().x, player.Position().y),
 				0.08f);
 
@@ -60,9 +56,13 @@ public class ShrubyWay extends ApplicationAdapter {
 		Camera.update();
 		batch.setProjectionMatrix(Camera.combined);
         player.moveTo(InputProcessor.getMovementDirection());
+		player.LiquidStatus(background.checkLiquid(1,player.BottomPosition()));
 
 		batch.begin();
+
 		background.render(batch,1,player.Position());
+		batch.draw(new Texture(Gdx.files.internal("TEST.png")), player.BottomPosition().x,
+				player.BottomPosition().y);
 		player.render(batch);
 		batch.end();
 
