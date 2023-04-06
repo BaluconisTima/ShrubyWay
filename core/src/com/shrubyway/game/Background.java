@@ -10,6 +10,9 @@ import java.util.Scanner;
 
 public class Background {
 char Background_map[][][] = new char[2][256][256];
+char Decorations[][][] = new char[2][256][256];
+
+    Bush tmp = new Bush(0,0);
 Texture Tile[][] = new Texture[4][2];
 
    public Background() {
@@ -35,14 +38,26 @@ Texture Tile[][] = new Texture[4][2];
               Tile[i][j] = new Texture(Gdx.files.internal(s));
        }
 
-       for(int i = 0; i < 2; i++) {
-           String fileName = "map" + i + ".txt";
+       for(int i = 1; i < 2; i++) {
+           String fileName = "maps/" + i + "/basicMap.txt";
            try (Scanner scanner = new Scanner(new File(fileName))) {
                int j = 0;
                while (scanner.hasNextLine()) {
                    String temp = scanner.nextLine();
                    for(int q = 0; q < 256; q++) {
                        Background_map[i][j][q] = temp.charAt(q);
+                   }
+                   j++;
+               }
+           } catch (FileNotFoundException e){};
+
+           fileName = "maps/" + i + "/Decorations.txt";
+           try (Scanner scanner = new Scanner(new File(fileName))) {
+               int j = 0;
+               while (scanner.hasNextLine()) {
+                   String temp = scanner.nextLine();
+                   for(int q = 0; q < 256; q++) {
+                       Decorations[i][j][q] = temp.charAt(q);
                    }
                    j++;
                }
@@ -61,12 +76,18 @@ Texture Tile[][] = new Texture[4][2];
                       if (Math.abs(i + j) % 2 != d) continue;
                       int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
 
+
                       int tile = Background_map[level][i2][j2] - '0';
                       batch.draw(Tile[tile][d],
                             (i * 150) - 25,
                             (j * 150) - 25,
                             Tile[level][d].getWidth(),
                             Tile[level][d].getHeight());
+
+
+                      if(Decorations[level][i2][j2] == '1') {
+                          //temp.
+                      }
 
                   }
     }
