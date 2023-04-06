@@ -9,6 +9,8 @@ public class KeyboardAdapter extends InputAdapter{
     private boolean UpPressed;
     private boolean DownPressed;
 
+    private boolean Runing;
+
     public final Vector2 MovementDirection = new Vector2();
     @Override
     public boolean keyDown(int keycode) {
@@ -16,6 +18,7 @@ public class KeyboardAdapter extends InputAdapter{
         if(keycode == Input.Keys.D) RightPressed = true;
         if(keycode == Input.Keys.W) UpPressed = true;
         if(keycode == Input.Keys.S) DownPressed = true;
+        if(keycode == Input.Keys.CONTROL_LEFT) Runing = true;
         return false;
     }
 
@@ -25,6 +28,7 @@ public class KeyboardAdapter extends InputAdapter{
         if(keycode == Input.Keys.D) RightPressed = false;
         if(keycode == Input.Keys.W) UpPressed = false;
         if(keycode == Input.Keys.S) DownPressed = false;
+        if(keycode == Input.Keys.CONTROL_LEFT) Runing = false;
         return false;
     }
 
@@ -38,5 +42,9 @@ public class KeyboardAdapter extends InputAdapter{
             MovementDirection.scl(1/(float) Math.sqrt(2));
         return MovementDirection;
 
+    }
+
+    public boolean isRuning() {
+        return Runing;
     }
 }

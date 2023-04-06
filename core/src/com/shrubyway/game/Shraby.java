@@ -9,7 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import java.lang.Math;
 
 public class Shraby extends VisibleObject {
-    private final boolean DebugMode = true;
+
     private byte FaceDirection = 0;  // 0 - DOWN, 1 - UP, 2 - LEFT, 3 - RIGHT
     private boolean IsMoving = false;
     private byte lastFaceDirection = 0;
@@ -18,6 +18,7 @@ public class Shraby extends VisibleObject {
     private String last_animation;
 
     private final int Speed = 10;
+    boolean isRunning = false;
     Animation<TextureRegion> CurrentAnimation;
     Animation<TextureRegion> CurrentAnimation_inLiquid;
     float AnimationStateTime;
@@ -35,6 +36,13 @@ public class Shraby extends VisibleObject {
     }
 
     @Override public void Render(Batch batch) {
+           if(isRunning) {
+               CurrentAnimation.setFrameDuration(1/36f);
+               CurrentAnimation_inLiquid.setFrameDuration(1/36f);
+           } else {
+               CurrentAnimation.setFrameDuration(1/24f);
+               CurrentAnimation_inLiquid.setFrameDuration(1/24f);
+           }
            if(FaceDirection != lastFaceDirection || IsMoving != lastIsMoving) {
                lastFaceDirection = FaceDirection;
                lastIsMoving = IsMoving;
@@ -70,6 +78,12 @@ public class Shraby extends VisibleObject {
                    Math.round(position.x - currentFrame.getRegionWidth() / 2),
                    Math.round(position.y - currentFrame.getRegionHeight() / 2));
     }
+    public void Running(boolean running) {
+        isRunning = running;
+    }
+    public void notRunning() {
+        isRunning = false;
+    }
 
     public void moveTo(Vector2 direction) {
         if(direction.x == 0 && direction.y == 0) IsMoving = false;
@@ -79,7 +93,8 @@ public class Shraby extends VisibleObject {
         else if(direction.x < 0) FaceDirection = 2;
         else if(direction.x > 0) FaceDirection = 3;
         int temp = 0; temp += (Speed);
-        if(inLiquid) temp *= 1.7;
+        if(inLiquid) temp *= 0.85;
+        if(isRunning) temp *= 1.5;
         position.add(direction.scl(temp));
     }
     public Vector2 Position() {
@@ -97,7 +112,7 @@ public class Shraby extends VisibleObject {
         position.set(positionNew);
     }
     public void dispose() {
-      //  currentFrame.dispose();
+        //animator.dispose();
     }
 
 

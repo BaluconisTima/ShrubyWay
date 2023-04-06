@@ -90,6 +90,7 @@ public class ShrubyWay extends ApplicationAdapter {
 		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
 		Camera.update();
 		batch.setProjectionMatrix(Camera.combined);
+		player.Running(InputProcessor.isRuning());
         player.moveTo(InputProcessor.getMovementDirection());
 		player.LiquidStatus(background.checkLiquid(1,player.positionBottom()));
 
@@ -101,9 +102,7 @@ public class ShrubyWay extends ApplicationAdapter {
 		renderingObjects.add(player);
 		Collections.sort(renderingObjects);
 
-		System.out.println();
 		for (VisibleObject obj : renderingObjects) {
-			System.out.println(obj.position.y);
 			obj.Render(batch);
 		}
 		batch.end();
