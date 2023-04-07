@@ -1,15 +1,20 @@
 package com.shrubyway.game;
-import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 
-public class KeyboardAdapter extends InputAdapter{
+public class inputAdapter extends InputAdapter {
     private boolean LeftPressed;
     private boolean RightPressed;
     private boolean UpPressed;
     private boolean DownPressed;
 
+    private boolean MouseLeft;
+    private boolean MouseRight;
+
     private boolean Runing;
+    private final Vector2 MousePosition = new Vector2();
 
     public final Vector2 MovementDirection = new Vector2();
     @Override
@@ -31,6 +36,33 @@ public class KeyboardAdapter extends InputAdapter{
         if(keycode == Input.Keys.CONTROL_LEFT) Runing = false;
         return false;
     }
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        MousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
+        return false;
+    }
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT) {
+            MouseLeft = true;
+        } else if (button == Input.Buttons.RIGHT) {
+            MouseRight = true;
+        }
+        return false;
+    }
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        if (button == Input.Buttons.LEFT) {
+            MouseLeft = false;
+        } else if (button == Input.Buttons.RIGHT) {
+            MouseRight = false;
+        }
+        return false;
+    }
+
+    public Vector2 MousePosition() {
+        return MousePosition;
+    }
 
     public Vector2 getMovementDirection() {
         MovementDirection.set(0, 0);
@@ -42,6 +74,12 @@ public class KeyboardAdapter extends InputAdapter{
             MovementDirection.scl(1/(float) Math.sqrt(2));
         return MovementDirection;
 
+    }
+    public boolean isMouseLeft() {
+        return MouseLeft;
+    }
+    public boolean isMouseRight() {
+        return MouseRight;
     }
 
     public boolean isRuning() {

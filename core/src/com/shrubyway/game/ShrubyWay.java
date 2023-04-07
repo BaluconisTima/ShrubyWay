@@ -5,6 +5,9 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.Color;
+
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
@@ -28,35 +31,39 @@ public class ShrubyWay extends ApplicationAdapter {
 	SpriteBatch batch;
 	OrthographicCamera Camera;
 	Vector2 CameraPosition;
-	List<VisibleObject> renderingObjects;
-	Texture TEST_OBJECT;
+	Vector2 MousePosition;
+	List<VisibleObject> renderingObjects, effects, entities;
+	List<Decoration> decorations;
+
 	private BitmapFont font;
 
-	private KeyboardAdapter InputProcessor = new KeyboardAdapter();
+	private inputAdapter InputProcessor = new inputAdapter();
 
 	@Override
 	public void create () {
 		font = new BitmapFont();
 		font.getData().setScale(3);
 
-		TEST_OBJECT = new Texture(Gdx.files.internal("Test.png"));
 		Gdx.graphics.setWindowedMode(1920, 1080);
-		CameraPosition = new Vector2(0, 0);
+		player = new Shraby(0, 0);
+		CameraPosition = new Vector2(player.Position());
 		Graphics.DisplayMode currentDisplayMode = Gdx.graphics.getDisplayMode();
 		Gdx.graphics.setFullscreenMode(currentDisplayMode);
 		Camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+
 		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
 		Camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         background = new Background();
 
 		Gdx.input.setInputProcessor(InputProcessor);
 		batch = new SpriteBatch();
-		player = new Shraby(0, 0);
-
+		decorations = new ArrayList<Decoration>();
+		effects = new ArrayList<VisibleObject>();
+		entities = new ArrayList<VisibleObject>();
+		renderingObjects = new ArrayList<VisibleObject>();
 		Gdx.graphics.setVSync(true);
-
-
 	}
+
     public void correctPosition() {
 		Vector2 temp = new Vector2(player.Position());
 		if(temp.x < 0) {
@@ -84,41 +91,58 @@ public class ShrubyWay extends ApplicationAdapter {
 		CameraPosition.lerp(new Vector2(player.Position().x, player.Position().y),
 				0.1f);
 
-
-
-
 		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
 		Camera.update();
 		batch.setProjectionMatrix(Camera.combined);
+
+
+
 		player.Running(InputProcessor.isRuning());
-        player.moveTo(InputProcessor.getMovementDirection());
+        Vector2 movingVector = InputProcessor.getMovementDirection();
+
+
+		MousePosition = new Vector2(InputProcessor.MousePosition().x + CameraPosition.x - Gdx.graphics.getWidth()/2,
+				InputProcessor.MousePosition().y + CameraPosition.y - Gdx.graphics.getHeight()/2);
+		if(InputProcessor.isMouseLeft()) background.addDecoration(1, MousePosition, '1');
+		if(InputProcessor.isMouseRight()) background.addDecoration(1, MousePosition, '0');
+
+		renderingObjects.clear();
+		background.updateDecorations(1, player.position,decorations);
+        for(VisibleObject to: decorations) {
+			renderingObjects.add(to);
+		}
+		for(VisibleObject to: entities) {
+			renderingObjects.add(to);
+		}
+		for(VisibleObject to: effects) {
+			renderingObjects.add(to);
+		}
+		player.TryMoveTo(movingVector, renderingObjects);
 		player.LiquidStatus(background.checkLiquid(1,player.positionBottom()));
 
-		batch.begin();
-		background.render(batch,1,player.positionBottom());
-
-		renderingObjects =
-				background.decorationsList(1, player.Position());
 		renderingObjects.add(player);
 		Collections.sort(renderingObjects);
 
+		batch.begin();
+		background.render(batch,1,player.positionBottom());
 		for (VisibleObject obj : renderingObjects) {
 			obj.Render(batch);
 		}
+
+		batch.end();
+
+		batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
+		Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+		batch.begin();
+		font.draw(batch, ""+player.position, 100, 100);
 		batch.end();
 
 
-		/*batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
-
-		Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-		batch.begin();
-		font.draw(batch, ""+player.Position(), 100, 100);
-		batch.end(); */
 
 	}
 
 	@Override
 	public void dispose () {
-          player.dispose();
+         // player.dispose();
 	}
 }

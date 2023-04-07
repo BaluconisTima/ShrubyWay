@@ -7,8 +7,8 @@ public class Animator {
     public Animator(){
 
     }
-    public Animation<TextureRegion> toAnimation(Texture texture, int n, int sz_n, int sz_m) {
-        texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
+     Animation<TextureRegion> toAnimation(Texture texture, int n, int sz_n, int sz_m) {
+        //texture.setFilter(Texture.TextureFilter.Nearest, Texture.TextureFilter.Nearest);
         TextureRegion[] animation_frames = new TextureRegion[n];
 
         int index = 0;

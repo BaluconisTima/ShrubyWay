@@ -14,8 +14,8 @@ public class Background {
 char Background_map[][][] = new char[2][256][256];
 char Decorations[][][] = new char[2][256][256];
 
-private int renderDistanceX = 10, renderDistanceY = 7;
-    Bush tmp = new Bush(0,0);
+private int renderDistanceX = 10, renderDistanceY = 10;
+    Bush tmp;
 Texture Tile[][] = new Texture[4][2];
 
    public Background() {
@@ -67,6 +67,49 @@ Texture Tile[][] = new Texture[4][2];
            } catch (FileNotFoundException e){};
        }
     }
+
+    public List<Decoration> updateDecorations(int level, Vector2 playerPosition, List<Decoration> decorations) {
+        int x = 0; x += playerPosition.x;
+        x /= 150;
+        int y = 0; y += playerPosition.y;
+        y /= 150;
+        List<Decoration> temp_del = new ArrayList<Decoration>();
+        for(Decoration to: decorations) {
+            Decoration temp = to;
+            if(Math.abs(playerPosition.x - (to.positionBottom()).x) > renderDistanceX &&
+            Math.abs(playerPosition.y - (to.positionBottom()).y) > renderDistanceY) {
+                Decorations[level][temp.Decoration_i][temp.Decoration_j] = temp.Decoration_type;
+                temp_del.add(to);
+            }
+        }
+        for(Decoration to: temp_del) {
+            decorations.remove(to);
+        }
+
+        for (int i = x - renderDistanceX; i < x + renderDistanceX; i++)
+            for (int j = y - renderDistanceY; j < y + renderDistanceY; j++) {
+                int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
+                if(Decorations[level][i2][j2] == '1') {
+                    Bush temp = new Bush(i * 150, j * 150, i2, j2, '1');
+                    Decorations[level][i2][j2] = '0';
+                    decorations.add(temp);
+                }
+            }
+
+       return decorations;
+    }
+
+    public void addDecoration(int level, Vector2 position, char type) {
+       int x = 0; x += position.x; int y = 0; y += position.y;
+       if(x < 0) x += 38400;
+       if(y < 0) y += 38400;
+       if(x >= 38400) x -= 38400;
+       if(y >= 38400) y -= 38400;
+        x /= 150;
+        y /= 150;
+        Decorations[level][x][y] = type;
+    }
+
     public void render(Batch batch, int level, Vector2 playerPosition) {
 
           int x = 0; x += playerPosition.x;
@@ -98,21 +141,5 @@ Texture Tile[][] = new Texture[4][2];
                 Background_map[level][(xr + 256) % 256][(yl + 256) % 256] == '0'
                 && Background_map[level][(xl + 256) % 256][(yl + 256) % 256] == '0');
     }
-    public List<VisibleObject> decorationsList(int level, Vector2 playerPosition) {
-        List<VisibleObject> tmp = new ArrayList<>();
-        int x = 0; x += playerPosition.x;
-        x /= 150;
-        int y = 0; y += playerPosition.y;
-        y /= 150;
-        for (int i = x - renderDistanceX; i < x + renderDistanceX; i++)
-            for (int j = y - renderDistanceY; j < y + renderDistanceY; j++) {
-                int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
-                if(Decorations[level][i2][j2] == '1') {
-                    Bush temp = new Bush(i * 150, j * 150);
-                    tmp.add(temp);
-                }
-            }
 
-        return tmp;
-    }
 }
