@@ -95,21 +95,29 @@ public class Shraby extends VisibleObject {
         isRunning = running;
     }
 
+    private boolean checkCollisions(Vector2 direction, TreeSet<VisibleObject> objects) {
+        Rectangle temp = collisionBox();
+        for(VisibleObject object : objects) {
+            if(Math.abs(object.position.x - position.x) > 300) continue;
+            if(Math.abs(object.position.y - position.y) > 300) continue;
+            if(object.collisionBox().overlaps(temp)) {
+
+                return true;
+            }
+        }
+        return false;
+    }
     public void TryMoveTo(Vector2 direction, TreeSet<VisibleObject> objects) {
         int tempSpeed = 0; tempSpeed += (Speed);
         if(inLiquid) tempSpeed *= 0.85;
         if(isRunning) tempSpeed *= 1.5;
         Vector2 tempDirection = new Vector2(direction);
         position.add(tempDirection.scl(tempSpeed));
-       Rectangle temp = collisionBox();
-       for(VisibleObject object : objects) {
-           if(Math.abs(object.position.x - position.x) > 300) continue;
-           if(Math.abs(object.position.y - position.y) > 300) continue;
-           if(object.collisionBox().overlaps(temp)) {
-                position.sub(tempDirection);
-                tempDirection = new Vector2(0,0);
-                break;
-            }
+        if(checkCollisions(direction, objects)) {
+            position.sub(tempDirection);
+        }
+        if(checkCollisions(direction, objects)) {
+            position.add(tempDirection);
         }
         ChangeAnimationsFor(direction);
 

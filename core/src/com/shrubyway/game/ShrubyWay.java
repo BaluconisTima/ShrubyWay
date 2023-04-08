@@ -3,6 +3,7 @@ package com.shrubyway.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -57,6 +58,7 @@ public class ShrubyWay extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(InputProcessor);
 		batch = new SpriteBatch();
 		renderingObjects = new TreeSet<VisibleObject>();
+		Pixmap iconPixmap = new Pixmap(Gdx.files.internal("SWicon.png"));
 		Gdx.graphics.setVSync(true);
 	}
 
