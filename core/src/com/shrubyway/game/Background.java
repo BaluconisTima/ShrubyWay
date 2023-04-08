@@ -46,6 +46,7 @@ public List<Decoration> decorationsList = new ArrayList<Decoration>();
        }
        decorationsList.add(new Bush());
        decorationsList.add(new Pine());
+       decorationsList.add(new Rock());
 
        for(int i = 1; i < 2; i++) {
            String fileName = "maps/" + i + "/basicMap.txt";

@@ -92,7 +92,7 @@ public class ShrubyWay extends ApplicationAdapter {
 
 
 		if(InputProcessor.isMouseLeft()) background.addDecoration(1, MousePosition, '2');
-		if(InputProcessor.isMouseRight()) background.addDecoration(1, MousePosition, '1');
+		if(InputProcessor.isMouseRight()) background.addDecoration(1, MousePosition, '3');
 
 
 

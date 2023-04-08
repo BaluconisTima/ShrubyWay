@@ -34,10 +34,9 @@ public class Rectangle {
     }
 
     public void render(Batch batch) {
-        batch.draw(texture,topLeftCorner.x, topLeftCorner.y,
+        /* batch.draw(texture,topLeftCorner.x, topLeftCorner.y,
                 bottomRightCorner.x - topLeftCorner.x,
-                bottomRightCorner.y - topLeftCorner.y);
-
+                bottomRightCorner.y - topLeftCorner.y);*/
     }
 
 }
