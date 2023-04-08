@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import java.lang.Math;
 import java.util.List;
+import java.util.TreeSet;
 
 
 public class Shraby extends VisibleObject {
@@ -39,12 +40,36 @@ public class Shraby extends VisibleObject {
         frameY = currentFrame.getRegionHeight();
     }
 
+    public Rectangle collisionbox = new Rectangle(0,0,0,0);
     @Override public Rectangle collisionBox() {
-        return new Rectangle(position.x - currentFrame.getRegionWidth() / 2 + 55,
-                             position.y - currentFrame.getRegionHeight() / 2 + 5,
+        collisionbox.change(position.x - currentFrame.getRegionWidth() / 2 + 55,
+                position.y - currentFrame.getRegionHeight() / 2 + 5,
                 currentFrame.getRegionWidth() - 115, 15);
+        return collisionbox;
     }
 
+    public void animationChange() {
+        if(FaceDirection != lastFaceDirection || IsMoving != lastIsMoving) {
+            lastFaceDirection = FaceDirection;
+            lastIsMoving = IsMoving;
+            String s = "SHRABY/";
+            if(IsMoving) s += "WALK/";
+            else s += "AFK/";
+            switch(FaceDirection) {
+                case 0: s += "DOWN"; break;
+                case 1: s += "UP"; break;
+                case 2: s += "LEFT"; break;
+                case 3: s += "RIGHT"; break;
+            }
+            s += ".png";
+            if(!s.equals(last_animation)) {
+                last_animation = s;
+                AnimationList = new Texture(Gdx.files.internal(s));
+                CurrentAnimation = animator.toAnimation(AnimationList, 30, 0,0);
+                CurrentAnimation_inLiquid = animator.toAnimation(AnimationList, 30, 0, 50);
+            }
+        }
+    }
     @Override public void Render(Batch batch) {
            if(isRunning) {
                CurrentAnimation.setFrameDuration(1/36f);
@@ -53,30 +78,7 @@ public class Shraby extends VisibleObject {
                CurrentAnimation.setFrameDuration(1/24f);
                CurrentAnimation_inLiquid.setFrameDuration(1/24f);
            }
-           if(FaceDirection != lastFaceDirection || IsMoving != lastIsMoving) {
-               lastFaceDirection = FaceDirection;
-               lastIsMoving = IsMoving;
-               String s = "SHRABY/";
-               if(IsMoving) s += "WALK/";
-               else s += "AFK/";
-               switch(FaceDirection) {
-                   case 0: s += "DOWN"; break;
-                   case 1: s += "UP"; break;
-                   case 2: s += "LEFT"; break;
-                   case 3: s += "RIGHT"; break;
-               }
-               s += ".png";
-
-               if(s != last_animation) {
-                   last_animation = s;
-                   AnimationList = new Texture(Gdx.files.internal(s));
-                   CurrentAnimation =
-                           animator.toAnimation(AnimationList, 30, 0, 0);
-                   CurrentAnimation_inLiquid = animator.toAnimation(AnimationList, 30, 0, 50);
-                   AnimationStateTime = 0f;
-                   frameY = currentFrame.getRegionHeight();
-               }
-           }
+           animationChange();
            AnimationStateTime += Gdx.graphics.getDeltaTime();
            currentFrame = CurrentAnimation.getKeyFrame(AnimationStateTime, true);
            TextureRegion temp = new TextureRegion(currentFrame);
@@ -93,7 +95,7 @@ public class Shraby extends VisibleObject {
         isRunning = running;
     }
 
-    public void TryMoveTo(Vector2 direction, List<VisibleObject> objects) {
+    public void TryMoveTo(Vector2 direction, TreeSet<VisibleObject> objects) {
         int tempSpeed = 0; tempSpeed += (Speed);
         if(inLiquid) tempSpeed *= 0.85;
         if(isRunning) tempSpeed *= 1.5;
@@ -101,7 +103,9 @@ public class Shraby extends VisibleObject {
         position.add(tempDirection.scl(tempSpeed));
        Rectangle temp = collisionBox();
        for(VisibleObject object : objects) {
-            if(object.collisionBox().overlaps(temp)) {
+           if(Math.abs(object.position.x - position.x) > 300) continue;
+           if(Math.abs(object.position.y - position.y) > 300) continue;
+           if(object.collisionBox().overlaps(temp)) {
                 position.sub(tempDirection);
                 tempDirection = new Vector2(0,0);
                 break;

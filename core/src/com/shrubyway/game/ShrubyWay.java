@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.TreeSet;
 
 
 public class ShrubyWay extends ApplicationAdapter {
@@ -32,9 +33,7 @@ public class ShrubyWay extends ApplicationAdapter {
 	OrthographicCamera Camera;
 	Vector2 CameraPosition;
 	Vector2 MousePosition;
-	List<VisibleObject> renderingObjects, effects, entities;
-	List<Decoration> decorations;
-
+	TreeSet<VisibleObject> renderingObjects;
 	private BitmapFont font;
 
 	private inputAdapter InputProcessor = new inputAdapter();
@@ -57,10 +56,7 @@ public class ShrubyWay extends ApplicationAdapter {
 
 		Gdx.input.setInputProcessor(InputProcessor);
 		batch = new SpriteBatch();
-		decorations = new ArrayList<Decoration>();
-		effects = new ArrayList<VisibleObject>();
-		entities = new ArrayList<VisibleObject>();
-		renderingObjects = new ArrayList<VisibleObject>();
+		renderingObjects = new TreeSet<VisibleObject>();
 		Gdx.graphics.setVSync(true);
 	}
 
@@ -87,54 +83,48 @@ public class ShrubyWay extends ApplicationAdapter {
 	@Override
 	public void render () {
 		ScreenUtils.clear(1,1,1,1);
-		correctPosition();
-		CameraPosition.lerp(new Vector2(player.Position().x, player.Position().y),
-				0.1f);
-
-		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
-		Camera.update();
-		batch.setProjectionMatrix(Camera.combined);
-
-
-
 		player.Running(InputProcessor.isRuning());
-        Vector2 movingVector = InputProcessor.getMovementDirection();
+		Vector2 movingVector = InputProcessor.getMovementDirection();
 
 
 		MousePosition = new Vector2(InputProcessor.MousePosition().x + CameraPosition.x - Gdx.graphics.getWidth()/2,
 				InputProcessor.MousePosition().y + CameraPosition.y - Gdx.graphics.getHeight()/2);
-		if(InputProcessor.isMouseLeft()) background.addDecoration(1, MousePosition, '1');
-		if(InputProcessor.isMouseRight()) background.addDecoration(1, MousePosition, '0');
 
-		renderingObjects.clear();
-		background.updateDecorations(1, player.position,decorations);
-        for(VisibleObject to: decorations) {
-			renderingObjects.add(to);
-		}
-		for(VisibleObject to: entities) {
-			renderingObjects.add(to);
-		}
-		for(VisibleObject to: effects) {
-			renderingObjects.add(to);
-		}
+
+		if(InputProcessor.isMouseLeft()) background.addDecoration(1, MousePosition, '2');
+		if(InputProcessor.isMouseRight()) background.addDecoration(1, MousePosition, '1');
+
+
+
 		player.TryMoveTo(movingVector, renderingObjects);
 		player.LiquidStatus(background.checkLiquid(1,player.positionBottom()));
+		correctPosition();
+		CameraPosition.lerp(new Vector2(player.Position().x, player.Position().y),
+				0.1f);
+		background.update(1, player.positionBottom(), renderingObjects);
+		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
 
-		renderingObjects.add(player);
-		Collections.sort(renderingObjects);
+		Camera.update();
+		batch.setProjectionMatrix(Camera.combined);
 
 		batch.begin();
+		renderingObjects.add(player);
 		background.render(batch,1,player.positionBottom());
+		int i = 0;
 		for (VisibleObject obj : renderingObjects) {
 			obj.Render(batch);
+			i++;
 		}
+
+
+		renderingObjects.remove(player);
 
 		batch.end();
 
 		batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
 		Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 		batch.begin();
-		font.draw(batch, ""+player.position, 100, 100);
+		font.draw(batch, ""+renderingObjects.size(), 100, 100);
 		batch.end();
 
 

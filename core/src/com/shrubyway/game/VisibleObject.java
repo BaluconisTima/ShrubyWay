@@ -18,9 +18,11 @@ public class VisibleObject implements Comparable<VisibleObject> {
     }
 
     @Override public int compareTo(VisibleObject o) {
-        Float y1 = -(positionBottom().y), y2 = -o.positionBottom().y;
-        Float x1 = -(positionBottom().x), x2 = -o.positionBottom().x;
-        if(y1 == y2) return (x1.compareTo(x2));
+        Integer y1 = Math.round(-(positionBottom().y));
+        Integer y2 = Math.round(-o.positionBottom().y);
+        Integer x1 = Math.round(-(positionBottom().x));
+        Integer x2 = Math.round(-o.positionBottom().x);
+        if(y1.equals(y2)) return (x1.compareTo(x2));
         return (y1.compareTo(y2));
     }
 }
