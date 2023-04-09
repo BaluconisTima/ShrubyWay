@@ -39,6 +39,7 @@ public class ShrubyWay extends ApplicationAdapter {
 
 	private inputAdapter InputProcessor = new inputAdapter();
 
+
 	@Override
 	public void create () {
 		font = new BitmapFont();
@@ -50,7 +51,6 @@ public class ShrubyWay extends ApplicationAdapter {
 		Graphics.DisplayMode currentDisplayMode = Gdx.graphics.getDisplayMode();
 		Gdx.graphics.setFullscreenMode(currentDisplayMode);
 		Camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
 		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
 		Camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         background = new Background();
@@ -59,7 +59,9 @@ public class ShrubyWay extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		renderingObjects = new TreeSet<VisibleObject>();
 		Pixmap iconPixmap = new Pixmap(Gdx.files.internal("SWicon.png"));
+		AnimationGlobalTime.x = 0f;
 		Gdx.graphics.setVSync(true);
+
 	}
 
     public void correctPosition() {
@@ -84,6 +86,7 @@ public class ShrubyWay extends ApplicationAdapter {
 	}
 	@Override
 	public void render () {
+		AnimationGlobalTime.x += Gdx.graphics.getDeltaTime();
 		ScreenUtils.clear(1,1,1,1);
 		player.Running(InputProcessor.isRuning());
 		Vector2 movingVector = InputProcessor.getMovementDirection();

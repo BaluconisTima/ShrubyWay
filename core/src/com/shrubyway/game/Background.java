@@ -1,7 +1,9 @@
 package com.shrubyway.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import java.io.File;
@@ -15,35 +17,33 @@ char Decorations[][][] = new char[2][256][256];
 private int renderDistanceX = 10, renderDistanceY = 10;
 
     Bush tmp;
-    private String TileInterpretator(int i, int j) {
+    private String LoadAnimation(int i, int j) {
         String s = "TILES/";
-        switch (i) {
-            case 0:
-                s += "WATER";
-                break;
-            case 1:
-                s += "GRASS";
-                break;
-            case 2:
-                s += "SAND";
-                break;
-            case 3:
-                s += "DIRT";
-                break;
-        }
+        s += i + "/" + (j % 2);
         s += (j) % 2 + ".png";
         return s;
     }
-Texture Tile[][] = new Texture[4][2];
+    Animation<TextureRegion> Tile[][];
 
 public List<Decoration> decorationsList = new ArrayList<Decoration>();
 
    public Background() {
+       int TilesTypes = 4;
+       Tile = new Animation[TilesTypes][2];
 
-       for(int i = 0; i < 4; i++)
+       for(int i = 0; i < TilesTypes; i++)
            for(int j = 0; j < 2; j++){
-              Tile[i][j] = new Texture(Gdx.files.internal(TileInterpretator(i, j)));
+               String way = "TILES/" + i + "/" + j + "/";
+               File folder = new File(way);
+               File[] files = folder.listFiles();
+               Arrays.sort(files);
+               TextureRegion[] animation_frames = new TextureRegion[files.length];
+                for(int q = 0; q < files.length; q++) {
+                     animation_frames[q] = new TextureRegion(new Texture(way + files[q].getName()));
+                }
+               Tile[i][j] = new Animation<TextureRegion>(1/24f, animation_frames);
        }
+
        decorationsList.add(new Bush());
        decorationsList.add(new Pine());
        decorationsList.add(new Rock());
@@ -159,11 +159,11 @@ public List<Decoration> decorationsList = new ArrayList<Decoration>();
                       if (Math.abs(i + j) % 2 != d) continue;
                       int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
                       int tile = Background_map[level][i2][j2] - '0';
-                      batch.draw(Tile[tile][d],
-                            (i * 150) - 25,
-                            (j * 150) - 25,
-                            Tile[level][d].getWidth(),
-                            Tile[level][d].getHeight());
+                      TextureRegion tempTexture = Tile[tile][d].getKeyFrame(AnimationGlobalTime.x, true);
+                      batch.draw(tempTexture, (i * 150) - 25,
+                              (j * 150) - 25,
+                              200,
+                              200);
                   }
     }
     public boolean checkLiquid(int level, Vector2 playerPosition) {

@@ -20,31 +20,29 @@ public class Shraby extends VisibleObject {
     private boolean inLiquid = false;
     private String last_animation;
 
-    private final int Speed = 10;
+    private final float Speed = 10f;
     boolean isRunning = false;
     Animation<TextureRegion> CurrentAnimation;
     Animation<TextureRegion> CurrentAnimation_inLiquid;
-    float AnimationStateTime;
 
     private Texture AnimationList = new Texture(Gdx.files.internal("SHRABY/AFK/DOWN.png"));
     Animator animator = new Animator();
-    float frameY;
+    float RegionWidth, RegionHeight;
 
-    TextureRegion currentFrame;
     public Shraby(float x, float y) {
       position.set(x, y);
+
         CurrentAnimation = animator.toAnimation(AnimationList, 30, 0,0);
         CurrentAnimation_inLiquid = animator.toAnimation(AnimationList, 30, 0, 50);
-        AnimationStateTime = 0f;
-        currentFrame = CurrentAnimation.getKeyFrame(AnimationStateTime, true);
-        frameY = currentFrame.getRegionHeight();
+        RegionWidth = AnimationList.getWidth() / 30;
+        RegionHeight = AnimationList.getHeight() / 30;
     }
 
     public Rectangle collisionbox = new Rectangle(0,0,0,0);
     @Override public Rectangle collisionBox() {
-        collisionbox.change(position.x - currentFrame.getRegionWidth() / 2 + 55,
-                position.y - currentFrame.getRegionHeight() / 2 + 5,
-                currentFrame.getRegionWidth() - 115, 15);
+        collisionbox.change(position.x - RegionWidth / 2 + 55,
+                position.y - RegionHeight / 2 + 5,
+                RegionWidth - 115, 15);
         return collisionbox;
     }
 
@@ -79,16 +77,15 @@ public class Shraby extends VisibleObject {
                CurrentAnimation_inLiquid.setFrameDuration(1/24f);
            }
            animationChange();
-           AnimationStateTime += Gdx.graphics.getDeltaTime();
-           currentFrame = CurrentAnimation.getKeyFrame(AnimationStateTime, true);
-           TextureRegion temp = new TextureRegion(currentFrame);
+           TextureRegion temp =
+                   new TextureRegion(CurrentAnimation.getKeyFrame(AnimationGlobalTime.x, true));
 
            if(inLiquid) {
-               temp = CurrentAnimation_inLiquid.getKeyFrame(AnimationStateTime, true);
+               temp = CurrentAnimation_inLiquid.getKeyFrame(AnimationGlobalTime.x, true);
            }
            batch.draw(temp,
-                   Math.round(position.x - currentFrame.getRegionWidth() / 2),
-                   Math.round(position.y - currentFrame.getRegionHeight() / 2));
+                   Math.round(position.x - RegionWidth / 2),
+                   Math.round(position.y - RegionHeight / 2));
            collisionBox().render(batch);
     }
     public void Running(boolean running) {
@@ -101,14 +98,13 @@ public class Shraby extends VisibleObject {
             if(Math.abs(object.position.x - position.x) > 300) continue;
             if(Math.abs(object.position.y - position.y) > 300) continue;
             if(object.collisionBox().overlaps(temp)) {
-
                 return true;
             }
         }
         return false;
     }
     public void TryMoveTo(Vector2 direction, TreeSet<VisibleObject> objects) {
-        int tempSpeed = 0; tempSpeed += (Speed);
+        float tempSpeed = 0; tempSpeed += (Speed);
         if(inLiquid) tempSpeed *= 0.85;
         if(isRunning) tempSpeed *= 1.5;
         Vector2 tempDirection = new Vector2(direction);
@@ -120,7 +116,6 @@ public class Shraby extends VisibleObject {
             position.add(tempDirection);
         }
         ChangeAnimationsFor(direction);
-
     }
     public void ChangeAnimationsFor(Vector2 direction) {
         if(direction.x == 0 && direction.y == 0) IsMoving = false;
@@ -135,7 +130,7 @@ public class Shraby extends VisibleObject {
     }
     @Override public Vector2 positionBottom() {
         return new Vector2(position.x,
-                position.y - frameY/2);
+                position.y - RegionHeight/2);
     }
 
     public void LiquidStatus(boolean isLiquid) {
