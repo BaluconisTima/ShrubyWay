@@ -19,6 +19,8 @@ public class Bush extends Decoration {
         if(collisionBox == null)
             collisionBox = new Rectangle(position.x + HalfTextureWidth - 10,
                     position.y, 20, 10);
+        else collisionBox.change(position.x + HalfTextureWidth - 10,
+                position.y, 20, 10);
         return collisionBox;
     }
     @Override public Bush newTemp() {

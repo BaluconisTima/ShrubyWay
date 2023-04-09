@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Tree;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import jdk.incubator.vector.VectorOperators;
@@ -25,8 +26,8 @@ import java.util.TreeSet;
 
 
 public class ShrubyWay extends ApplicationAdapter {
-	private Shraby player;
-	private Background background;
+	Shraby player;
+	Map map;
 	SpriteBatch batch;
 	OrthographicCamera Camera;
 	Vector2 CameraPosition;
@@ -41,24 +42,28 @@ public class ShrubyWay extends ApplicationAdapter {
 		font = new BitmapFont();
 		font.getData().setScale(3);
 
+		map = new Map(1);
+		player = new Shraby(0, 0);
+		renderingObjects = new TreeSet<>();
+		Gdx.input.setInputProcessor(InputProcessor);
+		renderingObjects.add(player);
+
+		Pixmap iconPixmap = new Pixmap(Gdx.files.internal("SWicon.png"));
 		Gdx.graphics.setWindowedMode(1920, 1080);
 		Graphics.DisplayMode currentDisplayMode = Gdx.graphics.getDisplayMode();
 		Gdx.graphics.setFullscreenMode(currentDisplayMode);
-
-		player = new Shraby(0, 0);
+		Gdx.graphics.setVSync(true);
+		AnimationGlobalTime.x = 0f;
 		CameraPosition = new Vector2(player.positionCenter());
 		Camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
 		Camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        background = new Background();
-		Gdx.input.setInputProcessor(InputProcessor);
 		batch = new SpriteBatch();
 		batch.enableBlending();
 		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-		renderingObjects = new TreeSet<VisibleObject>();
-		Pixmap iconPixmap = new Pixmap(Gdx.files.internal("SWicon.png"));
-		AnimationGlobalTime.x = 0f;
-		Gdx.graphics.setVSync(true);
+
+
+
 
 	}
 
@@ -82,33 +87,38 @@ public class ShrubyWay extends ApplicationAdapter {
 		}
 		player.changePosition(temp);
 	}
+
+
 	@Override
 	public void render () {
 		AnimationGlobalTime.x += Gdx.graphics.getDeltaTime();
+
+
 		player.Running(InputProcessor.isRuning());
 		Vector2 movingVector = InputProcessor.getMovementDirection();
-		if(InputProcessor.isMouseLeft()) {
-			Bullet temp = player.shoot(MousePosition);
-			if(temp != null) renderingObjects.add(temp);
-		}
-		if(InputProcessor.isMouseRight()) {
-			background.addDecoration(1, MousePosition, '2');
-		}
 		MousePosition = new Vector2(InputProcessor.MousePosition().x + CameraPosition.x - Gdx.graphics.getWidth()/2,
 				InputProcessor.MousePosition().y + CameraPosition.y - Gdx.graphics.getHeight()/2);
+		if(InputProcessor.isMouseLeft()) {
+			Bullet temp = player.shoot(MousePosition);
+			if(temp != null) map.addEntity(temp);
+		}
+		if(InputProcessor.isMouseRight()) {
+			map.ChangeDecoration(MousePosition, '2');
+		}
 
 
-		background.update(1, player.positionCenter(), renderingObjects);
-		renderingObjects.add(player);
+
+		player.TryMoveTo(movingVector, renderingObjects);
 		for(VisibleObject obj : renderingObjects) {
 			if(obj instanceof Bullet) {
 				((Bullet) obj).TryMoveTo();
 			}
 		}
-		player.TryMoveTo(movingVector, renderingObjects);
-
-		player.LiquidStatus(background.checkLiquid(1,player.positionLegs()));
 		correctPosition();
+		map.UpdateRenderingObjects(player.positionCenter(), renderingObjects);
+		player.LiquidStatus(map.checkLiquid(player.positionLegs()));
+
+
 		CameraPosition.lerp(player.positionCenter(),
 				0.1f);
 		Camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -119,19 +129,23 @@ public class ShrubyWay extends ApplicationAdapter {
 
 		ScreenUtils.clear(1,1,1,1);
 		batch.begin();
-
-		background.render(batch,1,player.position());
+		map.render(batch,player.position());
+		TreeSet<VisibleObject> temp = new TreeSet<>();
 		for (VisibleObject obj : renderingObjects) {
+			temp.add(obj);
+		}
+		for (VisibleObject obj : temp) {
 			obj.Render(batch);
 		}
 		batch.end();
-		renderingObjects.clear();
+
 
 		batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
 		Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 		batch.begin();
 		font.draw(batch, ""+renderingObjects.size() + " " + player.position, 100, 100);
 		batch.end();
+
 
 
 

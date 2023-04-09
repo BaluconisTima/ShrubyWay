@@ -19,6 +19,7 @@ public class Rock extends Decoration {
         if(collisionBox == null)
             collisionBox = new Rectangle(position.x + HalfTextureWidth - 60,
                     position.y + 20, 120, 40);
+        else collisionBox.change(position.x + HalfTextureWidth - 60, position.y + 20, 120, 40);
         return collisionBox;
     }
     @Override public Rock newTemp() {

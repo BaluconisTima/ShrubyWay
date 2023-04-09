@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.ArrayList;
 import java.util.TreeSet;
 
 public class Entity extends VisibleObject{
@@ -45,6 +46,7 @@ public class Entity extends VisibleObject{
         isRunning = running;
     }
     public void TryMoveTo(Vector2 direction, TreeSet<VisibleObject> objects){
+        objects.remove(this);
         float tempSpeed = getSpeed();
         Vector2 tempDirection = new Vector2(direction);
         position.add(tempDirection.scl(tempSpeed));
@@ -54,6 +56,7 @@ public class Entity extends VisibleObject{
         if(checkCollisions(objects)) {
             position.add(tempDirection);
         }
+        objects.add(this);
         ChangeAnimationsFor(direction);
     };
     @Override public Rectangle collisionBox(){

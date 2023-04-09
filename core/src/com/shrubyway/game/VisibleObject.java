@@ -5,7 +5,6 @@ import com.badlogic.gdx.math.Vector2;
 
 public class VisibleObject implements Comparable<VisibleObject> {
     final Vector2 position = new Vector2();
-
     public void Render(Batch batch){
 
     };

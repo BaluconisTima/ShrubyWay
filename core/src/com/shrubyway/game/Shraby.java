@@ -46,8 +46,6 @@ public class Shraby extends Entity {
         return null;
     }
 
-
-
     @Override public Vector2 position() {
         return position;
     }

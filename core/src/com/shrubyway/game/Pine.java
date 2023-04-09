@@ -19,6 +19,8 @@ public class Pine extends Decoration {
         if(collisionBox == null)
             collisionBox = new Rectangle(position.x + HalfTextureWidth - 45,
                     position.y, 90, 10);
+            collisionBox.change(position.x + HalfTextureWidth - 45,
+                    position.y, 90, 10);
         return collisionBox;
     }
     @Override public Pine newTemp() {
