@@ -14,7 +14,7 @@ import java.util.*;
 public class Background {
 char Background_map[][][] = new char[2][256][256];
 char Decorations[][][] = new char[2][256][256];
-private int renderDistanceX = 10, renderDistanceY = 10;
+private int renderDistanceX = 13, renderDistanceY = 10;
 
     Bush tmp;
     private String LoadAnimation(int i, int j) {
@@ -78,7 +78,7 @@ public List<Decoration> decorationsList = new ArrayList<Decoration>();
 
 
     private TreeSet<VisibleObject> temp_del = new TreeSet<VisibleObject>();
-    private TreeSet<VisibleObject> temp_entitys = new TreeSet<VisibleObject>();
+    private TreeSet<Entity> temp_entitys = new TreeSet<Entity>();
     private TreeSet<VisibleObject> temp_effects = new TreeSet<VisibleObject>();
     private TreeSet<Decoration> temp_decorations = new TreeSet<Decoration>();
 
@@ -87,7 +87,6 @@ public List<Decoration> decorationsList = new ArrayList<Decoration>();
            for (int j = y - renderDistanceY; j < y + renderDistanceY; j++) {
                int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
                if(Decorations[level][i2][j2] == '0') continue;
-
                    Decoration temp = decorationsList.get(Decorations[level][i2][j2] - '1');
                    temp.change(i * 150, j * 150, i2, j2);
                    if(!DecorObj.contains(temp)) {
@@ -107,9 +106,14 @@ public List<Decoration> decorationsList = new ArrayList<Decoration>();
         temp_effects.clear();
         temp_decorations.clear();
         for(VisibleObject to: VisObj) {
-            if(Math.abs(playerPosition.x - (to.positionBottom()).x)/150 > renderDistanceX ||
-            Math.abs(playerPosition.y - (to.positionBottom()).y)/150 > renderDistanceY) {
+            if(Math.abs(playerPosition.x - (to.position()).x)/150 > renderDistanceX ||
+            Math.abs(playerPosition.y - (to.position()).y)/150 > renderDistanceY) {
                 temp_del.add(to);
+            } else {
+                if(to instanceof Decoration) {
+                    if(Decorations[level][((Decoration) to).Decoration_i][((Decoration) to).Decoration_j] == '0')
+                        temp_del.add(to);
+                }
             }
         }
         for(VisibleObject to: temp_del) {
@@ -130,6 +134,7 @@ public List<Decoration> decorationsList = new ArrayList<Decoration>();
         }
 
         updateDecorations(level, playerPosition, temp_decorations);
+        //updateEntities(level, playerPosition, temp_decorations);
 
         for(Decoration to: temp_decorations) {
             VisObj.add(to);

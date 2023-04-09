@@ -5,140 +5,57 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.utils.TimeUtils;
+
 import java.lang.Math;
-import java.util.List;
-import java.util.TreeSet;
 
 
-public class Shraby extends VisibleObject {
+public class Shraby extends Entity {
 
-    private byte FaceDirection = 0;  // 0 - DOWN, 1 - UP, 2 - LEFT, 3 - RIGHT
-    private boolean IsMoving = false;
-    private byte lastFaceDirection = 0;
-    private boolean lastIsMoving = false;
-    private boolean inLiquid = false;
-    private String last_animation;
-
-    private final float Speed = 10f;
-    boolean isRunning = false;
-    Animation<TextureRegion> CurrentAnimation;
-    Animation<TextureRegion> CurrentAnimation_inLiquid;
-
-    private Texture AnimationList = new Texture(Gdx.files.internal("SHRABY/AFK/DOWN.png"));
-    Animator animator = new Animator();
-    float RegionWidth, RegionHeight;
-
+    static protected  Animation<TextureRegion> animations[][][];
     public Shraby(float x, float y) {
-      position.set(x, y);
-
-        CurrentAnimation = animator.toAnimation(AnimationList, 30, 0,0);
-        CurrentAnimation_inLiquid = animator.toAnimation(AnimationList, 30, 0, 50);
-        RegionWidth = AnimationList.getWidth() / 30;
-        RegionHeight = AnimationList.getHeight() / 30;
+        if(animations == null) animations = animationLoader.Load("ENTITIES/SHRABY",30);
+        position.set(x, y);
+        RegionWidth = (animations[0][0][0].getKeyFrame(AnimationGlobalTime.x)).getRegionWidth();
+        RegionHeight = animations[0][0][0].getKeyFrame(AnimationGlobalTime.x).getRegionHeight();
     }
 
-    public Rectangle collisionbox = new Rectangle(0,0,0,0);
     @Override public Rectangle collisionBox() {
-        collisionbox.change(position.x - RegionWidth / 2 + 55,
-                position.y - RegionHeight / 2 + 5,
+        collisionBox.change(position.x + 55,
+                position.y + 5,
                 RegionWidth - 115, 15);
-        return collisionbox;
-    }
-
-    public void animationChange() {
-        if(FaceDirection != lastFaceDirection || IsMoving != lastIsMoving) {
-            lastFaceDirection = FaceDirection;
-            lastIsMoving = IsMoving;
-            String s = "SHRABY/";
-            if(IsMoving) s += "WALK/";
-            else s += "AFK/";
-            switch(FaceDirection) {
-                case 0: s += "DOWN"; break;
-                case 1: s += "UP"; break;
-                case 2: s += "LEFT"; break;
-                case 3: s += "RIGHT"; break;
-            }
-            s += ".png";
-            if(!s.equals(last_animation)) {
-                last_animation = s;
-                AnimationList = new Texture(Gdx.files.internal(s));
-                CurrentAnimation = animator.toAnimation(AnimationList, 30, 0,0);
-                CurrentAnimation_inLiquid = animator.toAnimation(AnimationList, 30, 0, 50);
-            }
-        }
+        return collisionBox;
     }
     @Override public void Render(Batch batch) {
-           if(isRunning) {
-               CurrentAnimation.setFrameDuration(1/36f);
-               CurrentAnimation_inLiquid.setFrameDuration(1/36f);
-           } else {
-               CurrentAnimation.setFrameDuration(1/24f);
-               CurrentAnimation_inLiquid.setFrameDuration(1/24f);
-           }
-           animationChange();
+        animations[FaceDirection][IsMoving ? 1 : 0][inLiquid ? 1 : 0].setFrameDuration(1f/(2.4f * getSpeed()));
            TextureRegion temp =
-                   new TextureRegion(CurrentAnimation.getKeyFrame(AnimationGlobalTime.x, true));
-
-           if(inLiquid) {
-               temp = CurrentAnimation_inLiquid.getKeyFrame(AnimationGlobalTime.x, true);
-           }
+                   animations[FaceDirection][IsMoving ? 1 : 0][inLiquid ? 1 : 0].getKeyFrame(AnimationGlobalTime.x, true);
            batch.draw(temp,
-                   Math.round(position.x - RegionWidth / 2),
-                   Math.round(position.y - RegionHeight / 2));
+                   Math.round(position.x), Math.round(position.y));
            collisionBox().render(batch);
     }
-    public void Running(boolean running) {
-        isRunning = running;
+    private float cooldown = 0.3f;
+    private float lastUsedTime;
+    public Bullet shoot(Vector2 mousePosition) {
+        if((TimeUtils.nanoTime() - lastUsedTime) / 1000000000.0f > cooldown) {
+            lastUsedTime = TimeUtils.nanoTime();
+            Bullet bullet = new Bullet(positionCenter(), mousePosition);
+            ChangeAnimationsFor(bullet.Direction);
+            return bullet;
+        }
+        return null;
     }
 
-    private boolean checkCollisions(Vector2 direction, TreeSet<VisibleObject> objects) {
-        Rectangle temp = collisionBox();
-        for(VisibleObject object : objects) {
-            if(Math.abs(object.position.x - position.x) > 300) continue;
-            if(Math.abs(object.position.y - position.y) > 300) continue;
-            if(object.collisionBox().overlaps(temp)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    public void TryMoveTo(Vector2 direction, TreeSet<VisibleObject> objects) {
-        float tempSpeed = 0; tempSpeed += (Speed);
-        if(inLiquid) tempSpeed *= 0.85;
-        if(isRunning) tempSpeed *= 1.5;
-        Vector2 tempDirection = new Vector2(direction);
-        position.add(tempDirection.scl(tempSpeed));
-        if(checkCollisions(direction, objects)) {
-            position.sub(tempDirection);
-        }
-        if(checkCollisions(direction, objects)) {
-            position.add(tempDirection);
-        }
-        ChangeAnimationsFor(direction);
-    }
-    public void ChangeAnimationsFor(Vector2 direction) {
-        if(direction.x == 0 && direction.y == 0) IsMoving = false;
-        else IsMoving = true;
-        if(direction.y < 0) FaceDirection = 0;
-        else if(direction.y > 0) FaceDirection = 1;
-        else if(direction.x < 0) FaceDirection = 2;
-        else if(direction.x > 0) FaceDirection = 3;
-    }
-    public Vector2 Position() {
+
+
+    @Override public Vector2 position() {
         return position;
     }
-    @Override public Vector2 positionBottom() {
-        return new Vector2(position.x,
-                position.y - RegionHeight/2);
-    }
 
-    public void LiquidStatus(boolean isLiquid) {
-        inLiquid = isLiquid;
-    }
-    public void changePosition(Vector2 positionNew) {
-        position.set(positionNew);
-    }
+
+
+
+
 
 
 }
