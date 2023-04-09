@@ -13,6 +13,7 @@ import java.util.*;
 
 public class Background {
 char Background_map[][][] = new char[2][256][256];
+List<VisibleObject> [][]chunks = new ArrayList[16][16];
 char Decorations[][][] = new char[2][256][256];
 private int renderDistanceX = 13, renderDistanceY = 10;
 
@@ -86,14 +87,13 @@ public List<Decoration> decorationsList = new ArrayList<Decoration>();
        for (int i = x - renderDistanceX; i < x + renderDistanceX; i++) {
            for (int j = y - renderDistanceY; j < y + renderDistanceY; j++) {
                int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
-               if(Decorations[level][i2][j2] == '0') continue;
+              // if(Decorations[level][i2][j2] == '0') continue;
                    Decoration temp = decorationsList.get(Decorations[level][i2][j2] - '1');
                    temp.change(i * 150, j * 150, i2, j2);
                    if(!DecorObj.contains(temp)) {
                        DecorObj.add(temp);
                        decorationsList.set(Decorations[level][i2][j2] - '1', temp.newTemp());
                    }
-
            }
        }
    }
@@ -106,14 +106,9 @@ public List<Decoration> decorationsList = new ArrayList<Decoration>();
         temp_effects.clear();
         temp_decorations.clear();
         for(VisibleObject to: VisObj) {
-            if(Math.abs(playerPosition.x - (to.position()).x)/150 > renderDistanceX ||
-            Math.abs(playerPosition.y - (to.position()).y)/150 > renderDistanceY) {
+            if(Math.abs(playerPosition.x - (to.position()).x) > renderDistanceX * 150 ||
+            Math.abs(playerPosition.y - (to.position()).y) > renderDistanceY * 150) {
                 temp_del.add(to);
-            } else {
-                if(to instanceof Decoration) {
-                    if(Decorations[level][((Decoration) to).Decoration_i][((Decoration) to).Decoration_j] == '0')
-                        temp_del.add(to);
-                }
             }
         }
         for(VisibleObject to: temp_del) {

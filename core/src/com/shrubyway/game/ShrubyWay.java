@@ -87,12 +87,6 @@ public class ShrubyWay extends ApplicationAdapter {
 		AnimationGlobalTime.x += Gdx.graphics.getDeltaTime();
 		player.Running(InputProcessor.isRuning());
 		Vector2 movingVector = InputProcessor.getMovementDirection();
-
-
-		MousePosition = new Vector2(InputProcessor.MousePosition().x + CameraPosition.x - Gdx.graphics.getWidth()/2,
-				InputProcessor.MousePosition().y + CameraPosition.y - Gdx.graphics.getHeight()/2);
-
-
 		if(InputProcessor.isMouseLeft()) {
 			Bullet temp = player.shoot(MousePosition);
 			if(temp != null) renderingObjects.add(temp);
@@ -100,41 +94,45 @@ public class ShrubyWay extends ApplicationAdapter {
 		if(InputProcessor.isMouseRight()) {
 			background.addDecoration(1, MousePosition, '2');
 		}
+		MousePosition = new Vector2(InputProcessor.MousePosition().x + CameraPosition.x - Gdx.graphics.getWidth()/2,
+				InputProcessor.MousePosition().y + CameraPosition.y - Gdx.graphics.getHeight()/2);
 
+
+		background.update(1, player.positionCenter(), renderingObjects);
+		renderingObjects.add(player);
 		for(VisibleObject obj : renderingObjects) {
 			if(obj instanceof Bullet) {
 				((Bullet) obj).TryMoveTo();
 			}
 		}
-
-
-
 		player.TryMoveTo(movingVector, renderingObjects);
+
 		player.LiquidStatus(background.checkLiquid(1,player.positionLegs()));
 		correctPosition();
 		CameraPosition.lerp(player.positionCenter(),
 				0.1f);
-		background.update(1, player.positionCenter(), renderingObjects);
 		Camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Camera.position.set(Math.round(CameraPosition.x),Math.round(CameraPosition.y), 0);
 		Camera.update();
+
 		batch.setProjectionMatrix(Camera.combined);
 
 		ScreenUtils.clear(1,1,1,1);
 		batch.begin();
-		renderingObjects.add(player);
+
 		background.render(batch,1,player.position());
 		for (VisibleObject obj : renderingObjects) {
 			obj.Render(batch);
 		}
-		renderingObjects.remove(player);
 		batch.end();
+		renderingObjects.clear();
 
 		batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
 		Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 		batch.begin();
-		font.draw(batch, ""+player.position(), 100, 100);
+		font.draw(batch, ""+renderingObjects.size() + " " + player.position, 100, 100);
 		batch.end();
+
 
 
 

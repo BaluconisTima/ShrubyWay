@@ -11,6 +11,7 @@ import java.util.TreeSet;
 public class Bullet extends Entity {
    TextureRegion BulletTexture = new TextureRegion(new Texture("Entities/WIND.png"));
    protected Vector2 finishPosition, Direction;
+
     public Bullet(Vector2 StartPosition, Vector2 FinishPosition) {
         position.set(StartPosition);
         Speed = 30f;
@@ -25,7 +26,7 @@ public class Bullet extends Entity {
         position.add(Direction);
     }
     @Override public void Render(Batch batch) {
-        collisionBox.change(position.x, position.y, -10, -10);
+        //collisionBox.change(position.x, position.y, -10, -10);
         collisionBox().render(batch);
         batch.draw(BulletTexture, position.x, position.y, 0, 0,
                 BulletTexture.getRegionWidth(), BulletTexture.getRegionHeight(), 1, 1, Direction.angleDeg() - 90);

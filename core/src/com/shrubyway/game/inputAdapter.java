@@ -43,6 +43,7 @@ public class inputAdapter extends InputAdapter {
     }
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        MousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
         if (button == Input.Buttons.LEFT) {
             MouseLeft = true;
         } else if (button == Input.Buttons.RIGHT) {
@@ -50,8 +51,13 @@ public class inputAdapter extends InputAdapter {
         }
         return false;
     }
+    @Override public boolean touchDragged (int screenX, int screenY, int pointer) {
+        MousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
+        return true;
+    }
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        MousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
         if (button == Input.Buttons.LEFT) {
             MouseLeft = false;
         } else if (button == Input.Buttons.RIGHT) {

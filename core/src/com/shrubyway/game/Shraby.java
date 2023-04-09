@@ -34,7 +34,7 @@ public class Shraby extends Entity {
                    Math.round(position.x), Math.round(position.y));
            collisionBox().render(batch);
     }
-    private float cooldown = 0.3f;
+    private float cooldown = 0.5f;
     private float lastUsedTime;
     public Bullet shoot(Vector2 mousePosition) {
         if((TimeUtils.nanoTime() - lastUsedTime) / 1000000000.0f > cooldown) {
