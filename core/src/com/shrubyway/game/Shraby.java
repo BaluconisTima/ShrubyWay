@@ -14,6 +14,7 @@ public class Shraby extends Entity {
 
     static protected  Animation<TextureRegion> animations[][][];
     public Shraby(float x, float y) {
+        Speed = 10f;
         if(animations == null) animations = animationLoader.Load("ENTITIES/SHRABY",30);
         position.set(x, y);
         RegionWidth = (animations[0][0][0].getKeyFrame(AnimationGlobalTime.x)).getRegionWidth();
