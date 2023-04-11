@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.ArrayList;
 import java.util.TreeSet;
@@ -86,6 +87,17 @@ public class Entity extends VisibleObject{
     public Vector2 positionLegs() {
         tempPosition.set(position.x + RegionWidth / 2, position.y);
         return tempPosition;
+    }
+
+    private float lastStepTime = 0f;
+    private float Cooldown = 0.25f;
+    public boolean makingStep() {
+        if(!IsMoving) return false;
+        if((TimeUtils.nanoTime() - lastStepTime) / 1000000000.0f  >= Cooldown / (getSpeed() / 10)) {
+            lastStepTime = TimeUtils.nanoTime();
+            return true;
+        }
+        return false;
     }
 
 }

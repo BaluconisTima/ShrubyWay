@@ -1,5 +1,6 @@
 package com.shrubyway.game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -14,18 +15,17 @@ import java.util.*;
 public class Background {
 char Background_map[][] = new char[256][256];
 private final int renderDistanceX = 13, renderDistanceY = 10;
+    private final float soundDistanceX = 1200, soundDistanceY = 1200;
 private int level;
 final int TilesTypes = 4;
 
-
-    private String LoadAnimation(int i, int j) {
-        String s = "TILES/";
-        s += i + "/" + (j % 2);
-        s += (j) % 2 + ".png";
-        return s;
-    }
     Animation<TextureRegion> Tile[][];
+    long TileSound[] = new long[TilesTypes];
+    Sound StepSound[] = new Sound[TilesTypes];
+    int TileWithSound[] = {0};
 
+    float NearestTile[] = new float[TilesTypes];
+    Sound sound;
 
 
    private void animationsLoader() {
@@ -40,7 +40,7 @@ final int TilesTypes = 4;
                for(int q = 0; q < files.length; q++) {
                    animation_frames[q] = new TextureRegion(new Texture(way + files[q].getName()));
                }
-               Tile[i][j] = new Animation<TextureRegion>(1/24f, animation_frames);
+               Tile[i][j] = new Animation<>(1/24f, animation_frames);
            }
    }
    private void TileMapLoader() {
@@ -57,14 +57,31 @@ final int TilesTypes = 4;
            } catch (FileNotFoundException e){};
    }
 
+   private void soundLoader() {
+       for(int i = 0; i < TilesTypes; i++) {
+           TileSound[i] = -1;
+           StepSound[i] = Gdx.audio.newSound(Gdx.files.internal("sounds/STEPS/" + i + ".ogg"));
+       }
+       for(int to: TileWithSound) {
+           sound = Gdx.audio.newSound(Gdx.files.internal("sounds/TILES/" + to + ".ogg"));
+           TileSound[to] = sound.play();
+           sound.setLooping(TileSound[to], true);
+           sound.setVolume(TileSound[to], 0);
+       }
+   }
+
 public Background(int Level) {
        level = Level;
        animationsLoader();
        TileMapLoader();
+       soundLoader();
     }
 
 
     public void render(Batch batch, Vector2 playerPosition) {
+          for(int i = 0; i < TilesTypes; i++) {
+                  NearestTile[i] = 1;
+          }
           int x = 0; x += playerPosition.x; x /= 150;
           int y = 0; y += playerPosition.y; y /= 150;
           for(int d = 0; d < 2; d++)
@@ -73,22 +90,42 @@ public Background(int Level) {
                       if (Math.abs(i + j) % 2 != d) continue;
                       int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
                       int tile = Background_map[i2][j2] - '0';
+                      NearestTile[tile] = Math.min(NearestTile[tile],
+                              Math.max(Math.abs(i * 150 + 75 - playerPosition.x) / soundDistanceX,
+                                       Math.abs(j * 150 + 75 - playerPosition.y) / soundDistanceY));
                       TextureRegion tempTexture = Tile[tile][d].getKeyFrame(AnimationGlobalTime.x, true);
                       batch.draw(tempTexture, (i * 150) - 25,
                               (j * 150) - 25,
                               200,
                               200);
                   }
+          for(int i: TileWithSound) {
+              sound.setVolume(TileSound[i], Math.max(0, 1 - NearestTile[i]));
+          }
     }
     public boolean checkLiquid(Vector2 playerPosition) {
         int xr = 0; xr += (playerPosition.x + 10) / 150;
         int xl = 0; xl += (playerPosition.x - 10) / 150;
         int yr = 0; yr += (playerPosition.y + 10) / 150;
         int yl = 0; yl += (playerPosition.y - 10) / 150;
-        return (Background_map[(xr + 256) % 256][(yr + 256) % 256] == '0'
-              && Background_map[(xl + 256) % 256][(yr + 256) % 256] == '0' &&
-                Background_map[(xr + 256) % 256][(yl + 256) % 256] == '0'
-                && Background_map[(xl + 256) % 256][(yl + 256) % 256] == '0');
+        xr = (xr + 256) % 256; xl = (xl + 256) % 256;
+        yr = (yr + 256) % 256; yl = (yl + 256) % 256;
+
+        return (Background_map[xr][yr] == '0'
+              && Background_map[xr][yl] == '0' &&
+                Background_map[xl][yl] == '0'
+                && Background_map[xl][yr] == '0');
+    }
+
+    void makeStep(Vector2 step, Vector2 playerPosition) {
+        int x = 0; x += (step.x) / 150;
+        int y = 0; y += (step.y) / 150;
+        x = (x + 256) % 256; y = (y + 256) % 256;
+           long temp = StepSound[Background_map[x][y] - '0'].play(1f);
+           sound.setPitch(temp, 1 + (float) (Math.random() * 0.5 - 0.25f));
+           sound.setVolume(temp, 1 - Math.max(Math.abs(step.x - playerPosition.x) / soundDistanceX,
+                   Math.abs(step.y - playerPosition.y) / soundDistanceY));
+
     }
 
 }

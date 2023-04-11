@@ -1,5 +1,7 @@
 package com.shrubyway.game;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -35,6 +37,7 @@ public class Map {
         }
         ;
     }
+
 
     public Map(int level) {
         background = new Background(level);
@@ -161,6 +164,10 @@ public class Map {
         background.render(batch, playerPosition);
 
     }
+    void makeStep(Vector2 step, Vector2 playerPosition) {
+        background.makeStep(step, playerPosition);
+    }
+
     public boolean checkLiquid(Vector2 position) {
         return background.checkLiquid(position);
     }

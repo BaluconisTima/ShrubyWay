@@ -33,5 +33,7 @@ public class Bullet extends Entity {
                 BulletTexture.getRegionWidth(), BulletTexture.getRegionHeight(), 1, 1, Direction.angleDeg() - 90);
 
     }
+
+
 }
 

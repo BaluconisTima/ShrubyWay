@@ -113,6 +113,11 @@ public class ShrubyWay extends ApplicationAdapter {
 			if(obj instanceof Bullet) {
 				((Bullet) obj).TryMoveTo();
 			}
+			if(obj instanceof Entity) {
+				if(((Entity) obj).makingStep()) {
+                     map.makeStep(((Entity)obj).positionLegs(), player.positionLegs());
+				};
+			}
 		}
 		correctPosition();
 		map.UpdateRenderingObjects(player.positionCenter(), renderingObjects);
