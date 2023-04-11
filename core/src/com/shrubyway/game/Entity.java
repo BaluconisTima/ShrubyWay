@@ -26,6 +26,11 @@ public class Entity extends VisibleObject{
     AnimationLoader animationLoader = new AnimationLoader();
     Vector2 tempPosition = new Vector2(0,0);
 
+    private float lastStepTime = 0f;
+    private float StepCooldown = 0.3f;
+
+    private char lastTile = '0';
+
     public float getSpeed() {
         float tempSpeed = 0; tempSpeed += (Speed);
         if(inLiquid) tempSpeed *= 0.85;
@@ -89,11 +94,12 @@ public class Entity extends VisibleObject{
         return tempPosition;
     }
 
-    private float lastStepTime = 0f;
-    private float Cooldown = 0.25f;
-    public boolean makingStep() {
+
+    public boolean makingStep(char tile) {
+        if(tile != lastTile) lastStepTime = 0f;
+        lastTile = tile;
         if(!IsMoving) return false;
-        if((TimeUtils.nanoTime() - lastStepTime) / 1000000000.0f  >= Cooldown / (getSpeed() / 10)) {
+        if((TimeUtils.nanoTime() - lastStepTime) / 1000000000.0f  >= StepCooldown / (getSpeed() / 10)) {
             lastStepTime = TimeUtils.nanoTime();
             return true;
         }

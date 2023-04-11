@@ -21,7 +21,7 @@ final int TilesTypes = 4;
 
     Animation<TextureRegion> Tile[][];
     long TileSound[] = new long[TilesTypes];
-    Sound StepSound[] = new Sound[TilesTypes];
+    Sound StepSound[][] = new Sound[TilesTypes][2];
     int TileWithSound[] = {0};
 
     float NearestTile[] = new float[TilesTypes];
@@ -60,7 +60,8 @@ final int TilesTypes = 4;
    private void soundLoader() {
        for(int i = 0; i < TilesTypes; i++) {
            TileSound[i] = -1;
-           StepSound[i] = Gdx.audio.newSound(Gdx.files.internal("sounds/STEPS/" + i + ".ogg"));
+           StepSound[i][0] = Gdx.audio.newSound(Gdx.files.internal("sounds/STEPS/" + i + "_0.ogg"));
+           StepSound[i][1] = Gdx.audio.newSound(Gdx.files.internal("sounds/STEPS/" + i + "_1.ogg"));
        }
        for(int to: TileWithSound) {
            sound = Gdx.audio.newSound(Gdx.files.internal("sounds/TILES/" + to + ".ogg"));
@@ -100,7 +101,7 @@ public Background(int Level) {
                               200);
                   }
           for(int i: TileWithSound) {
-              sound.setVolume(TileSound[i], Math.max(0, 1 - NearestTile[i]));
+              sound.setVolume(TileSound[i], Math.max(0, 2 * (1 - NearestTile[i])));
           }
     }
     public boolean checkLiquid(Vector2 playerPosition) {
@@ -117,12 +118,20 @@ public Background(int Level) {
                 && Background_map[xl][yr] == '0');
     }
 
+    public char checkTile(Vector2 position) {
+        int x = 0; x += (position.x) / 150;
+        int y = 0; y += (position.y) / 150;
+        x = (x + 256) % 256;
+        y = (y + 256) % 256;
+        return Background_map[x][y];
+    }
+
     void makeStep(Vector2 step, Vector2 playerPosition) {
         int x = 0; x += (step.x) / 150;
         int y = 0; y += (step.y) / 150;
         x = (x + 256) % 256; y = (y + 256) % 256;
-           long temp = StepSound[Background_map[x][y] - '0'].play(1f);
-           sound.setPitch(temp, 1 + (float) (Math.random() * 0.5 - 0.25f));
+           long temp = StepSound[Background_map[x][y] - '0'][(int)(Math.random() * 2)].play(1f);
+           sound.setPitch(temp, 1 + (float)Math.random() * 0.2f - 0.1f);
            sound.setVolume(temp, 1 - Math.max(Math.abs(step.x - playerPosition.x) / soundDistanceX,
                    Math.abs(step.y - playerPosition.y) / soundDistanceY));
 

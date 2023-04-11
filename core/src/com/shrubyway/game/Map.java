@@ -48,7 +48,7 @@ public class Map {
 
         for(int i = 0; i < 16; i++)
             for(int j = 0; j < 16; j++) {
-                chunks[i][j] = new TreeSet<VisibleObject>();
+                chunks[i][j] = new TreeSet<>();
             }
 
         for (int i = 0; i < 256; i++)
@@ -172,5 +172,8 @@ public class Map {
         return background.checkLiquid(position);
     }
 
+    public char checkTile(Vector2 position) {
+        return background.checkTile(position);
+    }
 
 }
