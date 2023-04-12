@@ -9,9 +9,11 @@ public class inputAdapter extends InputAdapter {
     private boolean RightPressed;
     private boolean UpPressed;
     private boolean DownPressed;
+    private boolean SpacePressed;
 
     private boolean MouseLeft;
     private boolean MouseRight;
+
 
     private boolean Runing;
     private final Vector2 MousePosition = new Vector2();
@@ -24,6 +26,7 @@ public class inputAdapter extends InputAdapter {
         if(keycode == Input.Keys.W) UpPressed = true;
         if(keycode == Input.Keys.S) DownPressed = true;
         if(keycode == Input.Keys.CONTROL_LEFT) Runing = true;
+        if(keycode == Input.Keys.SPACE) SpacePressed = true;
         return false;
     }
 
@@ -34,6 +37,7 @@ public class inputAdapter extends InputAdapter {
         if(keycode == Input.Keys.W) UpPressed = false;
         if(keycode == Input.Keys.S) DownPressed = false;
         if(keycode == Input.Keys.CONTROL_LEFT) Runing = false;
+        if(keycode == Input.Keys.SPACE) SpacePressed = false;
         return false;
     }
     @Override
@@ -80,6 +84,10 @@ public class inputAdapter extends InputAdapter {
             MovementDirection.scl(1/(float) Math.sqrt(2));
         return MovementDirection;
 
+    }
+    public boolean isSpacePressed() {
+        if(SpacePressed) {SpacePressed = false; return true;}
+        return false;
     }
     public boolean isMouseLeft() {
         return MouseLeft;

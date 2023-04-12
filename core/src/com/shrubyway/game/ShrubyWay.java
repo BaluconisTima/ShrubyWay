@@ -53,7 +53,6 @@ public class ShrubyWay extends ApplicationAdapter {
 		Graphics.DisplayMode currentDisplayMode = Gdx.graphics.getDisplayMode();
 		Gdx.graphics.setFullscreenMode(currentDisplayMode);
 		Gdx.graphics.setVSync(true);
-		AnimationGlobalTime.x = 0f;
 		CameraPosition = new Vector2(player.positionCenter());
 		Camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Camera.position.set(CameraPosition.x,CameraPosition.y, 0);
@@ -61,10 +60,7 @@ public class ShrubyWay extends ApplicationAdapter {
 		batch = new SpriteBatch();
 		batch.enableBlending();
 		batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
-
-
-
+		AnimationGlobalTime.x = 0f;
 	}
 
     public void correctPosition() {
@@ -92,8 +88,6 @@ public class ShrubyWay extends ApplicationAdapter {
 	@Override
 	public void render () {
 		AnimationGlobalTime.x += Gdx.graphics.getDeltaTime();
-
-
 		player.Running(InputProcessor.isRuning());
 		Vector2 movingVector = InputProcessor.getMovementDirection();
 		MousePosition = new Vector2(InputProcessor.MousePosition().x + CameraPosition.x - Gdx.graphics.getWidth()/2,
@@ -108,7 +102,11 @@ public class ShrubyWay extends ApplicationAdapter {
 
 
 
+
 		player.TryMoveTo(movingVector, renderingObjects);
+		if(InputProcessor.isSpacePressed()) {
+			player.Attack();
+		}
 		for(VisibleObject obj : renderingObjects) {
 			if(obj instanceof Bullet) {
 				((Bullet) obj).TryMoveTo();

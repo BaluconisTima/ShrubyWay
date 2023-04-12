@@ -14,13 +14,12 @@ public class Bullet extends Entity {
 
     public Bullet(Vector2 StartPosition, Vector2 FinishPosition) {
         position.set(StartPosition);
-        Speed = 5f;
+        Speed = 30f;
        Direction =
                new Vector2(FinishPosition.x -position.x, FinishPosition.y - position.y);
        Direction.scl(1/Direction.len());
        Direction.scl(getSpeed());
        finishPosition = new Vector2(FinishPosition);
-
     }
 
     public void TryMoveTo() {

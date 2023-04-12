@@ -1,6 +1,7 @@
 package com.shrubyway.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -12,12 +13,13 @@ import java.util.TreeSet;
 
 public class Entity extends VisibleObject{
     protected Rectangle hitBox;
-    protected int Health;
+    protected float Health;
 
     protected boolean onFire = false;
     protected Rectangle collisionBox = new Rectangle(0,0,-1,-1);
-    protected byte FaceDirection = 0;  // 0 - DOWN, 1 - UP, 2 - LEFT, 3 - RIGHT
-    protected boolean IsMoving = false;
+    protected byte FaceDirection = 0;
+    static protected  Animation<TextureRegion> animations[][][];
+    protected int action = 0;
     protected boolean inLiquid = false;
     protected float Speed = 10f;
     protected boolean isRunning = false;
@@ -30,16 +32,20 @@ public class Entity extends VisibleObject{
     private float StepCooldown = 0.3f;
 
     private char lastTile = '0';
+    Boolean canMove = true;
+    static Sound SoundAttack = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/Swing.ogg"));
 
     public float getSpeed() {
         float tempSpeed = 0; tempSpeed += (Speed);
-        if(inLiquid) tempSpeed *= 0.85;
-        if(isRunning) tempSpeed *= 1.25;
+        if(inLiquid) tempSpeed *= 0.75;
+        if(action != 3) {if (isRunning) tempSpeed *= 1.25;}
+        else tempSpeed *= 1.5;
         return tempSpeed;
     }
     public void ChangeAnimationsFor(Vector2 direction) {
-        if(direction.x == 0 && direction.y == 0) IsMoving = false;
-        else IsMoving = true;
+        if(!canMove) return;
+        if(direction.x == 0 && direction.y == 0) action = 0;
+        else action = 1;
         if(Math.abs(direction.x) > Math.abs(direction.y)) {
             if(direction.x < 0) FaceDirection = 2;
             else if(direction.x > 0) FaceDirection = 3;
@@ -49,9 +55,11 @@ public class Entity extends VisibleObject{
         }
     }
     public void Running(boolean running) {
+        if(!canMove) return;
         isRunning = running;
     }
     public void TryMoveTo(Vector2 direction, TreeSet<VisibleObject> objects){
+        if(!canMove) return;
         objects.remove(this);
         float tempSpeed = getSpeed();
         Vector2 tempDirection = new Vector2(direction);
@@ -65,6 +73,33 @@ public class Entity extends VisibleObject{
         objects.add(this);
         ChangeAnimationsFor(direction);
     };
+
+
+    private float AttackCooldown = 0.3f;
+    static float animationTime = 0f;
+    private float lastAttackTime;
+    public void Attack() {
+        if(!canMove && action != 3) return;
+        if((TimeUtils.nanoTime() - lastAttackTime) / 1000000000.0f > AttackCooldown) {
+            animationTime = 0f;
+            canMove = false;
+            action = 3;
+            lastAttackTime = TimeUtils.nanoTime();
+            SoundAttack.play();
+        }
+    }
+    private float ShootCooldown = 0.5f;
+    private float lastShootTime;
+    public Bullet shoot(Vector2 mousePosition) {
+        if(!canMove) return null;
+        if((TimeUtils.nanoTime() - lastShootTime) / 1000000000.0f > ShootCooldown) {
+            lastShootTime = TimeUtils.nanoTime();
+            Bullet bullet = new Bullet(positionCenter(), mousePosition);
+            ChangeAnimationsFor(bullet.Direction);
+            return bullet;
+        }
+        return null;
+    }
     @Override public Rectangle collisionBox(){
         return collisionBox;
     }
@@ -98,7 +133,7 @@ public class Entity extends VisibleObject{
     public boolean makingStep(char tile) {
         if(tile != lastTile) lastStepTime = 0f;
         lastTile = tile;
-        if(!IsMoving) return false;
+        if(action != 1) return false;
         if((TimeUtils.nanoTime() - lastStepTime) / 1000000000.0f  >= StepCooldown / (getSpeed() / 10)) {
             lastStepTime = TimeUtils.nanoTime();
             return true;

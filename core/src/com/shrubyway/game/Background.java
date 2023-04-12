@@ -26,6 +26,7 @@ final int TilesTypes = 4;
 
     float NearestTile[] = new float[TilesTypes];
     Sound sound;
+    static SoundSettings soundSettings;
 
 
    private void animationsLoader() {
@@ -101,7 +102,7 @@ public Background(int Level) {
                               200);
                   }
           for(int i: TileWithSound) {
-              sound.setVolume(TileSound[i], Math.max(0, 2 * (1 - NearestTile[i])));
+              sound.setVolume(TileSound[i], Math.max(0,  0.7f * (1 - NearestTile[i])* soundSettings.soundVolume));
           }
     }
     public boolean checkLiquid(Vector2 playerPosition) {
@@ -130,7 +131,8 @@ public Background(int Level) {
         int x = 0; x += (step.x) / 150;
         int y = 0; y += (step.y) / 150;
         x = (x + 256) % 256; y = (y + 256) % 256;
-           long temp = StepSound[Background_map[x][y] - '0'][(int)(Math.random() * 2)].play(1f);
+
+           long temp = StepSound[Background_map[x][y] - '0'][(int)(Math.random() * 1.999)].play(1f * soundSettings.soundVolume);
            sound.setPitch(temp, 1 + (float)Math.random() * 0.2f - 0.1f);
            sound.setVolume(temp, 1 - Math.max(Math.abs(step.x - playerPosition.x) / soundDistanceX,
                    Math.abs(step.y - playerPosition.y) / soundDistanceY));
