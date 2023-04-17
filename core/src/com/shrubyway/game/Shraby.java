@@ -1,4 +1,6 @@
 package com.shrubyway.game;
+
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -22,14 +24,14 @@ public class Shraby extends Entity {
 
 
     public Shraby(float x, float y) {
-        Speed = 10f;
+        speed = 10f;
         canMove = false;
         action = 2;
         if(animations == null) animations =
-                animationLoader.Load("ENTITIES/SHRABY", actions, actionTypes, FrameCount);
+                animationLoader.load("ENTITIES/SHRABY", actions, actionTypes, FrameCount);
         position.set(x, y);
-        RegionWidth = (animations[0][0][0].getKeyFrame(AnimationGlobalTime.x)).getRegionWidth();
-        RegionHeight = animations[0][0][0].getKeyFrame(AnimationGlobalTime.x).getRegionHeight();
+        regionWidth = (animations[0][0][0].getKeyFrame(AnimationGlobalTime.x)).getRegionWidth();
+        regionHeight = animations[0][0][0].getKeyFrame(AnimationGlobalTime.x).getRegionHeight();
         Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/PortalOut.ogg"));
         sound.play(SoundSettings.soundVolume);
     }
@@ -41,18 +43,18 @@ public class Shraby extends Entity {
         return collisionBox;
     }
     TextureRegion temp;
-    @Override public void Render(Batch batch) {
+    @Override public void render(Batch batch) {
         animationTime += Gdx.graphics.getDeltaTime();
         if(!canMove) {
-            if(animations[action][FaceDirection][inLiquid ? 1: 0].isAnimationFinished(animationTime)) {
+            if(animations[action][faceDirection][inLiquid ? 1: 0].isAnimationFinished(animationTime)) {
                 canMove = true;
                 action = 0;
                 animationTime = 0;
             }
         }
-        animations[action][FaceDirection][inLiquid ? 1 : 0].setFrameDuration(1f/(2.4f * getSpeed()));
+        animations[action][faceDirection][inLiquid ? 1 : 0].setFrameDuration(1f/(2.4f * getSpeed()));
         temp =
-                   animations[action][FaceDirection][inLiquid ? 1 : 0].getKeyFrame(animationTime, true);
+                   animations[action][faceDirection][inLiquid ? 1 : 0].getKeyFrame(animationTime, true);
            batch.draw(temp,
                    Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
            collisionBox().render(batch);
@@ -63,7 +65,7 @@ public class Shraby extends Entity {
         return position;
     }
     @Override public Vector2 positionCenter() {
-        tempPosition.set(position.x + RegionWidth / 2, position.y + 118);
+        tempPosition.set(position.x + regionWidth / 2, position.y + 118);
         return tempPosition;
     }
 

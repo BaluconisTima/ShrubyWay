@@ -11,22 +11,22 @@ public class Pine extends Decoration {
 
     @Override public void change(float x, float y, int i, int j) {
         position.set(x - HalfTextureWidth + 150/2, y);
-        Decoration_i = i;
-        Decoration_j = j;
-        Decoration_type = '2';
+        decorationI = i;
+        decorationI = j;
+        decorationType = '2';
     }
     @Override public Rectangle collisionBox() {
         if(collisionBox == null)
             collisionBox = new Rectangle(position.x + HalfTextureWidth - 45,
-                    position.y, 90, 10);
+                    position.y + 10, 90, 10);
             collisionBox.change(position.x + HalfTextureWidth - 45,
-                    position.y, 90, 10);
+                    position.y + 10, 90, 10);
         return collisionBox;
     }
     @Override public Pine newTemp() {
         return new Pine();
     }
-    @Override public void Render(Batch batch){
+    @Override public void render(Batch batch){
         batch.draw(texture, position.x, position.y);
         if(collisionBox != null) collisionBox.render(batch);
     };
