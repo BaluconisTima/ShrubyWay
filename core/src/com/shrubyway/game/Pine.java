@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 
 public class Pine extends Decoration {
     static Texture texture = new Texture(Gdx.files.internal("Decorations/PINE.png"));
-    Rectangle collisionBox = null;
     static float HalfTextureWidth = texture.getWidth() / 2;
 
     @Override public void change(float x, float y, int i, int j) {

@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 
 public class Bush extends Decoration {
     static Texture texture = new Texture(Gdx.files.internal("Decorations/BUSH.png"));
-    Rectangle collisionBox = null;
+
     static float halfTextureWidth = texture.getWidth() / 2;
 
     @Override public void change(float x, float y, int i, int j) {

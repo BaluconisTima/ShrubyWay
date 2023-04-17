@@ -91,6 +91,7 @@ abstract class Entity extends VisibleObject {
     }
     protected float shootCooldown = 0.5f;
     private float lastShootTime;
+
     public Bullet shoot(Vector2 mousePosition) {
         if(!canMove) return null;
         if((TimeUtils.nanoTime() - lastShootTime) / 1000000000.0f > shootCooldown) {
@@ -108,8 +109,9 @@ abstract class Entity extends VisibleObject {
         Rectangle temp = collisionBox();
         for(VisibleObject object : objects) {
             if(object == this) continue;
-            if(Math.abs(object.position.x - position.x) > 300) continue;
+              if(Math.abs(object.position.x - position.x) > 300) continue;
             if(Math.abs(object.position.y - position.y) > 300) continue;
+            if(object.collisionBox() == null) continue;
             if(object.collisionBox().overlaps(temp)) {
                 return true;
             }

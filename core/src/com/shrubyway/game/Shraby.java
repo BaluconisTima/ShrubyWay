@@ -27,6 +27,7 @@ public class Shraby extends Entity {
         speed = 10f;
         canMove = false;
         action = 2;
+        shootCooldown = 0.01f;
         if(animations == null) animations =
                 animationLoader.load("ENTITIES/SHRABY", actions, actionTypes, FrameCount);
         position.set(x, y);

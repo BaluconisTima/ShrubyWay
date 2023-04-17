@@ -7,13 +7,13 @@ import com.badlogic.gdx.math.Vector2;
 
 
 public class Bullet extends VisibleObject {
-   TextureRegion bulletTexture = new TextureRegion(new Texture("Entities/WIND.png"));
+   static TextureRegion bulletTexture = new TextureRegion(new Texture("Entities/WIND.png"));
    protected Vector2 direction;
    protected float speed;
 
     public Bullet(Vector2 startPosition, Vector2 finishPosition) {
         position.set(startPosition);
-        speed = 5f;
+        speed = 15f;
         direction =
                new Vector2(finishPosition.x -position.x, finishPosition.y - position.y);
        direction.scl(1/direction.len());

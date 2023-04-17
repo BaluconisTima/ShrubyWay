@@ -74,7 +74,6 @@ public class ShrubyWay extends ApplicationAdapter {
         player.changePosition(temp);
     }
 
-
     @Override
     public void render() {
         AnimationGlobalTime.x += Gdx.graphics.getDeltaTime();
@@ -88,9 +87,16 @@ public class ShrubyWay extends ApplicationAdapter {
         }
 
         player.tryMoveTo(movingVector, renderingObjects);
+        correctPosition();
+        player.liquidStatus(map.checkLiquid(player.positionLegs()));
         if (inputProcessor.isSpacePressed()) {
             player.attack();
         }
+        TreeSet<VisibleObject> temp = new TreeSet<>();
+        for(VisibleObject obj : renderingObjects){
+           temp.add(obj);
+        }
+        renderingObjects = temp;
 
         for (VisibleObject obj : renderingObjects) {
             if (obj instanceof Bullet) {
@@ -102,9 +108,16 @@ public class ShrubyWay extends ApplicationAdapter {
                 }
             }
         }
-        correctPosition();
+
+        temp = new TreeSet<>();
+        for(VisibleObject obj : renderingObjects){
+            temp.add(obj);
+        }
+        renderingObjects = temp;
+
         map.updateRenderingObjects(player.positionCenter(), renderingObjects);
-        player.liquidStatus(map.checkLiquid(player.positionLegs()));
+
+
 
 
         cameraPosition.lerp(player.positionCenter(),
@@ -118,11 +131,7 @@ public class ShrubyWay extends ApplicationAdapter {
         ScreenUtils.clear(1, 1, 1, 1);
         batch.begin();
         map.render(batch, player.position());
-        TreeSet<VisibleObject> temp = new TreeSet<>();
         for (VisibleObject obj : renderingObjects) {
-            temp.add(obj);
-        }
-        for (VisibleObject obj : temp) {
             obj.render(batch);
         }
         batch.end();
@@ -131,7 +140,7 @@ public class ShrubyWay extends ApplicationAdapter {
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         batch.begin();
-        font.draw(batch, "" + renderingObjects.size() + " " + player.position, 100, 100);
+        font.draw(batch, "" + renderingObjects.size() + " " + Gdx.graphics.getFramesPerSecond(), 100, 100);
         batch.end();
 
 
