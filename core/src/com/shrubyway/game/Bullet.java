@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
+
 public class Bullet extends VisibleObject {
    TextureRegion bulletTexture = new TextureRegion(new Texture("Entities/WIND.png"));
    protected Vector2 direction;

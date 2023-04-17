@@ -12,25 +12,27 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Background {
-char backgroundMap[][] = new char[256][256];
+    static final int TILENUMBER = 256;
+    char backgroundMap[][] = new char[TILENUMBER][TILENUMBER];
 private final int renderDistanceX = 13, renderDistanceY = 10;
     private final float soundDistanceX = 1200, soundDistanceY = 1200;
 private int level;
-final int tilesTypes = 4;
+ static final int TILETYPES = 4;
+ static final int TYLESIZE = 150;
 
     Animation<TextureRegion> tile[][];
-    long tileSound[] = new long[tilesTypes];
-    Sound stepSound[][] = new Sound[tilesTypes][2];
+    long tileSound[] = new long[TILETYPES];
+    Sound stepSound[][] = new Sound[TILETYPES][2];
     int tileWithSound[] = {0};
 
-    float nearestTile[] = new float[tilesTypes];
+    float nearestTile[] = new float[TILETYPES];
     Sound sound;
     static SoundSettings soundSettings;
 
 
    private void animationsLoader() {
-       tile = new Animation[tilesTypes][2];
-       for(int i = 0; i < tilesTypes; i++)
+       tile = new Animation[TILETYPES][2];
+       for(int i = 0; i < TILETYPES; i++)
            for(int j = 0; j < 2; j++){
                String way = "TILES/" + i + "/" + j + "/";
                File folder = new File(way);
@@ -49,7 +51,7 @@ final int tilesTypes = 4;
                int j = 0;
                while (scanner.hasNextLine()) {
                    String temp = scanner.nextLine();
-                   for(int q = 0; q < 256; q++) {
+                   for(int q = 0; q < TILENUMBER; q++) {
                        backgroundMap[j][q] = temp.charAt(q);
                    }
                    j++;
@@ -58,7 +60,7 @@ final int tilesTypes = 4;
    }
 
    private void soundLoader() {
-       for(int i = 0; i < tilesTypes; i++) {
+       for(int i = 0; i < TILETYPES; i++) {
            tileSound[i] = -1;
            stepSound[i][0] = Gdx.audio.newSound(Gdx.files.internal("sounds/STEPS/" + i + "_0.ogg"));
            stepSound[i][1] = Gdx.audio.newSound(Gdx.files.internal("sounds/STEPS/" + i + "_1.ogg"));
@@ -80,23 +82,23 @@ public Background(int levelNew) {
 
 
     public void render(Batch batch, Vector2 playerPosition) {
-          for(int i = 0; i < tilesTypes; i++) {
+          for(int i = 0; i < TILETYPES; i++) {
                   nearestTile[i] = 1;
           }
-          int x = 0; x += playerPosition.x; x /= 150;
-          int y = 0; y += playerPosition.y; y /= 150;
+          int x = 0; x += playerPosition.x; x /= TYLESIZE;
+          int y = 0; y += playerPosition.y; y /= TYLESIZE;
           for(int d = 0; d < 2; d++)
               for (int i = x - renderDistanceX; i < x + renderDistanceX; i++)
                   for (int j = y - renderDistanceY; j < y + renderDistanceY; j++) {
                       if (Math.abs(i + j) % 2 != d) continue;
-                      int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
+                      int i2 = (i + TILENUMBER) % TILENUMBER, j2 = (j + TILENUMBER) % TILENUMBER;
                       int tile = backgroundMap[i2][j2] - '0';
                       nearestTile[tile] = Math.min(nearestTile[tile],
-                              Math.max(Math.abs(i * 150 + 75 - playerPosition.x) / soundDistanceX,
-                                       Math.abs(j * 150 + 75 - playerPosition.y) / soundDistanceY));
+                              Math.max(Math.abs(i * TYLESIZE + TYLESIZE / 2 - playerPosition.x) / soundDistanceX,
+                                       Math.abs(j * TYLESIZE + TYLESIZE / 2 - playerPosition.y) / soundDistanceY));
                       TextureRegion tempTexture = this.tile[tile][d].getKeyFrame(AnimationGlobalTime.x, true);
-                      batch.draw(tempTexture, (i * 150) - 25,
-                              (j * 150) - 25,
+                      batch.draw(tempTexture, (i * TYLESIZE) - 25,
+                              (j * TYLESIZE) - 25,
                               200,
                               200);
                   }
@@ -105,12 +107,12 @@ public Background(int levelNew) {
           }
     }
     public boolean checkLiquid(Vector2 playerPosition) {
-        int xr = 0; xr += (playerPosition.x + 10) / 150;
-        int xl = 0; xl += (playerPosition.x - 10) / 150;
-        int yr = 0; yr += (playerPosition.y + 10) / 150;
-        int yl = 0; yl += (playerPosition.y - 10) / 150;
-        xr = (xr + 256) % 256; xl = (xl + 256) % 256;
-        yr = (yr + 256) % 256; yl = (yl + 256) % 256;
+        int xr = 0; xr += (playerPosition.x + 10) / TYLESIZE;
+        int xl = 0; xl += (playerPosition.x - 10) / TYLESIZE;
+        int yr = 0; yr += (playerPosition.y + 10) / TYLESIZE;
+        int yl = 0; yl += (playerPosition.y - 10) / TYLESIZE;
+        xr = (xr + TILENUMBER) % TILENUMBER; xl = (xl + TILENUMBER) % TILENUMBER;
+        yr = (yr + TILENUMBER) % TILENUMBER; yl = (yl + TILENUMBER) % TILENUMBER;
 
         return (backgroundMap[xr][yr] == '0'
               && backgroundMap[xr][yl] == '0' &&
@@ -119,17 +121,17 @@ public Background(int levelNew) {
     }
 
     public char checkTile(Vector2 position) {
-        int x = 0; x += (position.x) / 150;
-        int y = 0; y += (position.y) / 150;
-        x = (x + 256) % 256;
-        y = (y + 256) % 256;
+        int x = 0; x += (position.x) / TYLESIZE;
+        int y = 0; y += (position.y) / TYLESIZE;
+        x = (x + TILENUMBER) % TILENUMBER;
+        y = (y + TILENUMBER) % TILENUMBER;
         return backgroundMap[x][y];
     }
 
     void makeStep(Vector2 step, Vector2 playerPosition) {
-        int x = 0; x += (step.x) / 150;
-        int y = 0; y += (step.y) / 150;
-        x = (x + 256) % 256; y = (y + 256) % 256;
+        int x = 0; x += (step.x) / TYLESIZE;
+        int y = 0; y += (step.y) / TYLESIZE;
+        x = (x + TILENUMBER) % TILENUMBER; y = (y + TILENUMBER) % TILENUMBER;
 
            long temp = stepSound[backgroundMap[x][y] - '0'][(int)(Math.random() * 1.999)].play(1f * soundSettings.soundVolume);
            sound.setPitch(temp, 1 + (float)Math.random() * 0.2f - 0.1f);

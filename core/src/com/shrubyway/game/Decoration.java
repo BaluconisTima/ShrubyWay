@@ -1,6 +1,6 @@
 package com.shrubyway.game;
 
-public class Decoration extends VisibleObject{
+abstract class Decoration extends VisibleObject{
     public int decorationI = 0, decorationJ = 0;
     public char decorationType;
 

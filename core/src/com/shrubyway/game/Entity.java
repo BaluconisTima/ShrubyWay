@@ -6,10 +6,15 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.shrubyway.game.AnimationLoader;
+import com.shrubyway.game.Animator;
+import com.shrubyway.game.Bullet;
+import com.shrubyway.game.Rectangle;
+import com.shrubyway.game.VisibleObject;
 
 import java.util.TreeSet;
 
-public class Entity extends VisibleObject{
+abstract class Entity extends VisibleObject {
     protected Rectangle hitBox;
     protected float health;
 

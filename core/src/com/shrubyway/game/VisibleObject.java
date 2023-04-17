@@ -3,7 +3,7 @@ package com.shrubyway.game;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 
-public class VisibleObject implements Comparable<VisibleObject> {
+public abstract class VisibleObject implements Comparable<VisibleObject> {
     final Vector2 position = new Vector2();
     public void render(Batch batch){
 
