@@ -1,7 +1,12 @@
-package com.shrubyway.game;
+package com.shrubyway.game.map;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.visibleobject.VisibleObject;
+import com.shrubyway.game.visibleobject.decoration.Bush;
+import com.shrubyway.game.visibleobject.decoration.Decoration;
+import com.shrubyway.game.visibleobject.decoration.Pine;
+import com.shrubyway.game.visibleobject.decoration.Rock;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -154,7 +159,7 @@ public class Map {
         background.render(batch, playerPosition);
 
     }
-    void makeStep(Vector2 step, Vector2 playerPosition) {
+    public void makeStep(Vector2 step, Vector2 playerPosition) {
         background.makeStep(step, playerPosition);
     }
 

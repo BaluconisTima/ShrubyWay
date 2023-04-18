@@ -1,10 +1,11 @@
-package com.shrubyway.game;
+package com.shrubyway.game.visibleobject;
 
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.shapes.Rectangle;
 
 public abstract class VisibleObject implements Comparable<VisibleObject> {
-    final Vector2 position = new Vector2();
+    public final Vector2 position = new Vector2();
     static long ids;
     long id = ids++;
     protected Rectangle collisionBox = null;

@@ -1,4 +1,4 @@
-package com.shrubyway.game;
+package com.shrubyway.game.shapes;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;

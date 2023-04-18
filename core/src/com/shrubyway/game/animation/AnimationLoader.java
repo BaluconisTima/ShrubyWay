@@ -1,4 +1,4 @@
-package com.shrubyway.game;
+package com.shrubyway.game.animation;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -8,9 +8,9 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 public class AnimationLoader {
        static Animator animator = new Animator();
        static Texture animationList;
-       AnimationLoader() {
+       public AnimationLoader() {
        }
-       protected Animation<TextureRegion>[][][] load(String s, String actions[], String actionsTypes[][], int frameCount[]){
+       public Animation<TextureRegion>[][][] load(String s, String actions[], String actionsTypes[][], int frameCount[]){
                 Animation<TextureRegion>[][][] currentAnimation = new Animation[actions.length][4][2];
               for(int i = 0; i < actions.length; i++) {
                      for(int j = 0; j < 4; j++) {

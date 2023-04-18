@@ -1,4 +1,4 @@
-package com.shrubyway.game;
+package com.shrubyway.game.visibleobject.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -6,15 +6,15 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
-import com.shrubyway.game.AnimationLoader;
-import com.shrubyway.game.Animator;
-import com.shrubyway.game.Bullet;
-import com.shrubyway.game.Rectangle;
-import com.shrubyway.game.VisibleObject;
+import com.shrubyway.game.animation.AnimationLoader;
+import com.shrubyway.game.animation.Animator;
+import com.shrubyway.game.shapes.Rectangle;
+import com.shrubyway.game.visibleobject.VisibleObject;
+import com.shrubyway.game.visibleobject.bullet.Bullet;
 
 import java.util.TreeSet;
 
-abstract class Entity extends VisibleObject {
+abstract public class Entity extends VisibleObject {
     protected float health;
     protected boolean onFire = false;
     protected byte faceDirection = 0;
@@ -25,7 +25,7 @@ abstract class Entity extends VisibleObject {
     protected boolean isRunning = false;
     protected Animator animator = new Animator();
     protected float regionWidth, regionHeight;
-    AnimationLoader animationLoader = new AnimationLoader();
+    public AnimationLoader animationLoader = new AnimationLoader();
     Vector2 tempPosition = new Vector2(0,0);
 
     private float lastStepTime = 0f;

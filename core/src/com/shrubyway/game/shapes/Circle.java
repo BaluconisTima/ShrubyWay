@@ -1,4 +1,4 @@
-package com.shrubyway.game;
+package com.shrubyway.game.shapes;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 

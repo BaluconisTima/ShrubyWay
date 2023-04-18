@@ -1,4 +1,4 @@
-package com.shrubyway.game;
+package com.shrubyway.game.map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.sound.SoundSettings;
 
 import java.io.File;
 import java.io.FileNotFoundException;

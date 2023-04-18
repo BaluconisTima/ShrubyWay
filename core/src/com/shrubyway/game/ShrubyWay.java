@@ -9,6 +9,12 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.map.Map;
+import com.shrubyway.game.visibleobject.VisibleObject;
+import com.shrubyway.game.visibleobject.bullet.Bullet;
+import com.shrubyway.game.visibleobject.entity.Entity;
+import com.shrubyway.game.visibleobject.entity.Shraby;
 
 import java.util.TreeSet;
 
@@ -112,7 +118,6 @@ public class ShrubyWay extends ApplicationAdapter {
             temp.add(obj);
         }
         renderingObjects = temp;
-
         map.updateRenderingObjects(player.positionCenter(), renderingObjects);
     }
 

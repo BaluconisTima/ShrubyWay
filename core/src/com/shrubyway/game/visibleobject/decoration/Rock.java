@@ -1,9 +1,10 @@
-package com.shrubyway.game;
-import com.badlogic.gdx.Gdx;
+package com.shrubyway.game.visibleobject.decoration;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.shapes.Rectangle;
 
 
 public class Rock extends Decoration {

@@ -1,6 +1,7 @@
-package com.shrubyway.game;
+package com.shrubyway.game.item;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.shrubyway.game.visibleobject.VisibleObject;
 
 abstract class Item extends VisibleObject {
     static Texture texture[] = new Texture[3];

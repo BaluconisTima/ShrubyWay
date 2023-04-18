@@ -1,4 +1,4 @@
-package com.shrubyway.game;
+package com.shrubyway.game.animation;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -7,7 +7,7 @@ public class Animator {
     public Animator(){
 
     }
-     Animation<TextureRegion> toAnimation(Texture texture, int n, int szN, int szM) {
+     public Animation<TextureRegion> toAnimation(Texture texture, int n, int szN, int szM) {
         TextureRegion[] animationFrames = new TextureRegion[n];
         int textureWidth = texture.getWidth() / n, textureHeight = texture.getHeight();
         int index = 0;
