@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.utils.TimeUtils;
+import jdk.jfr.internal.test.WhiteBox;
 
 import java.lang.Math;
 
@@ -20,24 +21,61 @@ public class Shraby extends Entity {
             {"DOWN", "UP", "LEFT", "RIGHT"},
             {"OUT", null, null, null},
             {"DOWN", "UP", "LEFT", "RIGHT"}};
-    static int FrameCount[] = {30, 30, 34, 14};
-
-
+    static int frameCount[] = {30, 30, 34, 14};
     public Shraby(float x, float y) {
         speed = 10f;
         canMove = false;
         action = 2;
-        shootCooldown = 0.01f;
+        shootCooldown = 0;
         if(animations == null) animations =
-                animationLoader.load("ENTITIES/SHRABY", actions, actionTypes, FrameCount);
+                animationLoader.load("ENTITIES/SHRABY", actions, actionTypes, frameCount);
         position.set(x, y);
         regionWidth = (animations[0][0][0].getKeyFrame(AnimationGlobalTime.x)).getRegionWidth();
         regionHeight = animations[0][0][0].getKeyFrame(AnimationGlobalTime.x).getRegionHeight();
         Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/PortalOut.ogg"));
         sound.play(SoundSettings.soundVolume);
     }
-
+   @Override public Rectangle hitBox() {
+        if(hitBox == null) hitBox = new Rectangle(0,0,0,0);
+        hitBox.change(position.x + 150,
+                position.y + 40,
+                70, 140);
+        return hitBox;
+   }
+    @Override public Rectangle attackBox() {
+        if(attackBox == null) attackBox = new Rectangle(0,0,-1,-1);
+        if(action == 3) {
+            switch (faceDirection) {
+                case 0:
+                    attackBox.change(position.x + 75,
+                            position.y - 50,
+                            210, 100);
+                    break;
+                case 1:
+                    attackBox.change(position.x + 75,
+                            position.y + 120,
+                            210, 100);
+                    break;
+                case 2:
+                    attackBox.change(position.x + 30,
+                            position.y,
+                            100, 210);
+                    break;
+                case 3:
+                    attackBox.change(position.x + 240,
+                            position.y,
+                            100, 210);
+                    break;
+            }
+        } else {
+            attackBox.change(0,
+                    0,
+                    -1, -1);
+        }
+        return attackBox;
+    }
     @Override public Rectangle collisionBox() {
+        if(collisionBox == null) collisionBox = new Rectangle(0,0,0,0);
         collisionBox.change(position.x + 138,
                 position.y + 5,
                 95, 15);
@@ -58,7 +96,10 @@ public class Shraby extends Entity {
                    animations[action][faceDirection][inLiquid ? 1 : 0].getKeyFrame(animationTime, true);
            batch.draw(temp,
                    Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
-           collisionBox().render(batch);
+
+         //  collisionBox().render(batch);
+         //  hitBox().render(batch);
+        // attackBox().render(batch);
     }
 
 

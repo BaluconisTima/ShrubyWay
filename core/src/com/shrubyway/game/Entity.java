@@ -15,11 +15,8 @@ import com.shrubyway.game.VisibleObject;
 import java.util.TreeSet;
 
 abstract class Entity extends VisibleObject {
-    protected Rectangle hitBox;
     protected float health;
-
     protected boolean onFire = false;
-    protected Rectangle collisionBox = new Rectangle(0,0,-1,-1);
     protected byte faceDirection = 0;
     static protected  Animation<TextureRegion> animations[][][];
     protected int action = 0;
@@ -91,6 +88,7 @@ abstract class Entity extends VisibleObject {
     }
     protected float shootCooldown = 0.5f;
     private float lastShootTime;
+    protected boolean attacked = false;
 
     public Bullet shoot(Vector2 mousePosition) {
         if(!canMove) return null;
@@ -105,6 +103,7 @@ abstract class Entity extends VisibleObject {
     @Override public Rectangle collisionBox(){
         return collisionBox;
     }
+    @Override public Rectangle hitBox() {return hitBox;}
     protected boolean checkCollisions(TreeSet<VisibleObject> objects){
         Rectangle temp = collisionBox();
         for(VisibleObject object : objects) {
@@ -132,8 +131,6 @@ abstract class Entity extends VisibleObject {
         tempPosition.set(position.x + regionWidth / 2, position.y);
         return tempPosition;
     }
-
-
     public boolean makingStep(char tile) {
         if(tile != lastTile) lastStepTime = 0f;
         lastTile = tile;

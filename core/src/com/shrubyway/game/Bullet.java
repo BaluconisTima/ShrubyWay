@@ -13,7 +13,7 @@ public class Bullet extends VisibleObject {
 
     public Bullet(Vector2 startPosition, Vector2 finishPosition) {
         position.set(startPosition);
-        speed = 15f;
+        speed = 3f;
         direction =
                new Vector2(finishPosition.x -position.x, finishPosition.y - position.y);
        direction.scl(1/direction.len());
@@ -24,8 +24,8 @@ public class Bullet extends VisibleObject {
         position.add(direction);
     }
     @Override public void render(Batch batch) {
-        batch.draw(bulletTexture, position.x, position.y, 0, 0,
-                bulletTexture.getRegionWidth(), bulletTexture.getRegionHeight(), 1, 1, direction.angleDeg() - 90);
+        batch.draw(bulletTexture, Math.round(position.x), Math.round(position.y), 0, 0,
+                bulletTexture.getRegionWidth(), bulletTexture.getRegionHeight(), 1, 1, Math.round(direction.angleDeg() - 90));
 
     }
 

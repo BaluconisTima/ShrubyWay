@@ -73,9 +73,7 @@ public class ShrubyWay extends ApplicationAdapter {
         }
         player.changePosition(temp);
     }
-
-    @Override
-    public void render() {
+    public void gameTick() {
         AnimationGlobalTime.x += Gdx.graphics.getDeltaTime();
         player.running(inputProcessor.isRuning());
         Vector2 movingVector = inputProcessor.getMovementDirection();
@@ -94,7 +92,7 @@ public class ShrubyWay extends ApplicationAdapter {
         }
         TreeSet<VisibleObject> temp = new TreeSet<>();
         for(VisibleObject obj : renderingObjects){
-           temp.add(obj);
+            temp.add(obj);
         }
         renderingObjects = temp;
 
@@ -116,10 +114,9 @@ public class ShrubyWay extends ApplicationAdapter {
         renderingObjects = temp;
 
         map.updateRenderingObjects(player.positionCenter(), renderingObjects);
+    }
 
-
-
-
+    public void renderFrame() {
         cameraPosition.lerp(player.positionCenter(),
                 0.1f);
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -142,8 +139,11 @@ public class ShrubyWay extends ApplicationAdapter {
         batch.begin();
         font.draw(batch, "" + renderingObjects.size() + " " + Gdx.graphics.getFramesPerSecond(), 100, 100);
         batch.end();
-
-
+    }
+    @Override
+    public void render() {
+        gameTick();
+        renderFrame();
     }
 
     @Override
