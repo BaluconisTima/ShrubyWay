@@ -79,6 +79,7 @@ abstract public class Entity extends VisibleObject {
     public void attack() {
         if(!canMove && action != 3) return;
         if((TimeUtils.nanoTime() - lastAttackTime) / 1000000000.0f > attackCooldown) {
+            attacking = true;
             animationTime = 0f;
             canMove = false;
             action = 3;
@@ -88,7 +89,7 @@ abstract public class Entity extends VisibleObject {
     }
     protected float shootCooldown = 0.5f;
     private float lastShootTime;
-    protected boolean attacked = false;
+    protected boolean attacking = false;
 
     public Bullet shoot(Vector2 mousePosition) {
         if(!canMove) return null;

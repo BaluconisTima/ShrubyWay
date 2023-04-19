@@ -19,20 +19,27 @@ public class Rock extends Decoration {
         decorationJ = j;
         decorationType = '3';
     }
-    @Override public Rectangle collisionBox() {
+    @Override public void setCollisionBox() {
         if(collisionBox == null)
             collisionBox = new Rectangle(position.x + halfTextureWidth - 60,
                     position.y + 20, 120, 40);
         else collisionBox.change(position.x + halfTextureWidth - 60, position.y + 20, 120, 40);
-        return collisionBox;
     }
+
+    @Override public void setHitbox() {
+        if(hitBox == null) hitBox = new Rectangle(0,0,0,0);
+        hitBox.change(position.x + halfTextureWidth - 30,
+                position.y + 30, 60, 50);
+    }
+
     @Override public Rock newTemp() {
         return new Rock();
     }
     @Override public void render(Batch batch){
         batch.draw(texture.getKeyFrame(AnimationGlobalTime.x - lastInteraction), Math.round(position.x),
                 Math.round(position.y));
-        if(collisionBox != null) collisionBox.render(batch);
+        collisionBox().render(batch);
+        hitBox().render(batch);
     };
 
 

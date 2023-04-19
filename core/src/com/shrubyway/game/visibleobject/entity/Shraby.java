@@ -43,7 +43,7 @@ public class Shraby extends Entity {
    }
     @Override public Rectangle attackBox() {
         if(attackBox == null) attackBox = new Rectangle(0,0,-1,-1);
-        if(action == 3) {
+        if(action == 3 && attacking) {
             switch (faceDirection) {
                 case 0:
                     attackBox.change(position.x + 75,
@@ -56,14 +56,14 @@ public class Shraby extends Entity {
                             210, 100);
                     break;
                 case 2:
-                    attackBox.change(position.x + 30,
-                            position.y,
-                            100, 210);
+                    attackBox.change(position.x,
+                            position.y + 55,
+                            130, 70);
                     break;
                 case 3:
                     attackBox.change(position.x + 240,
-                            position.y,
-                            100, 210);
+                            position.y + 55,
+                            130, 70);
                     break;
             }
         } else {
@@ -82,6 +82,7 @@ public class Shraby extends Entity {
     }
     TextureRegion temp;
     @Override public void render(Batch batch) {
+        attacking = false;
         animationTime += Gdx.graphics.getDeltaTime();
         if(!canMove) {
             if(animations[action][faceDirection][inLiquid ? 1: 0].isAnimationFinished(animationTime)) {
@@ -98,7 +99,7 @@ public class Shraby extends Entity {
 
          //  collisionBox().render(batch);
          //  hitBox().render(batch);
-        // attackBox().render(batch);
+         //attackBox().render(batch);
     }
 
 

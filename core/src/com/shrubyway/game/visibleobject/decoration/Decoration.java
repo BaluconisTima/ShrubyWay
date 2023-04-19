@@ -2,6 +2,7 @@ package com.shrubyway.game.visibleobject.decoration;
 
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
+import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.visibleobject.VisibleObject;
 
 abstract public class Decoration extends VisibleObject {
@@ -14,6 +15,20 @@ abstract public class Decoration extends VisibleObject {
         position.set(x, y);
         decorationI = i;
         decorationJ = j;
+    }
+    public void setCollisionBox() {
+    }
+
+    public void setHitbox() {
+    }
+
+    public Rectangle collisionBox() {
+        setCollisionBox();
+        return collisionBox;
+    }
+    public Rectangle hitBox() {
+        setHitbox();
+        return hitBox;
     }
 
     public void interact() {

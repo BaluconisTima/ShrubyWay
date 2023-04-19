@@ -13,6 +13,7 @@ import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
+import com.shrubyway.game.visibleobject.decoration.Decoration;
 import com.shrubyway.game.visibleobject.entity.Entity;
 import com.shrubyway.game.visibleobject.entity.Shraby;
 
@@ -119,6 +120,21 @@ public class ShrubyWay extends ApplicationAdapter {
         }
         renderingObjects = temp;
         map.updateRenderingObjects(player.positionCenter(), renderingObjects);
+
+
+        for(VisibleObject obj : renderingObjects){
+            if(obj.attackBox() != null && obj.attackBox().topLeftCorner.x < obj.attackBox().bottomRightCorner.x) {
+                for(VisibleObject obj2 : renderingObjects){
+                    if(obj2.hitBox() != null) {
+                        if (obj.attackBox().overlaps(obj2.hitBox())) {
+                                if(obj2 instanceof Decoration) {
+                                    ((Decoration) obj2).interact();
+                                }
+                        }
+                    }
+                }
+            }
+        }
     }
 
     public void renderFrame() {
