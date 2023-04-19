@@ -4,7 +4,10 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.shapes.Rectangle;
+import com.shrubyway.game.visibleobject.RenderingList;
+import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class Pine extends Decoration {
     static Animation<TextureRegion> texture
@@ -32,6 +35,15 @@ public class Pine extends Decoration {
         decorationType = '2';
     }
 
+    @Override public void interact() {
+        super.interact();
+        if(Math.random() < 0.2) {
+            RenderingList.addTemp(new VisibleItem(ItemManager.newItem(2),
+                    position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),
+                    position().y + 3));
+        }
+    }
+
     @Override public Pine newTemp() {
         return new Pine();
     }
@@ -40,7 +52,6 @@ public class Pine extends Decoration {
                 Math.round(position.y));
         collisionBox().render(batch);
         hitBox().render(batch);
-
     };
 
 }

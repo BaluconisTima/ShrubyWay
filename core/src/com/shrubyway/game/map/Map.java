@@ -2,6 +2,7 @@ package com.shrubyway.game.map;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.visibleobject.RenderingList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.decoration.Bush;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
@@ -68,7 +69,7 @@ public class Map {
             }
     }
 
-    public void updateChunk(int i2, int j2, Vector2 playerPosition, TreeSet<VisibleObject> renderingList) {
+    public void updateChunk(int i2, int j2, Vector2 playerPosition) {
         if(!lastCheked[i2/16][j2/16]) {
             lastCheked[i2/16][j2/16] = true;
             tempList.clear();
@@ -107,7 +108,7 @@ public class Map {
                             && check.position.x < playerPosition.x + 150 * renderDistanceX &&
                             check.position.y > playerPosition.y - 150 * renderDistanceY
                             && check.position.y < playerPosition.y + 150 * renderDistanceY) {
-                        renderingList.add(check);
+                        RenderingList.list.add(check);
                         tempList.add(check);
                     }
             }
@@ -115,10 +116,10 @@ public class Map {
             tempList.clear();
         }
     }
-    public void updateRenderingObjects(Vector2 playerPosition, TreeSet<VisibleObject> renderingList) {
+    public void updateRenderingObjects(Vector2 playerPosition) {
         timeChecking++;
         int x , y;
-        for(VisibleObject check: renderingList) {
+        for(VisibleObject check: RenderingList.list) {
                 if(Math.abs(check.position.x - playerPosition.x) > 150 * renderDistanceX ||
                    Math.abs(check.position.y - playerPosition.y) > 150 * renderDistanceY) {
                     x = (int)check.position.x; while(x < 0) x += 38400; while(x >= 38400) x -= 38400; x /= 150; x /= 16;
@@ -127,7 +128,7 @@ public class Map {
                     tempList.add(check);
                 }
             }
-        renderingList.removeAll(tempList);
+        RenderingList.list.removeAll(tempList);
         tempList.clear();
         x = (int)playerPosition.x;
         y = (int)playerPosition.y;
@@ -137,7 +138,7 @@ public class Map {
        for (int i = x - renderDistanceX; i < x + renderDistanceX; i++) {
             for (int j = y - renderDistanceY; j < y + renderDistanceY; j++) {
                 int i2 = (i + 256) % 256, j2 = (j + 256) % 256;
-                updateChunk(i2, j2, playerPosition, renderingList);
+                updateChunk(i2, j2, playerPosition);
             }
         }
         for (int i = x - renderDistanceX; i < x + renderDistanceX; i++) {

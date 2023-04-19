@@ -4,19 +4,22 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.Map;
+import com.shrubyway.game.visibleobject.RenderingList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
 import com.shrubyway.game.visibleobject.entity.Entity;
 import com.shrubyway.game.visibleobject.entity.Shraby;
-
+import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 import java.util.TreeSet;
 
 
@@ -27,28 +30,24 @@ public class ShrubyWay extends ApplicationAdapter {
     OrthographicCamera camera;
     Vector2 cameraPosition;
     Vector2 mousePosition;
-    TreeSet<VisibleObject> renderingObjects;
-    private BitmapFont font;
 
-    private MyInputAdapter inputProcessor = new MyInputAdapter();
+    BitmapFont font;
+    MyInputAdapter inputProcessor = new MyInputAdapter();
 
     @Override
     public void create() {
         Gdx.graphics.setVSync(true);
-
         batch = new SpriteBatch();
         batch.enableBlending();
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        font = new BitmapFont();
-        font.getData().setScale(3);
+        font = new BitmapFont(Gdx.files.internal("fonts/font1.fnt"));
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         map = new Map(1);
-        player = new Shraby(0, 0);
-        renderingObjects = new TreeSet<>();
+        player = new Shraby(50, 50);
         Gdx.input.setInputProcessor(inputProcessor);
-        renderingObjects.add(player);
-
+        RenderingList.add(player);
+        ItemManager.init();
         cameraPosition = new Vector2(player.positionCenter());
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.position.set(cameraPosition.x, cameraPosition.y, 0);
@@ -86,39 +85,63 @@ public class ShrubyWay extends ApplicationAdapter {
             Bullet temp = player.shoot(mousePosition);
             if (temp != null) map.addVisibleObject(temp);
         }
-        player.tryMoveTo(movingVector, renderingObjects);
+        player.tryMoveTo(movingVector);
         correctPosition();
         player.liquidStatus(map.checkLiquid(player.positionLegs()));
         if (inputProcessor.isSpacePressed()) {
             player.attack();
         }
     }
-    public void globalProcessing() {
+    public float lastDrop = -1000000000f;
+    public void interfaceInputWorking() {
+        if(inputProcessor.isEPressed()){
+            Inventory.changeOpenned();
+        }
+        int x = inputProcessor.numberPressed();
+        if(x > 0) {
+            Inventory.changeSelected(x);
+        }
+        x = inputProcessor.getScroll();
+        Inventory.addSelected(x);
+
+        if(inputProcessor.isQPressed() && (AnimationGlobalTime.x -
+        lastDrop) / 100000000000f > 0.1) {
+            lastDrop = AnimationGlobalTime.x;
+            Inventory.dropItem(player.faceDirection, player.positionLegs());
+        }
+
+
+    }
+
+    public void sortList() {
         TreeSet<VisibleObject> temp = new TreeSet<>();
-        for(VisibleObject obj : renderingObjects){
+        for(VisibleObject obj : RenderingList.list){
             temp.add(obj);
         }
-        renderingObjects = temp;
+        RenderingList.list = temp;
+    }
 
-        for (VisibleObject obj : renderingObjects) {
+    public void globalProcessing() {
+        for (VisibleObject obj : RenderingList.list) {
             if (obj instanceof Bullet) {
                 ((Bullet) obj).tryMoveTo();
-            }
+            } else
             if (obj instanceof Entity) {
                 if (((Entity) obj).makingStep(map.checkTile(((Entity) obj).positionLegs()))) {
                     map.makeStep(((Entity) obj).positionLegs(), player.positionLegs());
                 }
+            } else
+            if(obj instanceof VisibleItem){
+                ((VisibleItem) obj).moveToPlayer(player.positionLegs());
             }
         }
-        temp = new TreeSet<>();
-        for(VisibleObject obj : renderingObjects){
-            temp.add(obj);
-        }
-        renderingObjects = temp;
-        map.updateRenderingObjects(player.positionCenter(), renderingObjects);
-        for(VisibleObject obj : renderingObjects){
+        sortList();
+        RenderingList.allTemp();
+
+        map.updateRenderingObjects(player.positionCenter());
+        for(VisibleObject obj : RenderingList.list){
             if(obj.attackBox() != null && obj.attackBox().topLeftCorner.x < obj.attackBox().bottomRightCorner.x) {
-                for(VisibleObject obj2 : renderingObjects){
+                for(VisibleObject obj2 : RenderingList.list){
                     if(obj2.hitBox() != null) {
                         if (obj.attackBox().overlaps(obj2.hitBox())) {
                             if(obj2 instanceof Decoration) {
@@ -129,9 +152,8 @@ public class ShrubyWay extends ApplicationAdapter {
                 }
             }
         }
-    }
-    public void interfaceInputWorking() {
-        //TODO
+        sortList();
+        RenderingList.allTemp();
     }
 
     public void cameraUpdate() {
@@ -154,17 +176,19 @@ public class ShrubyWay extends ApplicationAdapter {
         ScreenUtils.clear(1, 1, 1, 1);
         batch.begin();
         map.render(batch, player.position());
-        for (VisibleObject obj : renderingObjects) {
+        for (VisibleObject obj : RenderingList.list) {
             obj.render(batch);
         }
         batch.end();
     }
 
     public void renderInterface() {
+
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         batch.begin();
-        font.draw(batch, "" + AnimationGlobalTime.x + " " + Gdx.graphics.getFramesPerSecond(), 100, 100);
+        Inventory.render(batch);
+        font.draw(batch, "" + RenderingList.list.size() + " " + Gdx.graphics.getFramesPerSecond(), 100, 100);
         batch.end();
     }
 

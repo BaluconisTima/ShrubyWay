@@ -9,6 +9,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.shrubyway.game.animation.AnimationLoader;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.shapes.Rectangle;
+import com.shrubyway.game.visibleobject.RenderingList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 
@@ -17,7 +18,7 @@ import java.util.TreeSet;
 abstract public class Entity extends VisibleObject {
     protected float health;
     protected boolean onFire = false;
-    protected byte faceDirection = 0;
+    public byte faceDirection = 0;
     static protected  Animation<TextureRegion> animations[][][];
     protected int action = 0;
     protected boolean inLiquid = false;
@@ -58,15 +59,15 @@ abstract public class Entity extends VisibleObject {
         if(!canMove) return;
         isRunning = running;
     }
-    public void tryMoveTo(Vector2 direction, TreeSet<VisibleObject> objects){
+    public void tryMoveTo(Vector2 direction){
         if(!canMove) return;
         float tempSpeed = getSpeed();
         Vector2 tempDirection = new Vector2(direction);
         position.add(tempDirection.scl(tempSpeed));
-        if(checkCollisions(objects)) {
+        if(checkCollisions()) {
             position.sub(tempDirection);
         }
-        if(checkCollisions(objects)) {
+        if(checkCollisions()) {
             position.add(tempDirection);
         }
         changeAnimationsFor(direction);
@@ -105,9 +106,9 @@ abstract public class Entity extends VisibleObject {
         return collisionBox;
     }
     @Override public Rectangle hitBox() {return hitBox;}
-    protected boolean checkCollisions(TreeSet<VisibleObject> objects){
+    protected boolean checkCollisions(){
         Rectangle temp = collisionBox();
-        for(VisibleObject object : objects) {
+        for(VisibleObject object : RenderingList.list) {
             if(object == this) continue;
               if(Math.abs(object.position.x - position.x) > 300) continue;
             if(Math.abs(object.position.y - position.y) > 300) continue;

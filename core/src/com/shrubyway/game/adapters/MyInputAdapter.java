@@ -5,28 +5,28 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 
 public class MyInputAdapter extends InputAdapter {
-    private boolean leftPressed;
-    private boolean rightPressed;
-    private boolean upPressed;
-    private boolean downPressed;
-    private boolean spacePressed;
-
-    private boolean mouseLeft;
-    private boolean mouseRight;
-
-
+    private boolean leftPressed, rightPressed, upPressed, downPressed, spacePressed, ePressed, qPressed;
+    private boolean numberPressed[] = new boolean[10];
+    private boolean mouseLeft, mouseRight;
     private boolean runing;
     private final Vector2 mousePosition = new Vector2();
-
     public final Vector2 movementDirection = new Vector2();
+    private int scroll;
+
+
     @Override
     public boolean keyDown(int keycode) {
         if(keycode == Input.Keys.A) leftPressed = true;
         if(keycode == Input.Keys.D) rightPressed = true;
         if(keycode == Input.Keys.W) upPressed = true;
         if(keycode == Input.Keys.S) downPressed = true;
+        if(keycode == Input.Keys.E) ePressed = true;
         if(keycode == Input.Keys.CONTROL_LEFT) runing = true;
         if(keycode == Input.Keys.SPACE) spacePressed = true;
+        if(keycode == Input.Keys.Q) qPressed = true;
+        for(int i = 0; i < 10; i++) {
+            if(keycode == Input.Keys.NUM_0 + i) numberPressed[i] = true;
+        }
         return false;
     }
 
@@ -36,8 +36,10 @@ public class MyInputAdapter extends InputAdapter {
         if(keycode == Input.Keys.D) rightPressed = false;
         if(keycode == Input.Keys.W) upPressed = false;
         if(keycode == Input.Keys.S) downPressed = false;
+        if(keycode == Input.Keys.E) ePressed = false;
         if(keycode == Input.Keys.CONTROL_LEFT) runing = false;
         if(keycode == Input.Keys.SPACE) spacePressed = false;
+        if(keycode == Input.Keys.Q) qPressed = false;
         return false;
     }
     @Override
@@ -69,6 +71,11 @@ public class MyInputAdapter extends InputAdapter {
         }
         return false;
     }
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
+        scroll = Math.round(amountY);
+        return false;
+    }
 
     public Vector2 mousePosition() {
         return mousePosition;
@@ -83,7 +90,6 @@ public class MyInputAdapter extends InputAdapter {
         if((leftPressed ^ rightPressed) && (upPressed ^ downPressed))
             movementDirection.scl(1/(float) Math.sqrt(2));
         return movementDirection;
-
     }
     public boolean isSpacePressed() {
         if(spacePressed) {spacePressed = false; return true;}
@@ -95,8 +101,34 @@ public class MyInputAdapter extends InputAdapter {
     public boolean isMouseRight() {
         return mouseRight;
     }
+    public boolean isEPressed() {
+        if(ePressed) {ePressed = false; return true;}
+        return ePressed;
+    }
+
+    public int numberPressed() {
+        for(int i = 0; i < 10; i++) {
+            if(numberPressed[i]) {
+                numberPressed[i] = false;
+                return i;
+            }
+        }
+        return -1;
+    }
+    public int getScroll() {
+        int x = scroll;
+        scroll = 0;
+        return x;
+    }
+
 
     public boolean isRuning() {
         return runing;
     }
+
+    public boolean isQPressed() {
+        return qPressed;
+    }
+
+
 }

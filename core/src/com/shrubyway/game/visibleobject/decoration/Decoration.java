@@ -9,7 +9,7 @@ abstract public class Decoration extends VisibleObject {
     public int decorationI = 0, decorationJ = 0;
     public char decorationType;
     static Animator animator = new Animator();
-    protected float lastInteraction = 0f;
+    protected float lastInteraction = -100f;
 
     public void change(float x, float y, int i, int j) {
         position.set(x, y);
