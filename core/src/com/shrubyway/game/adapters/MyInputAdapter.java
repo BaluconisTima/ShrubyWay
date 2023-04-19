@@ -1,4 +1,4 @@
-package com.shrubyway.game;
+package com.shrubyway.game.adapters;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;

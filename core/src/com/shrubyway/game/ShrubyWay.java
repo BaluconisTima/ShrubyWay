@@ -2,13 +2,13 @@ package com.shrubyway.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.visibleobject.VisibleObject;
@@ -34,10 +34,6 @@ public class ShrubyWay extends ApplicationAdapter {
 
     @Override
     public void create() {
-
-        Gdx.graphics.setWindowedMode(1920, 1080);
-        Graphics.DisplayMode currentDisplayMode = Gdx.graphics.getDisplayMode();
-        Gdx.graphics.setFullscreenMode(currentDisplayMode);
         Gdx.graphics.setVSync(true);
 
         batch = new SpriteBatch();
@@ -80,8 +76,8 @@ public class ShrubyWay extends ApplicationAdapter {
         }
         player.changePosition(temp);
     }
-    public void gameTick() {
-        AnimationGlobalTime.x += Gdx.graphics.getDeltaTime();
+
+    public void playerInputWorking() {
         player.running(inputProcessor.isRuning());
         Vector2 movingVector = inputProcessor.getMovementDirection();
         mousePosition = new Vector2(inputProcessor.mousePosition().x + cameraPosition.x - Gdx.graphics.getWidth() / 2,
@@ -90,13 +86,14 @@ public class ShrubyWay extends ApplicationAdapter {
             Bullet temp = player.shoot(mousePosition);
             if (temp != null) map.addVisibleObject(temp);
         }
-
         player.tryMoveTo(movingVector, renderingObjects);
         correctPosition();
         player.liquidStatus(map.checkLiquid(player.positionLegs()));
         if (inputProcessor.isSpacePressed()) {
             player.attack();
         }
+    }
+    public void globalProcessing() {
         TreeSet<VisibleObject> temp = new TreeSet<>();
         for(VisibleObject obj : renderingObjects){
             temp.add(obj);
@@ -113,39 +110,47 @@ public class ShrubyWay extends ApplicationAdapter {
                 }
             }
         }
-
         temp = new TreeSet<>();
         for(VisibleObject obj : renderingObjects){
             temp.add(obj);
         }
         renderingObjects = temp;
         map.updateRenderingObjects(player.positionCenter(), renderingObjects);
-
-
         for(VisibleObject obj : renderingObjects){
             if(obj.attackBox() != null && obj.attackBox().topLeftCorner.x < obj.attackBox().bottomRightCorner.x) {
                 for(VisibleObject obj2 : renderingObjects){
                     if(obj2.hitBox() != null) {
                         if (obj.attackBox().overlaps(obj2.hitBox())) {
-                                if(obj2 instanceof Decoration) {
-                                    ((Decoration) obj2).interact();
-                                }
+                            if(obj2 instanceof Decoration) {
+                                ((Decoration) obj2).interact();
+                            }
                         }
                     }
                 }
             }
         }
     }
+    public void interfaceInputWorking() {
+        //TODO
+    }
 
-    public void renderFrame() {
+    public void cameraUpdate() {
         cameraPosition.lerp(player.positionCenter(),
                 0.1f);
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.position.set(Math.round(cameraPosition.x), Math.round(cameraPosition.y), 0);
         camera.update();
+    }
+    public void gameTick() {
+        AnimationGlobalTime.x += Gdx.graphics.getDeltaTime();
+        playerInputWorking();
+        interfaceInputWorking();
+        globalProcessing();
+        cameraUpdate();
+    }
 
+    public void renderObjects() {
         batch.setProjectionMatrix(camera.combined);
-
         ScreenUtils.clear(1, 1, 1, 1);
         batch.begin();
         map.render(batch, player.position());
@@ -153,14 +158,21 @@ public class ShrubyWay extends ApplicationAdapter {
             obj.render(batch);
         }
         batch.end();
+    }
 
-
+    public void renderInterface() {
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         batch.begin();
-        font.draw(batch, "" + renderingObjects.size() + " " + Gdx.graphics.getFramesPerSecond(), 100, 100);
+        font.draw(batch, "" + AnimationGlobalTime.x + " " + Gdx.graphics.getFramesPerSecond(), 100, 100);
         batch.end();
     }
+
+    public void renderFrame() {
+        renderObjects();
+        renderInterface();
+    }
+
     @Override
     public void render() {
         gameTick();

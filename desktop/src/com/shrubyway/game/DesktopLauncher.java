@@ -1,11 +1,9 @@
 package com.shrubyway.game;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
+
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.shrubyway.game.ShrubyWay;
+
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
@@ -14,6 +12,8 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setTitle("Shruby Way - beta");
 		config.setWindowIcon("SWicon.png");
+		config.setWindowedMode(1920, 1080);
+		config.setFullscreenMode(config.getDisplayMode());
 		new Lwjgl3Application(new ShrubyWay(), config);
 	}
 }
