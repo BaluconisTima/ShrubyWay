@@ -41,6 +41,11 @@ public class Rectangle {
         return (x.centerPosition.dst2(closestPoint) < x.radius * x.radius);
     }
 
+    public boolean checkPoint(Vector2 point) {
+        return (point.x >= topLeftCorner.x && point.x <= bottomRightCorner.x &&
+                point.y >= topLeftCorner.y && point.y <= bottomRightCorner.y);
+    }
+
     public void render(Batch batch) {
        // batch.draw(texture,topLeftCorner.x, topLeftCorner.y, bottomRightCorner.x - topLeftCorner.x, bottomRightCorner.y - topLeftCorner.y);
     }

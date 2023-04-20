@@ -96,10 +96,12 @@ public class MyInputAdapter extends InputAdapter {
         return false;
     }
     public boolean isMouseLeft() {
-        return mouseLeft;
+        if(mouseLeft) {mouseLeft = false; return true;}
+        return false;
     }
     public boolean isMouseRight() {
-        return mouseRight;
+        if(mouseRight) {mouseRight = false; return true;}
+        return false;
     }
     public boolean isEPressed() {
         if(ePressed) {ePressed = false; return true;}

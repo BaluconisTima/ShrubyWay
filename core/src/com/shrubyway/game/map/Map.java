@@ -11,10 +11,7 @@ import com.shrubyway.game.visibleobject.decoration.Rock;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.TreeSet;
+import java.util.*;
 
 public class Map {
     Background background;
@@ -108,7 +105,7 @@ public class Map {
                             && check.position.x < playerPosition.x + 150 * renderDistanceX &&
                             check.position.y > playerPosition.y - 150 * renderDistanceY
                             && check.position.y < playerPosition.y + 150 * renderDistanceY) {
-                        RenderingList.list.add(check);
+                        RenderingList.add(check);
                         tempList.add(check);
                     }
             }
@@ -119,7 +116,7 @@ public class Map {
     public void updateRenderingObjects(Vector2 playerPosition) {
         timeChecking++;
         int x , y;
-        for(VisibleObject check: RenderingList.list) {
+        for(VisibleObject check: RenderingList.getList()) {
                 if(Math.abs(check.position.x - playerPosition.x) > 150 * renderDistanceX ||
                    Math.abs(check.position.y - playerPosition.y) > 150 * renderDistanceY) {
                     x = (int)check.position.x; while(x < 0) x += 38400; while(x >= 38400) x -= 38400; x /= 150; x /= 16;
@@ -128,7 +125,7 @@ public class Map {
                     tempList.add(check);
                 }
             }
-        RenderingList.list.removeAll(tempList);
+        RenderingList.getList().removeAll(tempList);
         tempList.clear();
         x = (int)playerPosition.x;
         y = (int)playerPosition.y;

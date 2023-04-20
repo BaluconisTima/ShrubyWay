@@ -108,7 +108,7 @@ abstract public class Entity extends VisibleObject {
     @Override public Rectangle hitBox() {return hitBox;}
     protected boolean checkCollisions(){
         Rectangle temp = collisionBox();
-        for(VisibleObject object : RenderingList.list) {
+        for(VisibleObject object : RenderingList.getList()) {
             if(object == this) continue;
               if(Math.abs(object.position.x - position.x) > 300) continue;
             if(Math.abs(object.position.y - position.y) > 300) continue;

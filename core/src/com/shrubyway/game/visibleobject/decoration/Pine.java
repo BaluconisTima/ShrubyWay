@@ -38,7 +38,7 @@ public class Pine extends Decoration {
     @Override public void interact() {
         super.interact();
         if(Math.random() < 0.2) {
-            RenderingList.addTemp(new VisibleItem(ItemManager.newItem(2),
+            RenderingList.add(new VisibleItem(ItemManager.newItem(2),
                     position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),
                     position().y + 3));
         }
