@@ -146,10 +146,15 @@ public class ShrubyWay extends ApplicationAdapter {
     }
 
 
-    public void globalProcessing() {
-        CopyOnWriteArrayList<VisibleObject> temp = new CopyOnWriteArrayList<VisibleObject>(ObjectsList.getList());
+    CopyOnWriteArrayList<VisibleObject> temp = new CopyOnWriteArrayList<VisibleObject>();
+    CopyOnWriteArrayList<InteractiveObject> temp2 = new CopyOnWriteArrayList<InteractiveObject>();
 
-        for (VisibleObject obj : temp) {
+    public void globalProcessing() {
+        temp.clear(); temp2.clear();
+        for(VisibleObject obj: ObjectsList.getList()) {
+            temp.add(obj);
+        }
+       for (VisibleObject obj : temp) {
             if(!ObjectsList.getList().contains(obj)) continue;
             if (obj instanceof Bullet) {
                 ((Bullet) obj).tryMoveTo();
@@ -167,10 +172,12 @@ public class ShrubyWay extends ApplicationAdapter {
 
 
         map.updateRenderingObjects(player.positionCenter());
-        CopyOnWriteArrayList<InteractiveObject> temp2 = new CopyOnWriteArrayList<InteractiveObject>();
+
         for(VisibleObject obj: ObjectsList.getList()) {
-            if(obj instanceof InteractiveObject) temp.add((InteractiveObject) obj);
+            if(obj instanceof InteractiveObject) temp2.add((InteractiveObject) obj);
         }
+
+
         for(InteractiveObject obj : temp2){
             if(!ObjectsList.getList().contains(obj)) continue;
             if(obj.attackBox() != null && obj.attackBox().topLeftCorner.x < obj.attackBox().bottomRightCorner.x) {

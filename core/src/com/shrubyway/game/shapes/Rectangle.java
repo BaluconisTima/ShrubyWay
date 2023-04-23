@@ -34,8 +34,8 @@ public class Rectangle {
                 topLeftCorner.y < temp.bottomRightCorner.y &&
                 bottomRightCorner.y > temp.topLeftCorner.y);
     }
+    Vector2 closestPoint = new Vector2();
     public boolean overlaps(Circle x) {
-        Vector2 closestPoint = new Vector2();
         closestPoint.x = Math.max(topLeftCorner.x, Math.min(x.centerPosition.x, bottomRightCorner.x));
         closestPoint.y = Math.max(topLeftCorner.y, Math.min(x.centerPosition.y, bottomRightCorner.y));
         return (x.centerPosition.dst2(closestPoint) < x.radius * x.radius);

@@ -60,10 +60,11 @@ abstract public class Entity extends InteractiveObject {
         if(!canMove) return;
         isRunning = running;
     }
+    Vector2 tempDirection = new Vector2(0,0);
     public void tryMoveTo(Vector2 direction){
         if(!canMove) return;
         float tempSpeed = getSpeed();
-        Vector2 tempDirection = new Vector2(direction);
+        tempDirection.set(direction);
         position.add(tempDirection.scl(tempSpeed));
         if(checkCollisions()) {
             position.sub(tempDirection);
