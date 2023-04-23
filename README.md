@@ -13,8 +13,10 @@ Opponents in the game are different objects that can be found in the forest. Som
 
 In the process, the player earns experience and levels. Each new level can be "invested" in one of the 4 elements. Different elements change different character parameters. (For example, investing in the earth element increases defense.)
 
+## World map
 The world map is a forest, infinitely looped to each side. Different background tiles may have different interactions. For example, the player falls through the water and walks slower in it.
 
+## Development
 #It's also possible to add more, in case the main gameplay is completed before the anticipated deadline.
 
 ## Download
