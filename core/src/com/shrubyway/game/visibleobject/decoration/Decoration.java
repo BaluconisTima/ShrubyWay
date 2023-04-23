@@ -3,9 +3,10 @@ package com.shrubyway.game.visibleobject.decoration;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.shapes.Rectangle;
+import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.VisibleObject;
 
-abstract public class Decoration extends VisibleObject {
+abstract public class Decoration extends InteractiveObject {
     public int decorationI = 0, decorationJ = 0;
     public char decorationType;
     static Animator animator = new Animator();

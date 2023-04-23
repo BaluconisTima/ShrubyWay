@@ -188,76 +188,43 @@ public class Inventory {
 
     }
     static public void changeOpenned() {
-        if(opened == true) {
-
-        }
         click.play(SoundSettings.soundVolume);
         opened = !opened;
     }
-    static public void dropItem(int faceDirection, Vector2 playerPosition) {
-        Item temp = null;
-        if(items[0][selected] != null) {
-            if(numberOfItem[0][selected] > 1) {
-                temp = items[0][selected];
-                numberOfItem[0][selected]--;
-            } else {
-                temp = items[0][selected];
-                items[0][selected] = null;
-                numberOfItem[0][selected] = 0;
-            }
-        }
-        if(temp != null) {
-            switch (faceDirection) {
-                case 0:
-                    ObjectsList.add(new VisibleItem(temp, playerPosition.x,
-                            playerPosition.y, new Vector2(0,-1)));
-                    break;
-                case 1:
-                    ObjectsList.add(new VisibleItem(temp, playerPosition.x,
-                            playerPosition.y, new Vector2(0,1)));
-                    break;
-                case 2:
-                    ObjectsList.add(new VisibleItem(temp, playerPosition.x,
-                            playerPosition.y, new Vector2(-1,0)));
-                    break;
-                case 3:
-                    ObjectsList.add(new VisibleItem(temp, playerPosition.x,
-                            playerPosition.y, new Vector2(1,0)));
-                    break;
-            }
+
+    static public void drop(Item temp, int faceDirection, Vector2 playerPosition) {
+        switch (faceDirection) {
+            case 0:
+                ObjectsList.add(new VisibleItem(temp, playerPosition.x,
+                        playerPosition.y, new Vector2(0,-1)));
+                break;
+            case 1:
+                ObjectsList.add(new VisibleItem(temp, playerPosition.x,
+                        playerPosition.y, new Vector2(0,1)));
+                break;
+            case 2:
+                ObjectsList.add(new VisibleItem(temp, playerPosition.x,
+                        playerPosition.y, new Vector2(-1,0)));
+                break;
+            case 3:
+                ObjectsList.add(new VisibleItem(temp, playerPosition.x,
+                        playerPosition.y, new Vector2(1,0)));
+                break;
         }
     }
+    static public void dropItem(int faceDirection, Vector2 playerPosition) {
+        if(items[0][selected] != null) {
+            drop(items[0][selected],faceDirection,playerPosition);
+                numberOfItem[0][selected]--;
+                if(numberOfItem[0][selected] == 0) items[0][selected] = null;
+            }
+    }
+
     static public void dropItemHand(int faceDirection, Vector2 playerPosition) {
-        Item temp = null;
         while(itemInHand != null) {
-            if(numberOfItemInHand> 1) {
-                temp = itemInHand;
-                numberOfItemInHand--;
-            } else {
-                temp = itemInHand;
-                itemInHand = null;
-                numberOfItemInHand = 0;
-            }
-            if(temp != null) {
-                switch (faceDirection) {
-                    case 0:
-                        ObjectsList.add(new VisibleItem(temp, playerPosition.x,
-                                playerPosition.y, new Vector2(0,-1)));
-                        break;
-                    case 1:
-                        ObjectsList.add(new VisibleItem(temp, playerPosition.x,
-                                playerPosition.y, new Vector2(0,1)));
-                        break;
-                    case 2:
-                        ObjectsList.add(new VisibleItem(temp, playerPosition.x,
-                                playerPosition.y, new Vector2(-1,0)));
-                        break;
-                    case 3:
-                        ObjectsList.add(new VisibleItem(temp, playerPosition.x,
-                                playerPosition.y, new Vector2(1,0)));
-                        break;
-                }
-            }
+            drop(itemInHand,faceDirection,playerPosition);
+            numberOfItemInHand--;
+            if(numberOfItemInHand == 0) itemInHand = null;
         }
     }
     static public void changeSelected(int i) {

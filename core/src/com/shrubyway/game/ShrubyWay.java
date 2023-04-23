@@ -3,9 +3,11 @@ package com.shrubyway.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.g3d.Renderable;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -14,6 +16,7 @@ import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.Map;
+import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
@@ -34,26 +37,32 @@ public class ShrubyWay extends ApplicationAdapter {
     Vector2 cameraPosition;
     Vector2 mousePosition;
 
-    MyInputAdapter inputProcessor = new MyInputAdapter();
+    MyInputAdapter inputProcessor;
+
 
     @Override
     public void create() {
-        Gdx.graphics.setVSync(true);
-        Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_LINEAR);
         batch = new SpriteBatch();
+        Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_LINEAR);
         batch.enableBlending();
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+
+        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        Gdx.graphics.setVSync(true);
+        inputProcessor = new MyInputAdapter();
         map = new Map(1);
         player = new Shraby(50, 50);
-        Gdx.input.setInputProcessor(inputProcessor);
-        ObjectsList.add(player);
-        ItemManager.init();
         cameraPosition = new Vector2(player.positionCenter());
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.position.set(cameraPosition.x, cameraPosition.y, 0);
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.update();
+        Gdx.input.setInputProcessor(inputProcessor);
+        ObjectsList.add(player);
+        ItemManager.init();
         AnimationGlobalTime.x = 0f;
     }
 
@@ -94,6 +103,13 @@ public class ShrubyWay extends ApplicationAdapter {
         }
         if((leftClick || rightClick) &&
                 !Inventory.checkClick(inputProcessor.mousePosition())) {
+            if(leftClick) ObjectsList.add(new VisibleItem(ItemManager.newItem(0),
+                    mousePosition.x,
+                    mousePosition.y));
+            if(rightClick) for(int i = 0; i < 99; i++)
+                ObjectsList.add(new VisibleItem(ItemManager.newItem(1),
+                    mousePosition.x,
+                    mousePosition.y));
             leftClick = false;
             rightClick = false;
         }
@@ -113,7 +129,7 @@ public class ShrubyWay extends ApplicationAdapter {
         if(inputProcessor.isQPressed() && (AnimationGlobalTime.x -
         lastDrop) > 0.1f) {
             lastDrop = AnimationGlobalTime.x;
-            Inventory.dropItem(player.faceDirection, player.positionLegs());
+            Inventory.dropItem(player.faceDirection, player.positionItemDrop());
         }
         if(leftClick){
             leftClick = false;
@@ -124,7 +140,7 @@ public class ShrubyWay extends ApplicationAdapter {
             Inventory.rightClick(inputProcessor.mousePosition());
         }
         if(!Inventory.opened) {
-            Inventory.dropItemHand(player.faceDirection, player.positionLegs());
+            Inventory.dropItemHand(player.faceDirection, player.positionItemDrop());
         }
 
     }
@@ -144,18 +160,21 @@ public class ShrubyWay extends ApplicationAdapter {
                 }
             } else
             if(obj instanceof VisibleItem){
-                ((VisibleItem) obj).moveToPlayer(player.positionLegs());
+                ((VisibleItem) obj).moveToPlayer(player.positionItemDrop());
             }
         }
 
 
-        map.updateRenderingObjects(player.positionCenter());
-        temp = new CopyOnWriteArrayList<VisibleObject>(ObjectsList.getList());
 
-        for(VisibleObject obj : temp){
+        map.updateRenderingObjects(player.positionCenter());
+        CopyOnWriteArrayList<InteractiveObject> temp2 = new CopyOnWriteArrayList<InteractiveObject>();
+        for(VisibleObject obj: ObjectsList.getList()) {
+            if(obj instanceof InteractiveObject) temp.add((InteractiveObject) obj);
+        }
+        for(InteractiveObject obj : temp2){
             if(!ObjectsList.getList().contains(obj)) continue;
             if(obj.attackBox() != null && obj.attackBox().topLeftCorner.x < obj.attackBox().bottomRightCorner.x) {
-                for(VisibleObject obj2 : temp){
+                for(InteractiveObject obj2 : temp2){
                     if(!ObjectsList.getList().contains(obj2)) continue;
                     if(obj2.hitBox() != null) {
                         if (obj.attackBox().overlaps(obj2.hitBox())) {
@@ -186,9 +205,6 @@ public class ShrubyWay extends ApplicationAdapter {
     }
 
     public void renderObjects() {
-        batch.setProjectionMatrix(camera.combined);
-        ScreenUtils.clear(1, 1, 1, 1);
-        batch.begin();
         map.render(batch, player.position());
         for (VisibleObject obj : ObjectsList.getList()) {
             obj.render(batch);
@@ -201,17 +217,20 @@ public class ShrubyWay extends ApplicationAdapter {
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         batch.begin();
         Inventory.render(batch, inputProcessor.mousePosition());
-        TextDrawer.drawWhite(batch, "" + inputProcessor.mousePosition() + " " + VisibleObject.ids, 100, 100, 0.5f);
+        Runtime runtime = Runtime.getRuntime();
+        TextDrawer.drawWhite(batch, "" + (runtime.totalMemory() - runtime.freeMemory()) / 1024f / 1024f, 100, 100, 0.5f);
         batch.end();
     }
 
     public void renderFrame() {
+        batch.setProjectionMatrix(camera.combined);
+        ScreenUtils.clear(1, 1, 1, 1);
+        batch.begin();
         renderObjects();
         renderInterface();
     }
 
-    @Override
-    public void render() {
+     @Override public void render() {
         gameTick();
         renderFrame();
     }

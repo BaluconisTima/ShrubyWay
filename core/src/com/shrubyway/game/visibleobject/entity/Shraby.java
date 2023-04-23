@@ -111,6 +111,11 @@ public class Shraby extends Entity {
         return tempPosition;
     }
 
+    public Vector2 positionItemDrop() {
+        tempPosition.set(position.x + regionWidth / 2, position.y + 50);
+        return tempPosition;
+    }
+
 
 
 

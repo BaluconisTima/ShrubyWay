@@ -1,4 +1,5 @@
-// TODO sort by ai Subpackages
+// TODO HP
 // TODO Enemies
 // TODO Enemies AI
-// TODO items
+// TODO Saves
+// TODO Menu

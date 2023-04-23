@@ -1,6 +1,6 @@
 # Shraby Way
 
-A game with elements of survival and RPG, made in a nice animated style.
+A 2.5D game with elements of survival and RPG, made in a nice animated style.
 
 ![](JumpOut.gif)
 

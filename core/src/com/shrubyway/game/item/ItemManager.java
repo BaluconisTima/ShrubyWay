@@ -13,7 +13,6 @@ public class ItemManager {
     public static void init() {
         for(int i = 0; i < itemNumber; i++) {
             itemTexture[i] = new Texture("Items/" + i +".png");
-            itemTexture[i].setFilter(TextureFilter.Linear, TextureFilter.Linear);
         }
         itemName[0] = "Stone";
         itemDescription[0] = "A small stone.";

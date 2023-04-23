@@ -9,13 +9,14 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.shrubyway.game.animation.AnimationLoader;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.shapes.Rectangle;
+import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 
 import java.util.TreeSet;
 
-abstract public class Entity extends VisibleObject {
+abstract public class Entity extends InteractiveObject {
     protected float health;
     protected boolean onFire = false;
     public byte faceDirection = 0;
@@ -109,11 +110,12 @@ abstract public class Entity extends VisibleObject {
     protected boolean checkCollisions(){
         Rectangle temp = collisionBox();
         for(VisibleObject object : ObjectsList.getList()) {
+            if(!(object instanceof InteractiveObject)) continue;
             if(object == this) continue;
               if(Math.abs(object.position.x - position.x) > 300) continue;
             if(Math.abs(object.position.y - position.y) > 300) continue;
-            if(object.collisionBox() == null) continue;
-            if(object.collisionBox().overlaps(temp)) {
+            if(((InteractiveObject)object).collisionBox() == null) continue;
+            if(((InteractiveObject)object).collisionBox().overlaps(temp)) {
                 return true;
             }
         }

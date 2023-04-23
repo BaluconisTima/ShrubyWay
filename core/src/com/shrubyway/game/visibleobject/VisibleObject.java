@@ -8,24 +8,10 @@ public abstract class VisibleObject implements Comparable<VisibleObject> {
     public final Vector2 position = new Vector2();
     public static long ids;
     long id = ids++;
-    protected Rectangle collisionBox = null;
-    protected Rectangle hitBox = null;
-    protected Rectangle attackBox = null;
 
 
-    public void render(Batch batch){
 
-    };
-    public Rectangle collisionBox() {
-        return collisionBox;
-    }
-    public Rectangle hitBox() {
-        return hitBox;
-    }
-    public Rectangle attackBox() {
-        return attackBox;
-    }
-
+    public void render(Batch batch){};
     public Vector2 position() {
         return position;
     }
