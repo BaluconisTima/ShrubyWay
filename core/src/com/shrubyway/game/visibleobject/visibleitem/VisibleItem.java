@@ -9,7 +9,7 @@ import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.sound.SoundSettings;
-import com.shrubyway.game.visibleobject.RenderingList;
+import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 
 public class VisibleItem extends VisibleObject {
@@ -23,7 +23,7 @@ public class VisibleItem extends VisibleObject {
         globalDir = new Vector2(0,0);
         pop.play(SoundSettings.soundVolume);
         this.item = item;
-        position.set(x, y);
+        position.set(x + (float)Math.random() * 10f - 5, y + (float)Math.random() * 10f - 5);
         dropTime = AnimationGlobalTime.x;
     }
     public VisibleItem(Item item, float x, float y, Vector2 globalDir) {
@@ -32,7 +32,7 @@ public class VisibleItem extends VisibleObject {
         globalDir.scl(50);
         pop.play(SoundSettings.soundVolume);
         this.item = item;
-        position.set(x, y);
+        position.set(x + (float)Math.random() * 10f - 5, y + (float)Math.random() * 10f - 5);
         dropTime = AnimationGlobalTime.x;
     }
 
@@ -47,7 +47,7 @@ public class VisibleItem extends VisibleObject {
 
     public void delete() {
         pop.play(SoundSettings.soundVolume);
-        RenderingList.del(this);
+        ObjectsList.del(this);
     }
 
     public void moveToPlayer(Vector2 playerPosition) {
@@ -56,6 +56,8 @@ public class VisibleItem extends VisibleObject {
             position.add(globalDir);
             return;
         }
+        if(AnimationGlobalTime.x - dropTime < 0.5f) return;
+
         Vector2 dir = new Vector2(playerPosition.x - position.x, playerPosition.y - position.y);
         if(dir.len() <= 20 && Inventory.addItem(item)) {
             this.delete();

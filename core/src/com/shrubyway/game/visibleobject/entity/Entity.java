@@ -9,7 +9,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.shrubyway.game.animation.AnimationLoader;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.shapes.Rectangle;
-import com.shrubyway.game.visibleobject.RenderingList;
+import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 
@@ -108,7 +108,7 @@ abstract public class Entity extends VisibleObject {
     @Override public Rectangle hitBox() {return hitBox;}
     protected boolean checkCollisions(){
         Rectangle temp = collisionBox();
-        for(VisibleObject object : RenderingList.getList()) {
+        for(VisibleObject object : ObjectsList.getList()) {
             if(object == this) continue;
               if(Math.abs(object.position.x - position.x) > 300) continue;
             if(Math.abs(object.position.y - position.y) > 300) continue;

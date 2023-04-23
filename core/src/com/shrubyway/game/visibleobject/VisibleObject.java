@@ -6,7 +6,7 @@ import com.shrubyway.game.shapes.Rectangle;
 
 public abstract class VisibleObject implements Comparable<VisibleObject> {
     public final Vector2 position = new Vector2();
-    static long ids;
+    public static long ids;
     long id = ids++;
     protected Rectangle collisionBox = null;
     protected Rectangle hitBox = null;
@@ -36,10 +36,7 @@ public abstract class VisibleObject implements Comparable<VisibleObject> {
         Integer x1 = Math.round(-(position().x));
         Integer x2 = Math.round(-o.position().x);
         if(y1.equals(y2)) {
-            if(x1.equals(x2)) {
                 return (int) (id - o.id);
-            }
-            return (x1.compareTo(x2));
         }
         return (y1.compareTo(y2));
     }

@@ -14,7 +14,7 @@ import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.Map;
-import com.shrubyway.game.visibleobject.RenderingList;
+import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
@@ -23,6 +23,7 @@ import com.shrubyway.game.visibleobject.entity.Shraby;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class ShrubyWay extends ApplicationAdapter {
@@ -33,22 +34,21 @@ public class ShrubyWay extends ApplicationAdapter {
     Vector2 cameraPosition;
     Vector2 mousePosition;
 
-    BitmapFont font;
     MyInputAdapter inputProcessor = new MyInputAdapter();
 
     @Override
     public void create() {
         Gdx.graphics.setVSync(true);
+        Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_LINEAR);
         batch = new SpriteBatch();
         batch.enableBlending();
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        font = new BitmapFont(Gdx.files.internal("fonts/font1.fnt"));
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         map = new Map(1);
         player = new Shraby(50, 50);
         Gdx.input.setInputProcessor(inputProcessor);
-        RenderingList.add(player);
+        ObjectsList.add(player);
         ItemManager.init();
         cameraPosition = new Vector2(player.positionCenter());
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -115,14 +115,13 @@ public class ShrubyWay extends ApplicationAdapter {
             lastDrop = AnimationGlobalTime.x;
             Inventory.dropItem(player.faceDirection, player.positionLegs());
         }
-
         if(leftClick){
             leftClick = false;
             Inventory.leftClick(inputProcessor.mousePosition());
         }
         if(rightClick){
             rightClick = false;
-            //Inventory.rightClick(inputProcessor.mousePosition());
+            Inventory.rightClick(inputProcessor.mousePosition());
         }
         if(!Inventory.opened) {
             Inventory.dropItemHand(player.faceDirection, player.positionLegs());
@@ -132,7 +131,10 @@ public class ShrubyWay extends ApplicationAdapter {
 
 
     public void globalProcessing() {
-        for (VisibleObject obj : RenderingList.getList()) {
+        CopyOnWriteArrayList<VisibleObject> temp = new CopyOnWriteArrayList<VisibleObject>(ObjectsList.getList());
+
+        for (VisibleObject obj : temp) {
+            if(!ObjectsList.getList().contains(obj)) continue;
             if (obj instanceof Bullet) {
                 ((Bullet) obj).tryMoveTo();
             } else
@@ -145,13 +147,16 @@ public class ShrubyWay extends ApplicationAdapter {
                 ((VisibleItem) obj).moveToPlayer(player.positionLegs());
             }
         }
-       RenderingList.sort();
+
 
         map.updateRenderingObjects(player.positionCenter());
+        temp = new CopyOnWriteArrayList<VisibleObject>(ObjectsList.getList());
 
-        for(VisibleObject obj : RenderingList.getList()){
+        for(VisibleObject obj : temp){
+            if(!ObjectsList.getList().contains(obj)) continue;
             if(obj.attackBox() != null && obj.attackBox().topLeftCorner.x < obj.attackBox().bottomRightCorner.x) {
-                for(VisibleObject obj2 : RenderingList.getList()){
+                for(VisibleObject obj2 : temp){
+                    if(!ObjectsList.getList().contains(obj2)) continue;
                     if(obj2.hitBox() != null) {
                         if (obj.attackBox().overlaps(obj2.hitBox())) {
                             if(obj2 instanceof Decoration) {
@@ -162,6 +167,7 @@ public class ShrubyWay extends ApplicationAdapter {
                 }
             }
         }
+        ObjectsList.sort();
     }
 
     public void cameraUpdate() {
@@ -184,7 +190,7 @@ public class ShrubyWay extends ApplicationAdapter {
         ScreenUtils.clear(1, 1, 1, 1);
         batch.begin();
         map.render(batch, player.position());
-        for (VisibleObject obj : RenderingList.getList()) {
+        for (VisibleObject obj : ObjectsList.getList()) {
             obj.render(batch);
         }
         batch.end();
@@ -195,7 +201,7 @@ public class ShrubyWay extends ApplicationAdapter {
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         batch.begin();
         Inventory.render(batch, inputProcessor.mousePosition());
-        font.draw(batch, "" + inputProcessor.mousePosition(), 100, 100);
+        TextDrawer.drawWhite(batch, "" + inputProcessor.mousePosition() + " " + VisibleObject.ids, 100, 100, 0.5f);
         batch.end();
     }
 

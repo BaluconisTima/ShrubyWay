@@ -2,7 +2,7 @@ package com.shrubyway.game.map;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.visibleobject.RenderingList;
+import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.decoration.Bush;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
@@ -12,10 +12,11 @@ import com.shrubyway.game.visibleobject.decoration.Rock;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Map {
     Background background;
-    TreeSet<VisibleObject>[][] chunks = new TreeSet[16][16];
+    CopyOnWriteArrayList<VisibleObject>[][] chunks = new CopyOnWriteArrayList[16][16];
     long timeChecking = 0;
     boolean lastCheked[][] = new boolean[16][16];
     char decorations[][] = new char[256][256];
@@ -51,7 +52,7 @@ public class Map {
 
         for(int i = 0; i < 16; i++)
             for(int j = 0; j < 16; j++) {
-                chunks[i][j] = new TreeSet<>();
+                chunks[i][j] = new CopyOnWriteArrayList<>();
             }
 
         for (int i = 0; i < 256; i++)
@@ -105,7 +106,7 @@ public class Map {
                             && check.position.x < playerPosition.x + 150 * renderDistanceX &&
                             check.position.y > playerPosition.y - 150 * renderDistanceY
                             && check.position.y < playerPosition.y + 150 * renderDistanceY) {
-                        RenderingList.add(check);
+                        ObjectsList.add(check);
                         tempList.add(check);
                     }
             }
@@ -116,7 +117,9 @@ public class Map {
     public void updateRenderingObjects(Vector2 playerPosition) {
         timeChecking++;
         int x , y;
-        for(VisibleObject check: RenderingList.getList()) {
+        CopyOnWriteArrayList<VisibleObject> temp = new CopyOnWriteArrayList<>(ObjectsList.getList());
+        tempList.clear();
+        for(VisibleObject check: temp) {
                 if(Math.abs(check.position.x - playerPosition.x) > 150 * renderDistanceX ||
                    Math.abs(check.position.y - playerPosition.y) > 150 * renderDistanceY) {
                     x = (int)check.position.x; while(x < 0) x += 38400; while(x >= 38400) x -= 38400; x /= 150; x /= 16;
@@ -125,7 +128,7 @@ public class Map {
                     tempList.add(check);
                 }
             }
-        RenderingList.getList().removeAll(tempList);
+        ObjectsList.getList().removeAll(tempList);
         tempList.clear();
         x = (int)playerPosition.x;
         y = (int)playerPosition.y;
@@ -138,6 +141,7 @@ public class Map {
                 updateChunk(i2, j2, playerPosition);
             }
         }
+
         for (int i = x - renderDistanceX; i < x + renderDistanceX; i++) {
             for (int j = y - renderDistanceY; j < y + renderDistanceY; j++) {
                 int i2 = (i + 256) % 256, j2 = (j + 256) % 256;

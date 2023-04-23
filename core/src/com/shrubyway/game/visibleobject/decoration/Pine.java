@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.shapes.Rectangle;
-import com.shrubyway.game.visibleobject.RenderingList;
+import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class Pine extends Decoration {
@@ -38,7 +38,7 @@ public class Pine extends Decoration {
     @Override public void interact() {
         super.interact();
         if(Math.random() < 0.2) {
-            RenderingList.add(new VisibleItem(ItemManager.newItem(2),
+            ObjectsList.add(new VisibleItem(ItemManager.newItem(2),
                     position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),
                     position().y + 3));
         }

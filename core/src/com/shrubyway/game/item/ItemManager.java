@@ -26,7 +26,7 @@ public class ItemManager {
         Interacting[1] = false;
 
         itemName[2] = "Pine cone";
-        itemDescription[2] = "How easy it is to find, just as easy to lose.";
+        itemDescription[2] = "How easy it is to find,\njust as easy to lose.";
         throwingDamage[2] = 1;
         Interacting[2] = false;
     }

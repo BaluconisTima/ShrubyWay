@@ -11,7 +11,7 @@ import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.shapes.Rectangle;
-import com.shrubyway.game.visibleobject.RenderingList;
+import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class Inventory {
@@ -19,7 +19,6 @@ public class Inventory {
             full = new Texture("interface/fullInv.png"),
             select = new Texture("interface/selectInv.png");
     static Boolean opened = false;
-    static public BitmapFont font = new BitmapFont(Gdx.files.internal("fonts/font2.fnt"));
 
 
     static Sound click = Gdx.audio.newSound(Gdx.files.internal("sounds/Effects/Click.ogg"));
@@ -33,9 +32,6 @@ public class Inventory {
     static Item itemInHand = null;
     static Integer numberOfItemInHand = 0;
     static {
-        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        font.getData().setScale(0.5f);
-
         for(int i = 0; i < 9; i++) {
             buttons[0][i] = new Rectangle(27 + 79.1f * i,1080 - 70 - 28,70,70);
         }
@@ -44,8 +40,6 @@ public class Inventory {
                 buttons[j][i] = new Rectangle(27 + 79.1f * i,1080 - 70 - 55 - 79.1f * j,70,70);
             }
         }
-
-
         for(int i = 0; i < 5; i++)
             for(int j = 0; j < 9; j++) {
                 items[i][j] = null;
@@ -53,19 +47,33 @@ public class Inventory {
             }
     }
 
+    static private void nameAndDesc(Batch batch, Vector2 mousePosition, int i, int j) {
+        if(buttons[i][j].checkPoint(mousePosition)) {
+            if(items[i][j] != null) {
+                TextDrawer.drawWithShadow(batch, ItemManager.itemName[items[i][j].id],
+                        mousePosition.x + 15,
+                        mousePosition.y + 35, 0.5f);
+                TextDrawer.drawWithShadow(batch, ItemManager.itemDescription[items[i][j].id],
+                        mousePosition.x + 15,
+                        mousePosition.y + 5, 0.3f, 0.6f);
+            }
+        }
+    }
+
 
     static public void render(Batch batch, Vector2 mousePosition) {
        batch.draw(base,0,0);
        if(opened) batch.draw(full,0,0);
+
         for(int i = 0; i < 9; i++) {
             buttons[0][i].render(batch);
             if(items[0][i] != null) {
                 batch.draw(ItemManager.itemTexture[items[0][i].id],
                         27 + 79.1f * i, 1080 - 70 - 28, 70, 70);
                 if(numberOfItem[0][i] > 1)
-                    font.draw(batch, numberOfItem[0][i].toString(),
+                    TextDrawer.drawWithShadow(batch, numberOfItem[0][i].toString(),
                         27 + 79.1f * i + 50 - (numberOfItem[0][i].toString().length()-1) * 17,
-                        1080 - 70);
+                        1080 - 70, 0.5f);
             }
         }
         if(opened)
@@ -77,22 +85,30 @@ public class Inventory {
                                 27 + 79.1f * j,
                                 1080 - 70 - 55 - 79.1f * i, 70, 70);
                         if (numberOfItem[i][j] > 1)
-                            font.draw(batch, numberOfItem[i][j].toString(),
+                            TextDrawer.drawWithShadow(batch, numberOfItem[i][j].toString(),
                                     27 + 79.1f * j + 50 - (numberOfItem[i][j].toString().length() - 1) * 17,
                                     1080 - 70 - 28
-                                            - 79.1f * i);
+                                            - 79.1f * i, 0.5f);
                     }
                 }
 
         batch.draw(select, 12 + 79.1f * selected, 1080 - 111.55f);
+        for(int j = 0; j < 9; j++) {
+            nameAndDesc(batch, mousePosition, 0, j);
+        }
         if(opened) {
+            for(int i = 1; i < 5; i++) {
+               for(int j = 0; j < 9; j++) {
+                   nameAndDesc(batch, mousePosition, i, j);
+               }
+            }
             if(itemInHand != null) {
                 batch.draw(ItemManager.itemTexture[itemInHand.id],
                         mousePosition.x - 35, mousePosition.y - 35, 70, 70);
                 if(numberOfItemInHand > 1) {
-                    font.draw(batch, numberOfItemInHand.toString(),
+                    TextDrawer.drawWithShadow(batch, numberOfItemInHand.toString(),
                             mousePosition.x + 15 - (numberOfItemInHand.toString().length()-1) * 17,
-                            mousePosition.y -10);
+                            mousePosition.y -10, 0.5f);
                 }
             }
         }
@@ -100,7 +116,13 @@ public class Inventory {
     }
 
     static public boolean checkClick(Vector2 point) {
-        if(!opened) return false;
+        if(!opened) {
+            if(point.x <= 750 && point.y >= 970) {
+                changeOpenned();
+                return true;
+            }
+            return false;
+        }
         if(point.x <= 750 && point.y >= 620) return true;
         changeOpenned();
         return false;
@@ -110,9 +132,55 @@ public class Inventory {
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 9; j++) {
                 if(buttons[i][j].checkPoint(point)) {
+                    if(items[i][j] != null && itemInHand != null && items[i][j].id == itemInHand.id) {
+                        numberOfItem[i][j] += numberOfItemInHand;
+                        if(numberOfItem[i][j] >= 100) {
+                            numberOfItemInHand = numberOfItem[i][j] - 99;
+                            numberOfItem[i][j] = 99;
+                        } else { numberOfItemInHand = 0; itemInHand = null; }
+                    }
                     Item temp = items[i][j]; Integer temp2 = numberOfItem[i][j];
                     items[i][j] = itemInHand; numberOfItem[i][j] = numberOfItemInHand;
                     itemInHand = temp; numberOfItemInHand = temp2;
+                    return;
+                }
+            }
+        }
+
+    }
+    static public void rightClick(Vector2 point) {
+        for(int i = 0; i < 5; i++) {
+            for(int j = 0; j < 9; j++) {
+                if(buttons[i][j].checkPoint(point)) {
+                    if(items[i][j] == null && itemInHand == null) continue;
+                    if(items[i][j] == null && itemInHand != null) {
+                        numberOfItemInHand--;
+                        numberOfItem[i][j] = 1;
+                        items[i][j] = itemInHand;
+                        if(numberOfItemInHand == 0) {
+                            itemInHand = null;
+                        }
+                        continue;
+                    }
+                    if(items[i][j] != null && itemInHand == null) {
+                        numberOfItemInHand = 1;
+                        numberOfItem[i][j]--;
+                        itemInHand = items[i][j];
+                        if(numberOfItem[i][j] == 0) {
+                            items[i][j] = null;
+                        }
+                        continue;
+                    }
+                    if(items[i][j].id == itemInHand.id && numberOfItemInHand < 99) {
+                        numberOfItemInHand++;
+                        numberOfItem[i][j]--;
+                        if(numberOfItem[i][j] == 0) {
+                            items[i][j] = null;
+                        }
+                        continue;
+                    }
+
+
                     return;
                 }
             }
@@ -141,19 +209,19 @@ public class Inventory {
         if(temp != null) {
             switch (faceDirection) {
                 case 0:
-                    RenderingList.add(new VisibleItem(temp, playerPosition.x,
+                    ObjectsList.add(new VisibleItem(temp, playerPosition.x,
                             playerPosition.y, new Vector2(0,-1)));
                     break;
                 case 1:
-                    RenderingList.add(new VisibleItem(temp, playerPosition.x,
+                    ObjectsList.add(new VisibleItem(temp, playerPosition.x,
                             playerPosition.y, new Vector2(0,1)));
                     break;
                 case 2:
-                    RenderingList.add(new VisibleItem(temp, playerPosition.x,
+                    ObjectsList.add(new VisibleItem(temp, playerPosition.x,
                             playerPosition.y, new Vector2(-1,0)));
                     break;
                 case 3:
-                    RenderingList.add(new VisibleItem(temp, playerPosition.x,
+                    ObjectsList.add(new VisibleItem(temp, playerPosition.x,
                             playerPosition.y, new Vector2(1,0)));
                     break;
             }
@@ -173,19 +241,19 @@ public class Inventory {
             if(temp != null) {
                 switch (faceDirection) {
                     case 0:
-                        RenderingList.add(new VisibleItem(temp, playerPosition.x,
+                        ObjectsList.add(new VisibleItem(temp, playerPosition.x,
                                 playerPosition.y, new Vector2(0,-1)));
                         break;
                     case 1:
-                        RenderingList.add(new VisibleItem(temp, playerPosition.x,
+                        ObjectsList.add(new VisibleItem(temp, playerPosition.x,
                                 playerPosition.y, new Vector2(0,1)));
                         break;
                     case 2:
-                        RenderingList.add(new VisibleItem(temp, playerPosition.x,
+                        ObjectsList.add(new VisibleItem(temp, playerPosition.x,
                                 playerPosition.y, new Vector2(-1,0)));
                         break;
                     case 3:
-                        RenderingList.add(new VisibleItem(temp, playerPosition.x,
+                        ObjectsList.add(new VisibleItem(temp, playerPosition.x,
                                 playerPosition.y, new Vector2(1,0)));
                         break;
                 }
@@ -203,13 +271,17 @@ public class Inventory {
     static public boolean addItem(Item item) {
         for(int i = 0; i < 5; i++)
             for(int j = 0; j < 9; j++) {
+                if(items[i][j] != null &&
+                        items[i][j].id == item.id && numberOfItem[i][j] < 99) {
+                    numberOfItem[i][j]++;
+                    return true;
+                }
+            }
+        for(int i = 0; i < 5; i++)
+            for(int j = 0; j < 9; j++) {
                 if(items[i][j] == null) {
                     items[i][j] = item;
                     numberOfItem[i][j] = 1;
-                    return true;
-                }
-                if(items[i][j].id == item.id) {
-                    numberOfItem[i][j]++;
                     return true;
                 }
             }
