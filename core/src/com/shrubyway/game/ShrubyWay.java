@@ -103,13 +103,8 @@ public class ShrubyWay extends ApplicationAdapter {
         }
         if((leftClick || rightClick) &&
                 !Inventory.checkClick(inputProcessor.mousePosition())) {
-            if(leftClick) ObjectsList.add(new VisibleItem(ItemManager.newItem(0),
-                    mousePosition.x,
-                    mousePosition.y));
-            if(rightClick) for(int i = 0; i < 99; i++)
-                ObjectsList.add(new VisibleItem(ItemManager.newItem(1),
-                    mousePosition.x,
-                    mousePosition.y));
+            if(leftClick) {System.out.println("damage"); player.health.getDamage(1); }
+            if(rightClick) player.health.heal(1);
             leftClick = false;
             rightClick = false;
         }
@@ -223,9 +218,10 @@ public class ShrubyWay extends ApplicationAdapter {
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         batch.begin();
+        HealthBar.render(batch, player.health);
         Inventory.render(batch, inputProcessor.mousePosition());
         Runtime runtime = Runtime.getRuntime();
-        TextDrawer.drawWhite(batch, "" + (runtime.totalMemory() - runtime.freeMemory()) / 1024f / 1024f, 100, 100, 0.5f);
+        TextDrawer.drawWhite(batch, player.health.getHealth() + " " + (runtime.totalMemory() - runtime.freeMemory()) / 1024f / 1024f, 100, 100, 0.5f);
         batch.end();
     }
 

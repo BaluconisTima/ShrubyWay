@@ -6,6 +6,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.shrubyway.game.Health;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
@@ -22,6 +23,7 @@ public class Shraby extends Entity {
             {"DOWN", "UP", "LEFT", "RIGHT"}};
     static int frameCount[] = {30, 30, 34, 14};
     public Shraby(float x, float y) {
+        health = new Health(20);
         speed = 10f;
         canMove = false;
         action = 2;

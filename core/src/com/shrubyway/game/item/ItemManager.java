@@ -1,7 +1,6 @@
 package com.shrubyway.game.item;
-
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
+
 public class ItemManager {
     public static int itemNumber = 3;
     public static Texture itemTexture[] = new Texture[itemNumber];
@@ -28,7 +27,10 @@ public class ItemManager {
         itemDescription[2] = "How easy it is to find,\njust as easy to lose.";
         throwingDamage[2] = 1;
         Interacting[2] = false;
+
     }
+
+
     public static Item newItem(int id) {
         return new Item(id);
     }

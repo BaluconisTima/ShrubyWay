@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.shrubyway.game.Health;
 import com.shrubyway.game.animation.AnimationLoader;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.shapes.Rectangle;
@@ -17,15 +18,13 @@ import com.shrubyway.game.visibleobject.bullet.Bullet;
 import java.util.TreeSet;
 
 abstract public class Entity extends InteractiveObject {
-    protected float health;
-    protected boolean onFire = false;
+    public Health health;
     public byte faceDirection = 0;
     static protected  Animation<TextureRegion> animations[][][];
     protected int action = 0;
     protected boolean inLiquid = false;
     protected float speed = 10f;
     protected boolean isRunning = false;
-    protected Animator animator = new Animator();
     protected float regionWidth, regionHeight;
     public AnimationLoader animationLoader = new AnimationLoader();
     Vector2 tempPosition = new Vector2(0,0);

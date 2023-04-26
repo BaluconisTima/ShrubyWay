@@ -23,11 +23,11 @@ abstract public class Decoration extends InteractiveObject {
     public void setHitbox() {
     }
 
-    public Rectangle collisionBox() {
+   @Override public Rectangle collisionBox() {
         setCollisionBox();
         return collisionBox;
     }
-    public Rectangle hitBox() {
+    @Override public Rectangle hitBox() {
         setHitbox();
         return hitBox;
     }
