@@ -33,11 +33,6 @@ public class Bush extends Decoration {
         decorationJ = j;
         decorationType = '1';
     }
-
-    @Override
-    public Bush newTemp() {
-        return new Bush();
-    }
     @Override
     public void render(Batch batch){
         batch.draw(texture.getKeyFrame(AnimationGlobalTime.x - lastInteraction), Math.round(position.x),

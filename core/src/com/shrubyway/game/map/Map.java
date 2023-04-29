@@ -4,10 +4,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
-import com.shrubyway.game.visibleobject.decoration.Bush;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
-import com.shrubyway.game.visibleobject.decoration.Pine;
-import com.shrubyway.game.visibleobject.decoration.Rock;
+import com.shrubyway.game.visibleobject.decoration.decorationsManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,7 +18,6 @@ public class Map {
     long timeChecking = 0;
     boolean lastCheked[][] = new boolean[16][16];
     char decorations[][] = new char[256][256];
-    public List<Decoration> decorationsList = new ArrayList<Decoration>();
     public List<VisibleObject> tempList;
     private final int renderDistanceX = 13, renderDistanceY = 10;
 
@@ -45,9 +42,6 @@ public class Map {
     public Map(int level) {
         tempList = new ArrayList<>();
         background = new Background(level);
-        decorationsList.add(new Bush());
-        decorationsList.add(new Pine());
-        decorationsList.add(new Rock());
         decorationsLoad(level);
 
         for(int i = 0; i < 16; i++)
@@ -59,8 +53,7 @@ public class Map {
             for (int j = 0; j < 256; j++) {
                 if (decorations[i][j] != '0') {
                     int type = decorations[i][j] - '1';
-                    Decoration temp = decorationsList.get(type);
-                    decorationsList.set(type, temp.newTemp());
+                    Decoration temp = decorationsManager.newOf(type);
                     temp.change(i * 150, j * 150, i, j);
                     chunks[i / 16][j / 16].add(temp);
                 }

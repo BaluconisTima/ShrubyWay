@@ -1,4 +1,5 @@
 package com.shrubyway.game.item;
+
 import com.badlogic.gdx.graphics.Texture;
 
 public class ItemManager {
@@ -10,8 +11,8 @@ public class ItemManager {
     public static boolean Interacting[] = new boolean[itemNumber];
 
     public static void init() {
-        for(int i = 0; i < itemNumber; i++) {
-            itemTexture[i] = new Texture("Items/" + i +".png");
+        for (int i = 0; i < itemNumber; i++) {
+            itemTexture[i] = new Texture("Items/" + i + ".png");
         }
         itemName[0] = "Stone";
         itemDescription[0] = "A small stone.";

@@ -45,9 +45,6 @@ public class Pine extends Decoration {
         }
     }
 
-    @Override public Pine newTemp() {
-        return new Pine();
-    }
     @Override public void render(Batch batch){
         batch.draw(texture.getKeyFrame(AnimationGlobalTime.x - lastInteraction), Math.round(position.x),
                 Math.round(position.y));

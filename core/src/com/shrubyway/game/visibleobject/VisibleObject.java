@@ -8,9 +8,6 @@ public abstract class VisibleObject implements Comparable<VisibleObject> {
     public final Vector2 position = new Vector2();
     public static long ids;
     long id = ids++;
-
-
-
     public void render(Batch batch){};
     public Vector2 position() {
         return position;

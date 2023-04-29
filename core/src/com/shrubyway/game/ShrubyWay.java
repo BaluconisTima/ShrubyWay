@@ -103,7 +103,9 @@ public class ShrubyWay extends ApplicationAdapter {
         }
         if((leftClick || rightClick) &&
                 !Inventory.checkClick(inputProcessor.mousePosition())) {
-            if(leftClick) {System.out.println("damage"); player.health.getDamage(1); }
+            if(leftClick) {
+               player.die();
+            }
             if(rightClick) player.health.heal(1);
             leftClick = false;
             rightClick = false;

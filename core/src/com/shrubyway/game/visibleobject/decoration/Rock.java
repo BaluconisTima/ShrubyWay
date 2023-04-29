@@ -32,9 +32,6 @@ public class Rock extends Decoration {
                 position.y + 30, 60, 50);
     }
 
-    @Override public Rock newTemp() {
-        return new Rock();
-    }
     @Override public void render(Batch batch){
         batch.draw(texture.getKeyFrame(AnimationGlobalTime.x - lastInteraction), Math.round(position.x),
                 Math.round(position.y));

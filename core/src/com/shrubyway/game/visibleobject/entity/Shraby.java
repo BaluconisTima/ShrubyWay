@@ -3,36 +3,49 @@ package com.shrubyway.game.visibleobject.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.shrubyway.game.Health;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
 
 import java.lang.Math;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 
 
 public class Shraby extends Entity {
 
-    static String actions[] = {"AFK", "WALK", "PORTAL", "ATTACK"};
-    static String actionTypes[][] = {{"DOWN", "UP", "LEFT", "RIGHT"},
-            {"DOWN", "UP", "LEFT", "RIGHT"},
-            {"OUT", null, null, null},
-            {"DOWN", "UP", "LEFT", "RIGHT"}};
-    static int frameCount[] = {30, 30, 34, 14};
+    static String actions[] = {"AFK", "WALK", "PORTAL", "ATTACK", "DEATH"};
+    static protected boolean looping[] =
+            new boolean[]{true, true, false, false, false};
+    static protected ArrayList<ArrayList<Animation<TextureRegion>[]>> animations;
+
+    static protected ArrayList<String>[] actionTypes = new ArrayList[]{
+            new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+            new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+            new ArrayList<>(Arrays.asList("OUT")),
+            new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+            new ArrayList<>(Arrays.asList("1"))};
+    static int frameCount[] = {30, 30, 34, 14, 34};
+
     public Shraby(float x, float y) {
         health = new Health(20);
         speed = 10f;
-        canMove = false;
+        allowedMotion = false;
         action = 2;
         shootCooldown = 0;
         if(animations == null) animations =
                 animationLoader.load("ENTITIES/SHRABY", actions, actionTypes, frameCount);
         position.set(x, y);
-        regionWidth = (animations[0][0][0].getKeyFrame(AnimationGlobalTime.x)).getRegionWidth();
-        regionHeight = animations[0][0][0].getKeyFrame(AnimationGlobalTime.x).getRegionHeight();
+        regionWidth = (animations.get(0).get(0)[0].getKeyFrame(AnimationGlobalTime.x)).getRegionWidth();
+        regionHeight = animations.get(0).get(0)[0].getKeyFrame(AnimationGlobalTime.x).getRegionHeight();
+
         Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/PortalOut.ogg"));
         sound.play(SoundSettings.soundVolume);
     }
@@ -82,20 +95,30 @@ public class Shraby extends Entity {
                 95, 15);
         return collisionBox;
     }
+    @Override public void die() {
+        if(action == 4) return;
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/ShrabyDeath1.wav"));
+        sound.play(SoundSettings.soundVolume);
+        animationTime = 0f;
+        allowedMotion = false;
+        action = 4;
+    }
     TextureRegion temp;
     @Override public void render(Batch batch) {
         attacking = false;
         animationTime += Gdx.graphics.getDeltaTime();
-        if(!canMove) {
-            if(animations[action][faceDirection][inLiquid ? 1: 0].isAnimationFinished(animationTime)) {
-                canMove = true;
+        if(!allowedMotion) {
+            if(action != 4 &&
+                    animations.get(action).get(faceDirection)[inLiquid ? 1: 0].isAnimationFinished(animationTime)) {
+                allowedMotion = true;
                 action = 0;
                 animationTime = 0;
             }
         }
-        animations[action][faceDirection][inLiquid ? 1 : 0].setFrameDuration(1f/(2.4f * getSpeed()));
-        temp =
-                   animations[action][faceDirection][inLiquid ? 1 : 0].getKeyFrame(animationTime, true);
+        faceDirection = (byte)Math.min(faceDirection,
+                (animations.get(action).size() - 1));
+        animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(2.4f * getSpeed()));
+        temp = animations.get(action).get(faceDirection)[inLiquid ? 1: 0].getKeyFrame(animationTime, looping[action]);
            batch.draw(temp,
                    Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
 

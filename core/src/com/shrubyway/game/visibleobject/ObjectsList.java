@@ -13,15 +13,19 @@ public class ObjectsList {
     public static void add(VisibleObject object) {
         list.add(object);
     }
+
     public static void del(VisibleObject object) {
         list.remove(object);
     }
+
     public static boolean contains(VisibleObject object) {
         return list.contains(object);
     }
+
     public static List<VisibleObject> getList() {
         return list;
     }
+
     public static void sort() {
         Collections.sort(list);
     }

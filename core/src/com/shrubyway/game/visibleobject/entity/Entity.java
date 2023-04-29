@@ -20,9 +20,9 @@ import java.util.TreeSet;
 abstract public class Entity extends InteractiveObject {
     public Health health;
     public byte faceDirection = 0;
-    static protected  Animation<TextureRegion> animations[][][];
     protected int action = 0;
     protected boolean inLiquid = false;
+    protected Vector2 momentum = new Vector2(0, 0);
     protected float speed = 10f;
     protected boolean isRunning = false;
     protected float regionWidth, regionHeight;
@@ -33,7 +33,7 @@ abstract public class Entity extends InteractiveObject {
     private float stepCooldown = 0.3f;
 
     private char lastTile = '0';
-    Boolean canMove = true;
+    Boolean allowedMotion = false;
     static Sound soundAttack = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/Swing.ogg"));
 
     public float getSpeed() {
@@ -44,7 +44,7 @@ abstract public class Entity extends InteractiveObject {
         return tempSpeed;
     }
     public void changeAnimationsFor(Vector2 direction) {
-        if(!canMove) return;
+        if(!allowedMotion) return;
         if(direction.x == 0 && direction.y == 0) action = 0;
         else action = 1;
         if(Math.abs(direction.x) > Math.abs(direction.y)) {
@@ -56,34 +56,51 @@ abstract public class Entity extends InteractiveObject {
         }
     }
     public void running(boolean running) {
-        if(!canMove) return;
+        if(!allowedMotion) return;
         isRunning = running;
     }
     Vector2 tempDirection = new Vector2(0,0);
+    final int collisionsEps = 10;
     public void tryMoveTo(Vector2 direction){
-        if(!canMove) return;
+        if(!allowedMotion) return;
+
+        momentum.scl(0.85f);
         float tempSpeed = getSpeed();
         tempDirection.set(direction);
-        position.add(tempDirection.scl(tempSpeed));
-        if(checkCollisions()) {
-            position.sub(tempDirection);
-        }
-        if(checkCollisions()) {
+        tempDirection.scl(tempSpeed);
+         tempDirection.add(momentum);
+        tempDirection.scl(1f/collisionsEps);
+
+        for(int i = 0; i < collisionsEps; i++) {
             position.add(tempDirection);
+            if (checkCollisions()) {
+                position.sub(tempDirection);
+            }
+            if (checkCollisions()) {
+                position.add(tempDirection);
+            }
         }
         changeAnimationsFor(direction);
     };
+
+    public void addMomentum(Vector2 x) {
+        momentum.add(x);
+    }
+
+    public void die() {
+    }
 
 
     private float attackCooldown = 0.3f;
     static float animationTime = 0f;
     private float lastAttackTime;
     public void attack() {
-        if(!canMove && action != 3) return;
+        if(!allowedMotion && action != 3) return;
+
         if((TimeUtils.nanoTime() - lastAttackTime) / 1000000000.0f > attackCooldown) {
             attacking = true;
             animationTime = 0f;
-            canMove = false;
+            allowedMotion = false;
             action = 3;
             lastAttackTime = TimeUtils.nanoTime();
             soundAttack.play();
@@ -94,7 +111,7 @@ abstract public class Entity extends InteractiveObject {
     protected boolean attacking = false;
 
     public Bullet shoot(Vector2 mousePosition) {
-        if(!canMove) return null;
+        if(!allowedMotion) return null;
         if((TimeUtils.nanoTime() - lastShootTime) / 1000000000.0f > shootCooldown) {
             lastShootTime = TimeUtils.nanoTime();
             Bullet bullet = new Bullet(positionCenter(), mousePosition);

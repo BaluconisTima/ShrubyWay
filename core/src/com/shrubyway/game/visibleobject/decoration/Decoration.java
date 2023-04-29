@@ -17,17 +17,21 @@ abstract public class Decoration extends InteractiveObject {
         decorationI = i;
         decorationJ = j;
     }
+
     public void setCollisionBox() {
     }
 
     public void setHitbox() {
     }
 
-   @Override public Rectangle collisionBox() {
+    @Override
+    public Rectangle collisionBox() {
         setCollisionBox();
         return collisionBox;
     }
-    @Override public Rectangle hitBox() {
+
+    @Override
+    public Rectangle hitBox() {
         setHitbox();
         return hitBox;
     }
@@ -35,9 +39,7 @@ abstract public class Decoration extends InteractiveObject {
     public void interact() {
         lastInteraction = AnimationGlobalTime.x;
     }
-     public Decoration newTemp() {
-        return null;
-    }
+
 
 
 }
