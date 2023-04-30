@@ -10,9 +10,7 @@ import java.util.ArrayList;
 public class AnimationLoader {
        static Animator animator = new Animator();
        static Texture animationList;
-       public AnimationLoader() {
-       }
-       public ArrayList<ArrayList<Animation<TextureRegion>[]>>
+       static public ArrayList<ArrayList<Animation<TextureRegion>[]>>
 
        load(String s, String actions[], ArrayList<String>[] actionsTypes, int frameCount[]){
 
@@ -20,6 +18,7 @@ public class AnimationLoader {
 
               for(int i = 0; i < actions.length; i++) {
                         currentAnimation.add(new ArrayList<Animation<TextureRegion>[]>());
+
                         int x = actionsTypes[i].toArray().length;
                      for(int j = 0; j < x; j++) {
                             String tempAnimation = s + "/" + actions[i] + "/" + actionsTypes[i].get(j) + ".png";
@@ -27,7 +26,6 @@ public class AnimationLoader {
                             Animation temp[]
                                     = {animator.toAnimation(animationList, frameCount[i], 0, 0),
                                        animator.toAnimation(animationList, frameCount[i], 0, 130)};
-
                             currentAnimation.get(i).add(temp);
                      }
               }

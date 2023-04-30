@@ -1,9 +1,9 @@
 package com.shrubyway.game.visibleobject.decoration;
 
-public class decorationsManager {
+public class DecorationsManager {
     public static int decorationNumber = 3;
     public static Class<? extends Decoration> decorations[] = new Class[decorationNumber];
-    static {
+    public static void init() {
         decorations[0] = Bush.class;
         decorations[1] = Pine.class;
         decorations[2] = Rock.class;

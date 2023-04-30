@@ -7,6 +7,8 @@ public class InteractiveObject extends VisibleObject {
     protected Rectangle hitBox = null;
     protected Rectangle attackBox = null;
 
+    protected static Rectangle badBox = new Rectangle(0,0,-1,-1);
+
     public Rectangle collisionBox() {
         return collisionBox;
     }

@@ -1,70 +1,97 @@
-package com.shrubyway.game.visibleobject.entity;
-
+package com.shrubyway.game.visibleobject.entity.mob;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.shrubyway.game.Health;
-import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.AnimationLoader;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.ObjectsList;
 
-import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
+public class Agaric extends Mob{
 
-public class Shraby extends Entity {
-
-    static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH", "PORTAL"};
+    static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH"};
     static protected boolean looping[] =
-            new boolean[]{true, true, false, false, false};
+            new boolean[]{true, true, false, false};
     static protected ArrayList<ArrayList<Animation<TextureRegion>[]>> animations;
 
     static protected ArrayList<String>[] actionTypes = new ArrayList[]{
             new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
             new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
             new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new ArrayList<>(Arrays.asList("1")),
-            new ArrayList<>(Arrays.asList("OUT"))};
-    static int frameCount[] = {30, 30, 14, 34, 34};
+            new ArrayList<>(Arrays.asList("1"))};
 
-    public Shraby(float x, float y) {
-        damage = 2f;
-        health = new Health(20);
-        speed = 10f;
+    static int frameCount[] = {30, 30, 14, 22};
 
-        allowedMotion = false;
-        action = 4;
-        shootCooldown = 0;
-
+    static {
         if(animations == null) animations =
-                AnimationLoader.load("ENTITIES/SHRABY", actions, actionTypes, frameCount);
+                AnimationLoader.load("ENTITIES/AGARIC", actions, actionTypes, frameCount);
+    }
+
+    @Override public void ai(Vector2 playerPosition) {
+        /*
+        if(playerPosition.x - positionLegs().x > 50) tempDirection.x = 1;
+        else if(playerPosition.x - positionLegs().x < -50) tempDirection.x = -1;
+        else tempDirection.x = 0;
+
+        if(playerPosition.y - positionLegs().y > 50) tempDirection.y = 1;
+        else if(playerPosition.y - positionLegs().y < -50) tempDirection.y = -1;
+        else tempDirection.y = 0;
+
+        tempDirection.nor();
+        tryMoveTo(tempDirection);
+        if(tempDirection.len() == 0) {
+            attack();
+        } */
+    }
+
+    public Agaric(float x, float y) {
+        health = new Health(10);
+        speed = 8f;
+        allowedMotion = true;
+        attackCooldown = 1f;
+        action = 0;
+        damage = 2;
         position.set(x, y);
         regionWidth = (animations.get(0).get(0)[0].getKeyFrame(AnimationGlobalTime.x)).getRegionWidth();
         regionHeight = animations.get(0).get(0)[0].getKeyFrame(AnimationGlobalTime.x).getRegionHeight();
-
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/PortalOut.ogg"));
-        sound.play(SoundSettings.soundVolume);
     }
-   @Override public Rectangle hitBox() {
+    @Override public void die() {
+        if(action == 3) return;
+       /* Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/ShrabyDeath1.wav"));
+        sound.play(SoundSettings.soundVolume); */
+        animationTime = 0f;
+        allowedMotion = false;
+        action = 3;
+    }
+    @Override public void attack() {
+        if(!allowedMotion) return;
+        if(action == 2) return;
+       /* Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/ShrabyAttack1.wav"));
+        sound.play(SoundSettings.soundVolume); */
+        animationTime = 0f;
+        attacking = true;
+        allowedMotion = false;
+        action = 2;
+    }
+
+    @Override public Rectangle hitBox() {
         if(hitBox == null) hitBox = new Rectangle(0,0,0,0);
         hitBox.change(position.x + 150,
-                position.y + 40,
+                position.y + 20,
                 70, 140);
         return hitBox;
-   }
+    }
     @Override public Rectangle attackBox() {
-        if(attackBox == null)
-            attackBox = new Rectangle(0,0,0,0);
-
+        if(attackBox == null) attackBox = new Rectangle(0,0,0,0);
         if(action == 2 && attacking) {
             switch (faceDirection) {
                 case 0:
@@ -98,18 +125,29 @@ public class Shraby extends Entity {
     @Override public Rectangle collisionBox() {
         if(collisionBox == null) collisionBox = new Rectangle(0,0,0,0);
         collisionBox.change(position.x + 138,
-                position.y + 5,
+                position.y,
                 95, 15);
         return collisionBox;
     }
 
-    @Override public void die() {
-        if(action == 3) return;
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/ShrabyDeath1.wav"));
-        sound.play(SoundSettings.soundVolume);
-        animationTime = 0f;
-        allowedMotion = false;
-        action = 3;
+
+
+    @Override public void render(Batch batch) {
+        animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(2.4f * getSpeed()));
+        batch.draw(animations.get(action).get(faceDirection)[inLiquid ? 1: 0].getKeyFrame(animationTime, looping[action]),
+                Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
+        collisionBox().render(batch);
+        hitBox().render(batch);
+        attackBox().render(batch);
+    }
+
+
+    @Override public Vector2 position() {
+        return position;
+    }
+    @Override public Vector2 positionCenter() {
+        tempPosition.set(position.x + regionWidth / 2, position.y + 118);
+        return tempPosition;
     }
 
     @Override public void update() {
@@ -131,26 +169,6 @@ public class Shraby extends Entity {
             }
         }
     }
-    @Override public void render(Batch batch) {
-        animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(2.4f * getSpeed()));
-           batch.draw(animations.get(action).get(faceDirection)[inLiquid ? 1: 0].getKeyFrame(animationTime, looping[action]),
-                   Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
-    }
-
-
-    @Override public Vector2 position() {
-        return position;
-    }
-    @Override public Vector2 positionCenter() {
-        tempPosition.set(position.x + regionWidth / 2, position.y + 118);
-        return tempPosition;
-    }
-
-    public Vector2 positionItemDrop() {
-        tempPosition.set(position.x + regionWidth / 2, position.y + 50);
-        return tempPosition;
-    }
-
 
 
 

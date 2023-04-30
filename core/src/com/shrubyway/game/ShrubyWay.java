@@ -21,8 +21,11 @@ import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
+import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
 import com.shrubyway.game.visibleobject.entity.Entity;
 import com.shrubyway.game.visibleobject.entity.Shraby;
+import com.shrubyway.game.visibleobject.entity.mob.Mob;
+import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -53,8 +56,13 @@ public class ShrubyWay extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setVSync(true);
         inputProcessor = new MyInputAdapter();
+        MobsManager.init();
+        DecorationsManager.init();
         map = new Map(1);
         player = new Shraby(50, 50);
+
+
+
         cameraPosition = new Vector2(player.positionCenter());
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.position.set(cameraPosition.x, cameraPosition.y, 0);
@@ -97,16 +105,19 @@ public class ShrubyWay extends ApplicationAdapter {
         rightClick = inputProcessor.isMouseRight();
         player.tryMoveTo(movingVector);
         correctPosition();
-        player.liquidStatus(map.checkLiquid(player.positionLegs()));
+
+
         if (inputProcessor.isSpacePressed()) {
             player.attack();
         }
         if((leftClick || rightClick) &&
                 !Inventory.checkClick(inputProcessor.mousePosition())) {
             if(leftClick) {
-               player.die();
+                 ObjectsList.add(MobsManager.newOf(0, mousePosition.x, mousePosition.y));
             }
-            if(rightClick) player.health.heal(1);
+            if(rightClick) {
+
+            }
             leftClick = false;
             rightClick = false;
         }
@@ -154,9 +165,14 @@ public class ShrubyWay extends ApplicationAdapter {
        for (VisibleObject obj : temp) {
             if(!ObjectsList.getList().contains(obj)) continue;
             if (obj instanceof Bullet) {
-                ((Bullet) obj).tryMoveTo();
+                ((Bullet) obj).tryMove();
             } else
             if (obj instanceof Entity) {
+                Entity temp = (Entity) obj;
+                temp.liquidStatus(map.checkLiquid(((Entity) obj).positionLegs()));
+                if(obj instanceof Mob) {
+                    ((Mob) obj).ai(player.positionLegs());
+                }
                 if (((Entity) obj).makingStep(map.checkTile(((Entity) obj).positionLegs()))) {
                     map.makeStep(((Entity) obj).positionLegs(), player.positionLegs());
                 }
@@ -174,20 +190,33 @@ public class ShrubyWay extends ApplicationAdapter {
             if(obj instanceof InteractiveObject) temp2.add((InteractiveObject) obj);
         }
 
-
         for(InteractiveObject obj : temp2){
             if(!ObjectsList.getList().contains(obj)) continue;
+
             if(obj.attackBox() != null && obj.attackBox().topLeftCorner.x < obj.attackBox().bottomRightCorner.x) {
+
                 for(InteractiveObject obj2 : temp2){
                     if(!ObjectsList.getList().contains(obj2)) continue;
+                    if(obj == obj2) continue;
+
                     if(obj2.hitBox() != null) {
                         if (obj.attackBox().overlaps(obj2.hitBox())) {
                             if(obj2 instanceof Decoration) {
                                 ((Decoration) obj2).interact();
+                            } else
+                            if(obj2 instanceof Entity) {
+                                ((Entity) obj2).getDamage(((Entity) obj).damage,
+                                        ((Entity) obj).positionCenter());
                             }
                         }
                     }
                 }
+            }
+        }
+
+        for(VisibleObject obj: ObjectsList.getList()) {
+            if(obj instanceof Entity) {
+                ((Entity) obj).update();
             }
         }
         ObjectsList.sort();

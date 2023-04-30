@@ -87,8 +87,7 @@ public class MyInputAdapter extends InputAdapter {
         if(rightPressed) movementDirection.add(1, 0);
         if(upPressed) movementDirection.add(0, 1);
         if(downPressed) movementDirection.add(0, -1);
-        if((leftPressed ^ rightPressed) && (upPressed ^ downPressed))
-            movementDirection.scl(1/(float) Math.sqrt(2));
+        if((leftPressed ^ rightPressed) && (upPressed ^ downPressed)) movementDirection.nor();
         return movementDirection;
     }
     public boolean isSpacePressed() {

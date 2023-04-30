@@ -19,6 +19,8 @@ import java.util.TreeSet;
 
 abstract public class Entity extends InteractiveObject {
     public Health health;
+    public float damage = 0;
+
     public byte faceDirection = 0;
     protected int action = 0;
     protected boolean inLiquid = false;
@@ -26,27 +28,52 @@ abstract public class Entity extends InteractiveObject {
     protected float speed = 10f;
     protected boolean isRunning = false;
     protected float regionWidth, regionHeight;
-    public AnimationLoader animationLoader = new AnimationLoader();
-    Vector2 tempPosition = new Vector2(0,0);
+    protected Vector2 tempPosition = new Vector2(0,0);
 
-    private float lastStepTime = 0f;
-    private float stepCooldown = 0.3f;
+    protected float lastStepTime = 0f;
+    protected float stepCooldown = 0.3f;
 
-    private char lastTile = '0';
-    Boolean allowedMotion = false;
+    protected char lastTile = '0';
+    protected Boolean allowedMotion = false;
     static Sound soundAttack = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/Swing.ogg"));
+
 
     public float getSpeed() {
         float tempSpeed = 0; tempSpeed += (speed);
         if(inLiquid) tempSpeed *= 0.75;
-        if(action != 3) {if (isRunning) tempSpeed *= 1.25;}
+        if(action != 2) {if (isRunning) tempSpeed *= 1.25;}
         else tempSpeed *= 1.5;
         return tempSpeed;
     }
-    public void changeAnimationsFor(Vector2 direction) {
+    public void update() {
+         tryMoveMomentum();
+        attacking = false;
+        animationTime += Gdx.graphics.getDeltaTime();
+    }
+
+    public void getDamage(float damage) {
+        health.getDamage(damage);
+        if(health.getHealth() <= 0) {
+            die();
+        }
+    }
+    protected Vector2 direction = new Vector2(0,0);
+    public void getDamage(float damage, Vector2 hitPosition) {
+
+        direction.set(positionCenter().x - hitPosition.x + (float)Math.random() * 30 - 15,
+                positionCenter().y - hitPosition.y  + (float)Math.random() * 30 - 15);
+        direction.nor();
+        direction.scl(damage * 100f / health.getMaxHealth());
+        getDamage(damage);
+        momentum.add(direction);
+    }
+
+
+    protected void changeAnimationsFor(Vector2 direction) {
         if(!allowedMotion) return;
         if(direction.x == 0 && direction.y == 0) action = 0;
         else action = 1;
+
         if(Math.abs(direction.x) > Math.abs(direction.y)) {
             if(direction.x < 0) faceDirection = 2;
             else if(direction.x > 0) faceDirection = 3;
@@ -59,16 +86,31 @@ abstract public class Entity extends InteractiveObject {
         if(!allowedMotion) return;
         isRunning = running;
     }
-    Vector2 tempDirection = new Vector2(0,0);
-    final int collisionsEps = 10;
+    protected Vector2 tempDirection = new Vector2(0,0);
+    protected final int collisionsEps = 10;
+
+    public void tryMoveMomentum() {
+        if(action == 3) return;
+        momentum.scl(0.85f);
+        tempDirection.set(momentum);
+        tempDirection.scl(1f/collisionsEps);
+        for(int i = 0; i < collisionsEps; i++) {
+            position.add(tempDirection);
+            if (checkCollisions()) {
+                position.sub(tempDirection);
+            }
+            if (checkCollisions()) {
+                position.add(tempDirection);
+            }
+        }
+    }
+
+
     public void tryMoveTo(Vector2 direction){
         if(!allowedMotion) return;
-
-        momentum.scl(0.85f);
         float tempSpeed = getSpeed();
         tempDirection.set(direction);
         tempDirection.scl(tempSpeed);
-         tempDirection.add(momentum);
         tempDirection.scl(1f/collisionsEps);
 
         for(int i = 0; i < collisionsEps; i++) {
@@ -91,17 +133,18 @@ abstract public class Entity extends InteractiveObject {
     }
 
 
-    private float attackCooldown = 0.3f;
-    static float animationTime = 0f;
-    private float lastAttackTime;
+    protected float attackCooldown = 0.3f;
+    protected float animationTime = 0f;
+    protected float lastAttackTime;
+
     public void attack() {
-        if(!allowedMotion && action != 3) return;
+        if(!allowedMotion && action != 2) return;
 
         if((TimeUtils.nanoTime() - lastAttackTime) / 1000000000.0f > attackCooldown) {
             attacking = true;
             animationTime = 0f;
             allowedMotion = false;
-            action = 3;
+            action = 2;
             lastAttackTime = TimeUtils.nanoTime();
             soundAttack.play();
         }
@@ -120,10 +163,11 @@ abstract public class Entity extends InteractiveObject {
         }
         return null;
     }
-    @Override public Rectangle collisionBox(){
-        return collisionBox;
-    }
+    @Override public Rectangle collisionBox(){return collisionBox;}
     @Override public Rectangle hitBox() {return hitBox;}
+
+
+
     protected boolean checkCollisions(){
         Rectangle temp = collisionBox();
         for(VisibleObject object : ObjectsList.getList()) {

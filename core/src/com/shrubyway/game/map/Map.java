@@ -5,7 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
-import com.shrubyway.game.visibleobject.decoration.decorationsManager;
+import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -53,7 +53,7 @@ public class Map {
             for (int j = 0; j < 256; j++) {
                 if (decorations[i][j] != '0') {
                     int type = decorations[i][j] - '1';
-                    Decoration temp = decorationsManager.newOf(type);
+                    Decoration temp = DecorationsManager.newOf(type);
                     temp.change(i * 150, j * 150, i, j);
                     chunks[i / 16][j / 16].add(temp);
                 }

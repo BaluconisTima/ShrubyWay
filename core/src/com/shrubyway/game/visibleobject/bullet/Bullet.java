@@ -22,7 +22,7 @@ public class Bullet extends VisibleObject {
         direction.scl(speed);
     }
 
-    public void tryMoveTo() {
+    public void tryMove() {
         position.add(direction);
     }
 
