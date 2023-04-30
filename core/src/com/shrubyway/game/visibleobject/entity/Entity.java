@@ -2,25 +2,25 @@ package com.shrubyway.game.visibleobject.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
+
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.shrubyway.game.Health;
-import com.shrubyway.game.animation.AnimationLoader;
-import com.shrubyway.game.animation.Animator;
+
+import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.item.Item;
+import com.shrubyway.game.item.ThrowableItem;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
+import com.shrubyway.game.sound.SoundSettings;
 
 import java.util.TreeSet;
 
 abstract public class Entity extends InteractiveObject {
     public Health health;
-    public float damage = 0;
-
     public byte faceDirection = 0;
     protected int action = 0;
     protected boolean inLiquid = false;
@@ -59,12 +59,12 @@ abstract public class Entity extends InteractiveObject {
     }
     protected Vector2 direction = new Vector2(0,0);
     public void getDamage(float damage, Vector2 hitPosition) {
-
         direction.set(positionCenter().x - hitPosition.x + (float)Math.random() * 30 - 15,
                 positionCenter().y - hitPosition.y  + (float)Math.random() * 30 - 15);
         direction.nor();
         direction.scl(damage * 100f / health.getMaxHealth());
         getDamage(damage);
+
         momentum.add(direction);
     }
 
@@ -87,6 +87,7 @@ abstract public class Entity extends InteractiveObject {
         isRunning = running;
     }
     protected Vector2 tempDirection = new Vector2(0,0);
+    protected Vector2 tempDirection2 = new Vector2(0,0);
     protected final int collisionsEps = 10;
 
     public void tryMoveMomentum() {
@@ -106,23 +107,28 @@ abstract public class Entity extends InteractiveObject {
     }
 
 
-    public void tryMoveTo(Vector2 direction){
-        if(!allowedMotion) return;
+    public boolean tryMoveTo(Vector2 direction){
+        if(!allowedMotion) return false;
+        direction.nor();
+
         float tempSpeed = getSpeed();
         tempDirection.set(direction);
         tempDirection.scl(tempSpeed);
         tempDirection.scl(1f/collisionsEps);
+        boolean moved = false;
 
         for(int i = 0; i < collisionsEps; i++) {
             position.add(tempDirection);
             if (checkCollisions()) {
                 position.sub(tempDirection);
-            }
+            } else moved = true;
+
             if (checkCollisions()) {
                 position.add(tempDirection);
             }
         }
         changeAnimationsFor(direction);
+        return moved;
     };
 
     public void addMomentum(Vector2 x) {
@@ -140,33 +146,33 @@ abstract public class Entity extends InteractiveObject {
     public void attack() {
         if(!allowedMotion && action != 2) return;
 
-        if((TimeUtils.nanoTime() - lastAttackTime) / 1000000000.0f > attackCooldown) {
+        if((AnimationGlobalTime.x - lastAttackTime) > attackCooldown) {
             attacking = true;
             animationTime = 0f;
             allowedMotion = false;
             action = 2;
-            lastAttackTime = TimeUtils.nanoTime();
-            soundAttack.play();
+            lastAttackTime = AnimationGlobalTime.x;
+            soundAttack.play(SoundSettings.soundVolume);
         }
     }
-    protected float shootCooldown = 0.5f;
-    private float lastShootTime;
+    protected float throwCooldown = 0.5f;
+    private float lastThrowTime;
     protected boolean attacking = false;
 
-    public Bullet shoot(Vector2 mousePosition) {
-        if(!allowedMotion) return null;
-        if((TimeUtils.nanoTime() - lastShootTime) / 1000000000.0f > shootCooldown) {
-            lastShootTime = TimeUtils.nanoTime();
-            Bullet bullet = new Bullet(positionCenter(), mousePosition);
-            changeAnimationsFor(bullet.direction);
-            return bullet;
-        }
-        return null;
+    public boolean canThrow() {
+        if(!allowedMotion) return false;
+        return (AnimationGlobalTime.x - lastThrowTime >= throwCooldown);
     }
+    public void throwItem(Vector2 mousePosition, Item item, boolean rotating) {
+        if(!canThrow()) return;
+        lastThrowTime = AnimationGlobalTime.x;
+        Bullet bullet = new ThrowableItem(positionCenter(), mousePosition, item, this, rotating);
+        changeAnimationsFor(bullet.direction);
+        ObjectsList.add(bullet);
+    }
+
     @Override public Rectangle collisionBox(){return collisionBox;}
     @Override public Rectangle hitBox() {return hitBox;}
-
-
 
     protected boolean checkCollisions(){
         Rectangle temp = collisionBox();
@@ -188,7 +194,7 @@ abstract public class Entity extends InteractiveObject {
     public void changePosition(Vector2 positionNew) {
         position.set(positionNew);
     }
-    public Vector2 positionCenter() {
+    @Override public Vector2 positionCenter() {
         tempPosition.set(position.x + regionWidth / 2, position.y + regionHeight / 2);
         return tempPosition;
     }
@@ -200,8 +206,8 @@ abstract public class Entity extends InteractiveObject {
         if(tile != lastTile) lastStepTime = 0f;
         lastTile = tile;
         if(action != 1) return false;
-        if((TimeUtils.nanoTime() - lastStepTime) / 1000000000.0f  >= stepCooldown / (getSpeed() / 10)) {
-            lastStepTime = TimeUtils.nanoTime();
+        if((AnimationGlobalTime.x - lastStepTime)  >= stepCooldown / (getSpeed() / 10)) {
+            lastStepTime = AnimationGlobalTime.x;
             return true;
         }
         return false;

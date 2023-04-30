@@ -14,7 +14,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
+import com.shrubyway.game.item.ThrowableItem;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.ObjectsList;
@@ -113,7 +115,13 @@ public class ShrubyWay extends ApplicationAdapter {
         if((leftClick || rightClick) &&
                 !Inventory.checkClick(inputProcessor.mousePosition())) {
             if(leftClick) {
-                 ObjectsList.add(MobsManager.newOf(0, mousePosition.x, mousePosition.y));
+                if(player.canThrow()) {
+                    Item temp = Inventory.takeToThrow();
+                    if(temp != null) {
+                        player.throwItem(mousePosition, temp, true);
+                    }
+
+                }
             }
             if(rightClick) {
 
@@ -157,15 +165,28 @@ public class ShrubyWay extends ApplicationAdapter {
     CopyOnWriteArrayList<VisibleObject> temp = new CopyOnWriteArrayList<VisibleObject>();
     CopyOnWriteArrayList<InteractiveObject> temp2 = new CopyOnWriteArrayList<InteractiveObject>();
 
+    float lastMobUpdate = 5f;
     public void globalProcessing() {
+        if(player.health.timeAfterHeal() >= 3 && Math.random() < 0.05f) {
+            player.health.heal(1);
+        }
+        if(AnimationGlobalTime.x - lastMobUpdate > 1f) {
+            lastMobUpdate = AnimationGlobalTime.x;
+            MobsManager.playerAddUpdate(1);
+            MobsManager.tryGenerateMob(player.positionLegs());
+        }
+
         temp.clear(); temp2.clear();
         for(VisibleObject obj: ObjectsList.getList()) {
             temp.add(obj);
         }
+        map.updateRenderingObjects(player.positionCenter());
+
        for (VisibleObject obj : temp) {
             if(!ObjectsList.getList().contains(obj)) continue;
             if (obj instanceof Bullet) {
-                ((Bullet) obj).tryMove();
+                ((Bullet)obj).processBullet(player.positionCenter());
+
             } else
             if (obj instanceof Entity) {
                 Entity temp = (Entity) obj;
@@ -174,17 +195,14 @@ public class ShrubyWay extends ApplicationAdapter {
                     ((Mob) obj).ai(player.positionLegs());
                 }
                 if (((Entity) obj).makingStep(map.checkTile(((Entity) obj).positionLegs()))) {
-                    map.makeStep(((Entity) obj).positionLegs(), player.positionLegs());
+
+                    map.makeStep(((Entity) obj).positionLegs(), player.positionCenter());
                 }
             } else
             if(obj instanceof VisibleItem){
                 ((VisibleItem) obj).moveToPlayer(player.positionItemDrop());
             }
         }
-
-
-
-        map.updateRenderingObjects(player.positionCenter());
 
         for(VisibleObject obj: ObjectsList.getList()) {
             if(obj instanceof InteractiveObject) temp2.add((InteractiveObject) obj);
@@ -194,19 +212,24 @@ public class ShrubyWay extends ApplicationAdapter {
             if(!ObjectsList.getList().contains(obj)) continue;
 
             if(obj.attackBox() != null && obj.attackBox().topLeftCorner.x < obj.attackBox().bottomRightCorner.x) {
-
                 for(InteractiveObject obj2 : temp2){
                     if(!ObjectsList.getList().contains(obj2)) continue;
                     if(obj == obj2) continue;
 
                     if(obj2.hitBox() != null) {
                         if (obj.attackBox().overlaps(obj2.hitBox())) {
+                            if(obj instanceof Bullet) {
+                                if(((Bullet)obj).whoThrow == obj2) continue;
+                            }
                             if(obj2 instanceof Decoration) {
                                 ((Decoration) obj2).interact();
                             } else
                             if(obj2 instanceof Entity) {
-                                ((Entity) obj2).getDamage(((Entity) obj).damage,
-                                        ((Entity) obj).positionCenter());
+                                ((Entity) obj2).getDamage(obj.damage,
+                                        obj.positionCenter());
+                            }
+                            if(obj instanceof Bullet) {
+                                ((Bullet) obj).die();
                             }
                         }
                     }
@@ -252,7 +275,8 @@ public class ShrubyWay extends ApplicationAdapter {
         HealthBar.render(batch, player.health);
         Inventory.render(batch, inputProcessor.mousePosition());
         Runtime runtime = Runtime.getRuntime();
-        TextDrawer.drawWhite(batch, player.health.getHealth() + " " + (runtime.totalMemory() - runtime.freeMemory()) / 1024f / 1024f, 100, 100, 0.5f);
+        TextDrawer.drawWhite(batch, ""
+                + (runtime.totalMemory() - runtime.freeMemory()) / 1024f / 1024f, 100, 100, 0.5f);
         batch.end();
     }
 

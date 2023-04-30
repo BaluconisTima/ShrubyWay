@@ -15,27 +15,24 @@ import java.io.FileNotFoundException;
 import java.util.*;
 
 public class Background {
-    static final int TILENUMBER = 256;
-    char backgroundMap[][] = new char[TILENUMBER][TILENUMBER];
-    private final int renderDistanceX = 13, renderDistanceY = 10;
-    private final float soundDistanceX = 1200, soundDistanceY = 1200;
+
+    char backgroundMap[][] = new char[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
     private int level;
-    static final int TILETYPES = 4;
-    static final int TYLESIZE = 150;
+
 
     Animation<TextureRegion> tile[][];
-    long tileSound[] = new long[TILETYPES];
-    Sound stepSound[][] = new Sound[TILETYPES][2];
+    long tileSound[] = new long[MapSettings.TILETYPES];
+    Sound stepSound[][] = new Sound[MapSettings.TILETYPES][2];
     int tileWithSound[] = {0};
 
-    float nearestTile[] = new float[TILETYPES];
+    float nearestTile[] = new float[MapSettings.TILETYPES];
     Sound sound;
     static SoundSettings soundSettings;
 
 
     private void animationsLoader() {
-        tile = new Animation[TILETYPES][2];
-        for (int i = 0; i < TILETYPES; i++)
+        tile = new Animation[MapSettings.TILETYPES][2];
+        for (int i = 0; i < MapSettings.TILETYPES; i++)
             for (int j = 0; j < 2; j++) {
                 String way = "TILES/" + i + "/" + j + "/";
                 File folder = new File(way);
@@ -55,7 +52,7 @@ public class Background {
             int j = 0;
             while (scanner.hasNextLine()) {
                 String temp = scanner.nextLine();
-                for (int q = 0; q < TILENUMBER; q++) {
+                for (int q = 0; q < MapSettings.TILENUMBER; q++) {
                     backgroundMap[j][q] = temp.charAt(q);
                 }
                 j++;
@@ -66,7 +63,7 @@ public class Background {
     }
 
     private void soundLoader() {
-        for (int i = 0; i < TILETYPES; i++) {
+        for (int i = 0; i < MapSettings.TILETYPES; i++) {
             tileSound[i] = -1;
             stepSound[i][0] = Gdx.audio.newSound(Gdx.files.internal("sounds/STEPS/" + i + "_0.ogg"));
             stepSound[i][1] = Gdx.audio.newSound(Gdx.files.internal("sounds/STEPS/" + i + "_1.ogg"));
@@ -88,27 +85,34 @@ public class Background {
 
 
     public void render(Batch batch, Vector2 playerPosition) {
-        for (int i = 0; i < TILETYPES; i++) {
+        for (int i = 0; i < MapSettings.TILETYPES; i++) {
             nearestTile[i] = 1;
         }
         int x = 0;
         x += playerPosition.x;
-        x /= TYLESIZE;
+        x /= MapSettings.TYLESIZE;
         int y = 0;
         y += playerPosition.y;
-        y /= TYLESIZE;
+        y /= MapSettings.TYLESIZE;
         for (int d = 0; d < 2; d++)
-            for (int i = x - renderDistanceX; i < x + renderDistanceX; i++)
-                for (int j = y - renderDistanceY; j < y + renderDistanceY; j++) {
+            for (int i = x - MapSettings.visibleDistanceX; i < x + MapSettings.visibleDistanceX; i++)
+                for (int j = y - MapSettings.visibleDistanceY; j < y + MapSettings.visibleDistanceY; j++) {
                     if (Math.abs(i + j) % 2 != d) continue;
-                    int i2 = (i + TILENUMBER) % TILENUMBER, j2 = (j + TILENUMBER) % TILENUMBER;
+                    int i2 = (i + MapSettings.TILENUMBER) % MapSettings.TILENUMBER,
+                            j2 = (j + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
                     int tile = backgroundMap[i2][j2] - '0';
-                    nearestTile[tile] = Math.min(nearestTile[tile],
-                            Math.max(Math.abs(i * TYLESIZE + TYLESIZE / 2 - playerPosition.x) / soundDistanceX,
-                                    Math.abs(j * TYLESIZE + TYLESIZE / 2 - playerPosition.y) / soundDistanceY));
+                    tempDistance.set(i * MapSettings.TYLESIZE
+                            + MapSettings.TYLESIZE / 2,
+                            j * MapSettings.TYLESIZE
+                                    + MapSettings.TYLESIZE / 2);
+                    tempDistance.sub(playerPosition);
+                    float temp1 = tempDistance.len(); temp1 = temp1 / MapSettings.soundDistance;
+                    temp1 = Math.min(temp1, 1);
+                    nearestTile[tile] = Math.min(nearestTile[tile], temp1);
+
                     TextureRegion tempTexture = this.tile[tile][d].getKeyFrame(AnimationGlobalTime.x, true);
-                    batch.draw(tempTexture, (i * TYLESIZE) - 25,
-                            (j * TYLESIZE) - 25,
+                    batch.draw(tempTexture, (i * MapSettings.TYLESIZE) - 25,
+                            (j * MapSettings.TYLESIZE) - 25,
                             200,
                             200);
                 }
@@ -119,17 +123,17 @@ public class Background {
 
     public boolean checkLiquid(Vector2 playerPosition) {
         int xr = 0;
-        xr += (playerPosition.x + 10) / TYLESIZE;
+        xr += (playerPosition.x + 10) / MapSettings.TYLESIZE;
         int xl = 0;
-        xl += (playerPosition.x - 10) / TYLESIZE;
+        xl += (playerPosition.x - 10) / MapSettings.TYLESIZE;
         int yr = 0;
-        yr += (playerPosition.y + 10) / TYLESIZE;
+        yr += (playerPosition.y + 10) / MapSettings.TYLESIZE;
         int yl = 0;
-        yl += (playerPosition.y - 10) / TYLESIZE;
-        xr = (xr + TILENUMBER) % TILENUMBER;
-        xl = (xl + TILENUMBER) % TILENUMBER;
-        yr = (yr + TILENUMBER) % TILENUMBER;
-        yl = (yl + TILENUMBER) % TILENUMBER;
+        yl += (playerPosition.y - 10) / MapSettings.TYLESIZE;
+        xr = (xr + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
+        xl = (xl + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
+        yr = (yr + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
+        yl = (yl + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
 
         return (backgroundMap[xr][yr] == '0'
                 && backgroundMap[xr][yl] == '0' &&
@@ -139,26 +143,31 @@ public class Background {
 
     public char checkTile(Vector2 position) {
         int x = 0;
-        x += (position.x) / TYLESIZE;
+        x += (position.x) / MapSettings.TYLESIZE;
         int y = 0;
-        y += (position.y) / TYLESIZE;
-        x = (x + TILENUMBER) % TILENUMBER;
-        y = (y + TILENUMBER) % TILENUMBER;
+        y += (position.y) / MapSettings.TYLESIZE;
+        x = (x + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
+        y = (y + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
         return backgroundMap[x][y];
     }
-
+   Vector2 tempDistance = new Vector2(0,0);
     void makeStep(Vector2 step, Vector2 playerPosition) {
         int x = 0;
-        x += (step.x) / TYLESIZE;
+        x += (step.x) / MapSettings.TYLESIZE;
         int y = 0;
-        y += (step.y) / TYLESIZE;
-        x = (x + TILENUMBER) % TILENUMBER;
-        y = (y + TILENUMBER) % TILENUMBER;
+        y += (step.y) / MapSettings.TYLESIZE;
+        x = (x + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
+        y = (y + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
 
-        long temp = stepSound[backgroundMap[x][y] - '0'][(int) (Math.random() * 1.999)].play(1f * soundSettings.soundVolume);
+        long temp = stepSound[backgroundMap[x][y] - '0']
+                [(int) (Math.random() * 1.999)].play();
+
         sound.setPitch(temp, 1 + (float) Math.random() * 0.2f - 0.1f);
-        sound.setVolume(temp, 1 - Math.max(Math.abs(step.x - playerPosition.x) / soundDistanceX,
-                Math.abs(step.y - playerPosition.y) / soundDistanceY));
+        tempDistance.set(step.x, step.y);
+        tempDistance.sub(playerPosition);
+        float temp1 = tempDistance.len(); temp1 = temp1 / MapSettings.soundDistance;
+        temp1 = Math.min(temp1, 1);
+        sound.setVolume(temp,  (1 - temp1) * soundSettings.soundVolume);
 
     }
 

@@ -1,12 +1,16 @@
 package com.shrubyway.game;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.shrubyway.game.animation.AnimationGlobalTime;
 
 public class Health {
     private float health;
     private float maxHealth;
     private float cooldown;
     private float lastHitTime;
+
+    private float lastHealTime;
 
     public Health(float maxHealth) {
         this.maxHealth = maxHealth;
@@ -22,13 +26,17 @@ public class Health {
     }
 
     public void getDamage(float damage) {
-        if(TimeUtils.millis() - lastHitTime >= cooldown) {
+        if(AnimationGlobalTime.x - lastHitTime < cooldown) return;
+            if(health <= 0) return;
             health -= damage;
-            lastHitTime = TimeUtils.millis();
-        }
+            lastHitTime = AnimationGlobalTime.x;
+    }
+    public float lastHitTime() {
+        return lastHitTime;
     }
     public void heal(float heal) {
         health += heal;
+        lastHealTime = AnimationGlobalTime.x;
         if(health > maxHealth) health = maxHealth;
     }
     public float getHealth() {
@@ -38,6 +46,9 @@ public class Health {
         return maxHealth;
     }
     public float timeAfterHit() {
-        return TimeUtils.millis() - lastHitTime;
+        return AnimationGlobalTime.x - lastHitTime;
+    }
+    public float timeAfterHeal() {
+        return AnimationGlobalTime.x - lastHealTime;
     }
 }

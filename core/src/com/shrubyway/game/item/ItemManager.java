@@ -1,10 +1,11 @@
 package com.shrubyway.game.item;
 
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class ItemManager {
     public static int itemNumber = 3;
-    public static Texture itemTexture[] = new Texture[itemNumber];
+    public static TextureRegion itemTexture[] = new TextureRegion[itemNumber];
     public static String itemName[] = new String[itemNumber];
     public static String itemDescription[] = new String[itemNumber];
     public static float throwingDamage[] = new float[itemNumber];
@@ -12,7 +13,7 @@ public class ItemManager {
 
     public static void init() {
         for (int i = 0; i < itemNumber; i++) {
-            itemTexture[i] = new Texture("Items/" + i + ".png");
+            itemTexture[i] = new TextureRegion(new Texture("Items/" + i + ".png"));
         }
         itemName[0] = "Stone";
         itemDescription[0] = "A small stone.";

@@ -227,6 +227,17 @@ public class Inventory {
             if(numberOfItemInHand == 0) itemInHand = null;
         }
     }
+
+    static public Item takeToThrow() {
+        if(items[0][selected] != null
+                && ItemManager.throwingDamage[items[0][selected].id] > 0) {
+            Item temp = items[0][selected];
+            numberOfItem[0][selected]--;
+            if(numberOfItem[0][selected] == 0) items[0][selected] = null;
+            return temp;
+        }
+        return null;
+    }
     static public void changeSelected(int i) {
         selected = i - 1;
     }

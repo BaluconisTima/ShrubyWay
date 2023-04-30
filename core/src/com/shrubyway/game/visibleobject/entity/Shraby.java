@@ -38,12 +38,12 @@ public class Shraby extends Entity {
 
     public Shraby(float x, float y) {
         damage = 2f;
-        health = new Health(20);
+        health = new Health(20, 0.3f);
         speed = 10f;
 
         allowedMotion = false;
         action = 4;
-        shootCooldown = 0;
+        throwCooldown = 1f;
 
         if(animations == null) animations =
                 AnimationLoader.load("ENTITIES/SHRABY", actions, actionTypes, frameCount);
@@ -103,6 +103,15 @@ public class Shraby extends Entity {
         return collisionBox;
     }
 
+    @Override
+    public void getDamage(float damage, Vector2 hitPosition) {
+        if(health.getHealth() > 0 && damage != 0) {
+            Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/ShrabyDamage.ogg"));
+            sound.play(SoundSettings.soundVolume);
+        }
+        super.getDamage(damage, hitPosition);
+    }
+
     @Override public void die() {
         if(action == 3) return;
         Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/ShrabyDeath1.wav"));
@@ -132,9 +141,13 @@ public class Shraby extends Entity {
         }
     }
     @Override public void render(Batch batch) {
+        if(health.timeAfterHit() < 0.2f) {
+            batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
+        }
         animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(2.4f * getSpeed()));
            batch.draw(animations.get(action).get(faceDirection)[inLiquid ? 1: 0].getKeyFrame(animationTime, looping[action]),
                    Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
+        batch.setColor(1, 1, 1, 1);
     }
 
 

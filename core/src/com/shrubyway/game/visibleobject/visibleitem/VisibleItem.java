@@ -40,10 +40,10 @@ public class VisibleItem extends VisibleObject {
     @Override
     public void render(Batch batch) {
         batch.draw(ItemManager.itemTexture[item.id],
-                Math.round(position.x - ItemManager.itemTexture[item.id].getWidth() / 4),
+                Math.round(position.x - ItemManager.itemTexture[item.id].getRegionWidth() / 4),
                 Math.round(position.y - 16 * Math.sin(5 * (AnimationGlobalTime.x - dropTime))),
-                Math.round(ItemManager.itemTexture[item.id].getWidth() * 0.5f),
-                Math.round(ItemManager.itemTexture[item.id].getHeight() * 0.5f));
+                Math.round(ItemManager.itemTexture[item.id].getRegionWidth() * 0.5f),
+                Math.round(ItemManager.itemTexture[item.id].getRegionHeight() * 0.5f));
 
     }
 
@@ -74,7 +74,7 @@ public class VisibleItem extends VisibleObject {
 
     public Vector2 positionCenter() {
         tempVector.set(position.x,
-                 position.y + ItemManager.itemTexture[item.id].getHeight() / 4);
+                 position.y + ItemManager.itemTexture[item.id].getRegionHeight() / 4);
         return tempVector;
     }
 

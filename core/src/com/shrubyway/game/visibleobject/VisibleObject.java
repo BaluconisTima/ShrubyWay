@@ -16,8 +16,6 @@ public abstract class VisibleObject implements Comparable<VisibleObject> {
     @Override public int compareTo(VisibleObject o) {
         Integer y1 = Math.round(-(position().y));
         Integer y2 = Math.round(-o.position().y);
-        Integer x1 = Math.round(-(position().x));
-        Integer x2 = Math.round(-o.position().x);
         if(y1.equals(y2)) {
                 return (int) (id - o.id);
         }
