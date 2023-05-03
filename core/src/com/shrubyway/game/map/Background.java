@@ -27,7 +27,6 @@ public class Background {
 
     float nearestTile[] = new float[MapSettings.TILETYPES];
     Sound sound;
-    static SoundSettings soundSettings;
 
 
     private void animationsLoader() {
@@ -83,6 +82,17 @@ public class Background {
         soundLoader();
     }
 
+    void pauseSounds() {
+        for (int i : tileWithSound) {
+            sound.pause(i);
+        }
+    }
+
+    void resumeSounds() {
+        for (int i : tileWithSound) {
+            sound.resume(i);
+        }
+    }
 
     public void render(Batch batch, Vector2 playerPosition) {
         for (int i = 0; i < MapSettings.TILETYPES; i++) {
@@ -117,7 +127,7 @@ public class Background {
                             200);
                 }
         for (int i : tileWithSound) {
-            sound.setVolume(tileSound[i], Math.max(0, 0.7f * (1 - nearestTile[i]) * soundSettings.soundVolume));
+            sound.setVolume(tileSound[i], Math.max(0, 0.7f * (1 - nearestTile[i]) * SoundSettings.soundVolume));
         }
     }
 
@@ -167,7 +177,7 @@ public class Background {
         tempDistance.sub(playerPosition);
         float temp1 = tempDistance.len(); temp1 = temp1 / MapSettings.soundDistance;
         temp1 = Math.min(temp1, 1);
-        sound.setVolume(temp,  (1 - temp1) * soundSettings.soundVolume);
+        sound.setVolume(temp,  (1 - temp1) * SoundSettings.soundVolume);
 
     }
 

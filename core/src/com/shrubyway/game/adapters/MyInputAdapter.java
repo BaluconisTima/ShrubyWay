@@ -5,7 +5,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 
 public class MyInputAdapter extends InputAdapter {
-    private boolean leftPressed, rightPressed, upPressed, downPressed, spacePressed, ePressed, qPressed;
+    private boolean leftPressed, rightPressed, upPressed, downPressed, spacePressed, ePressed, qPressed, escPressed;
     private boolean numberPressed[] = new boolean[10];
     private boolean mouseLeft, mouseRight;
     private boolean runing;
@@ -24,6 +24,8 @@ public class MyInputAdapter extends InputAdapter {
         if(keycode == Input.Keys.CONTROL_LEFT) runing = true;
         if(keycode == Input.Keys.SPACE) spacePressed = true;
         if(keycode == Input.Keys.Q) qPressed = true;
+        if(keycode == Input.Keys.ESCAPE) escPressed = true;
+
         for(int i = 0; i < 10; i++) {
             if(keycode == Input.Keys.NUM_0 + i) numberPressed[i] = true;
         }
@@ -40,6 +42,7 @@ public class MyInputAdapter extends InputAdapter {
         if(keycode == Input.Keys.CONTROL_LEFT) runing = false;
         if(keycode == Input.Keys.SPACE) spacePressed = false;
         if(keycode == Input.Keys.Q) qPressed = false;
+        if(keycode == Input.Keys.ESCAPE) escPressed = false;
         return false;
     }
     @Override
@@ -107,6 +110,11 @@ public class MyInputAdapter extends InputAdapter {
         return ePressed;
     }
 
+    public boolean isEscPressed() {
+        if(escPressed) {escPressed = false; return true;}
+        return escPressed;
+    }
+
     public int numberPressed() {
         for(int i = 0; i < 10; i++) {
             if(numberPressed[i]) {
@@ -121,6 +129,7 @@ public class MyInputAdapter extends InputAdapter {
         scroll = 0;
         return x;
     }
+
 
 
     public boolean isRuning() {

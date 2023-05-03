@@ -2,12 +2,13 @@ package com.shrubyway.game.visibleobject;
 
 import com.shrubyway.game.animation.AnimationGlobalTime;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ObjectsList {
+public class ObjectsList implements Serializable {
     static private CopyOnWriteArrayList<VisibleObject> list = new CopyOnWriteArrayList<>();
 
     public static void add(VisibleObject object) {

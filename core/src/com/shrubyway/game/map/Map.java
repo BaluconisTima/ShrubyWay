@@ -35,7 +35,13 @@ public class Map {
             }
         } catch (FileNotFoundException e) {
         }
-        ;
+    }
+
+    public void pauseSounds() {
+        background.pauseSounds();
+    }
+    public void resumeSounds() {
+        background.resumeSounds();
     }
 
 

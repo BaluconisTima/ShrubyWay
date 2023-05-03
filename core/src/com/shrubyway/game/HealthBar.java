@@ -8,7 +8,7 @@ public class HealthBar {
     static Texture base = new Texture("interface/heartBase.png");
     static Texture bar = new Texture("interface/heart.png");
     static TextureRegion halfbar = new TextureRegion(bar, 38, 0, 38, 70);
-    static void render(Batch batch, Health health) {
+    static public void render(Batch batch, Health health) {
         float x = health.getHealth() / health.getMaxHealth() * 10;
 
        for(int i = 0; i < 10; i++) {

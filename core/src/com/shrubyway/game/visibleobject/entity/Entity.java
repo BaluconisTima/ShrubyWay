@@ -69,10 +69,9 @@ abstract public class Entity extends InteractiveObject {
     }
 
 
-    protected void changeAnimationsFor(Vector2 direction) {
+    protected void changeAnimationsFor(Vector2 direction, int actionLocal) {
         if(!allowedMotion) return;
-        if(direction.x == 0 && direction.y == 0) action = 0;
-        else action = 1;
+        action = actionLocal;
 
         if(Math.abs(direction.x) > Math.abs(direction.y)) {
             if(direction.x < 0) faceDirection = 2;
@@ -127,7 +126,7 @@ abstract public class Entity extends InteractiveObject {
                 position.add(tempDirection);
             }
         }
-        changeAnimationsFor(direction);
+        changeAnimationsFor(direction, direction.len() < 0.1f ? 0 : 1);
         return moved;
     };
 
@@ -167,7 +166,7 @@ abstract public class Entity extends InteractiveObject {
         if(!canThrow()) return;
         lastThrowTime = AnimationGlobalTime.x;
         Bullet bullet = new ThrowableItem(positionCenter(), mousePosition, item, this, rotating);
-        changeAnimationsFor(bullet.direction);
+        changeAnimationsFor(bullet.direction, 2);
         ObjectsList.add(bullet);
     }
 
