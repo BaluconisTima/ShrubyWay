@@ -1,5 +1,2 @@
-// TODO HP
-// TODO Enemies
-// TODO Enemies AI
 // TODO Saves
 // TODO Menu

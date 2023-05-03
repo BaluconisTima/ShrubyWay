@@ -1,11 +1,11 @@
-# Shraby Way
+# Shruby Way
 
 A 2.5D game with elements of survival and RPG, made in a nice animated style.
 
 ![](JumpOut.gif)
 
 ## Gameplay
-An ordinary shrub named Shraby finds himself caught up in adventures in other worlds in search of a way home. In the process, he will be forced to fight various opponents, collect items, evolve, meet characters and learn the reasons for everything that is going on.
+An ordinary shrub named Shruby finds himself caught up in adventures in other worlds in search of a way home. In the process, he will be forced to fight various opponents, collect items, evolve, meet characters and learn the reasons for everything that is going on.
 
 All of the environments in the game, (e.g. bushes and trees, etc.) are interactive. For example, when interacting with a pine tree with some chance you can get cones, which can later be used as a throwing weapon. Interacting with some elements of the environment can lead to both good and bad results for the player.
 

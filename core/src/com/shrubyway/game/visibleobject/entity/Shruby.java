@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.shrubyway.game.Health;
-import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.AnimationLoader;
 import com.shrubyway.game.shapes.Rectangle;
@@ -18,10 +17,9 @@ import com.shrubyway.game.visibleobject.ObjectsList;
 import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 
-public class Shraby extends Entity {
+public class Shruby extends Entity {
 
     static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH", "PORTAL"};
     static protected boolean looping[] =
@@ -36,7 +34,7 @@ public class Shraby extends Entity {
             new ArrayList<>(Arrays.asList("OUT"))};
     static int frameCount[] = {30, 30, 14, 34, 34};
 
-    public Shraby(float x, float y) {
+    public Shruby(float x, float y) {
         damage = 2f;
         health = new Health(20, 0.3f);
         speed = 10f;

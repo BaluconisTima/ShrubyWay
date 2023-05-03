@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.shrubyway.game.HealthBar;
 import com.shrubyway.game.Inventory;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.TextDrawer;
 import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
@@ -23,22 +24,19 @@ import com.shrubyway.game.visibleobject.bullet.Bullet;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
 import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
 import com.shrubyway.game.visibleobject.entity.Entity;
-import com.shrubyway.game.visibleobject.entity.Shraby;
+import com.shrubyway.game.visibleobject.entity.Shruby;
 import com.shrubyway.game.visibleobject.entity.mob.Mob;
 import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
-
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Game extends Screen{
-    Shraby player;
+    Shruby player;
     Map map;
     SpriteBatch batch;
     OrthographicCamera camera;
     Vector2 cameraPosition;
     Vector2 mousePosition;
-
-    MyInputAdapter inputProcessor;
 
 
     public Game() {
@@ -48,11 +46,10 @@ public class Game extends Screen{
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
-        inputProcessor = new MyInputAdapter();
         MobsManager.init();
         DecorationsManager.init();
         map = new Map(1);
-        player = new Shraby(50, 50);
+        player = new Shruby(50, 50);
 
         cameraPosition = new Vector2(player.positionCenter());
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -87,21 +84,21 @@ public class Game extends Screen{
 
     boolean leftClick = false, rightClick = false;
     public void playerInputWorking() {
-        player.running(inputProcessor.isRuning());
-        Vector2 movingVector = inputProcessor.getMovementDirection();
-        mousePosition = new Vector2(inputProcessor.mousePosition().x + cameraPosition.x - Gdx.graphics.getWidth() / 2,
-                inputProcessor.mousePosition().y + cameraPosition.y - Gdx.graphics.getHeight() / 2);
-        leftClick = inputProcessor.isMouseLeft();
-        rightClick = inputProcessor.isMouseRight();
+        player.running(ShrubyWay.inputProcessor.isRuning());
+        Vector2 movingVector = ShrubyWay.inputProcessor.getMovementDirection();
+        mousePosition = new Vector2(ShrubyWay.inputProcessor.mousePosition().x + cameraPosition.x - Gdx.graphics.getWidth() / 2,
+                ShrubyWay.inputProcessor.mousePosition().y + cameraPosition.y - Gdx.graphics.getHeight() / 2);
+        leftClick = ShrubyWay.inputProcessor.isMouseLeft();
+        rightClick = ShrubyWay.inputProcessor.isMouseRight();
         player.tryMoveTo(movingVector);
         correctPosition();
 
 
-        if (inputProcessor.isSpacePressed()) {
+        if (ShrubyWay.inputProcessor.isSpacePressed()) {
             player.attack();
         }
         if((leftClick || rightClick) &&
-                !Inventory.checkClick(inputProcessor.mousePosition())) {
+                !Inventory.checkClick(ShrubyWay.inputProcessor.mousePosition())) {
             if(leftClick) {
                 if(player.canThrow()) {
                     Item temp = Inventory.takeToThrow();
@@ -121,7 +118,7 @@ public class Game extends Screen{
     public float lastDrop = -1000000000f;
 
     public void menuInputWorking() {
-        if(inputProcessor.isEscPressed()) {
+        if(ShrubyWay.inputProcessor.isEscPressed()) {
             if(gamePaused) {
                 resume();
             } else {
@@ -130,29 +127,29 @@ public class Game extends Screen{
         }
     }
     public void interfaceInputWorking() {
-        if(inputProcessor.isEPressed()){
+        if(ShrubyWay.inputProcessor.isEPressed()){
             Inventory.changeOpenned();
         }
 
-        int x = inputProcessor.numberPressed();
+        int x = ShrubyWay.inputProcessor.numberPressed();
         if(x > 0) {
             Inventory.changeSelected(x);
         }
-        x = inputProcessor.getScroll();
+        x = ShrubyWay.inputProcessor.getScroll();
         Inventory.addSelected(x);
 
-        if(inputProcessor.isQPressed() && (AnimationGlobalTime.x -
+        if(ShrubyWay.inputProcessor.isQPressed() && (AnimationGlobalTime.x -
                 lastDrop) > 0.1f) {
             lastDrop = AnimationGlobalTime.x;
             Inventory.dropItem(player.faceDirection, player.positionItemDrop());
         }
         if(leftClick){
             leftClick = false;
-            Inventory.leftClick(inputProcessor.mousePosition());
+            Inventory.leftClick(ShrubyWay.inputProcessor.mousePosition());
         }
         if(rightClick){
             rightClick = false;
-            Inventory.rightClick(inputProcessor.mousePosition());
+            Inventory.rightClick(ShrubyWay.inputProcessor.mousePosition());
         }
         if(!Inventory.opened) {
             Inventory.dropItemHand(player.faceDirection, player.positionItemDrop());
@@ -270,7 +267,7 @@ public class Game extends Screen{
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         HealthBar.render(batch, player.health);
-        Inventory.render(batch, inputProcessor.mousePosition());
+        Inventory.render(batch, ShrubyWay.inputProcessor.mousePosition());
 
         if(gamePaused) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);

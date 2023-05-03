@@ -10,7 +10,7 @@ import com.shrubyway.game.screen.Menu;
 
 public class ShrubyWay extends ApplicationAdapter {
     static Screen screen;
-    static MyInputAdapter inputProcessor = new MyInputAdapter();
+    static public MyInputAdapter inputProcessor = new MyInputAdapter();
 
     @Override public void create() {
         Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_LINEAR);
