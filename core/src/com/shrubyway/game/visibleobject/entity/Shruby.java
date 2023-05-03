@@ -44,7 +44,7 @@ public class Shruby extends Entity {
         throwCooldown = 0.2f;
 
         if(animations == null) animations =
-                AnimationLoader.load("ENTITIES/SHRABY", actions, actionTypes, frameCount);
+                AnimationLoader.load("ENTITIES/SHRUBY", actions, actionTypes, frameCount);
         position.set(x, y);
         regionWidth = (animations.get(0).get(0)[0].getKeyFrame(AnimationGlobalTime.x)).getRegionWidth();
         regionHeight = animations.get(0).get(0)[0].getKeyFrame(AnimationGlobalTime.x).getRegionHeight();

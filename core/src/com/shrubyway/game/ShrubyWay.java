@@ -17,7 +17,7 @@ public class ShrubyWay extends ApplicationAdapter {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setVSync(true);
-        screen = new Menu();
+        screen = new Game();
         Gdx.input.setInputProcessor(inputProcessor);
     }
 
