@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.sound.SoundSettings;
 
@@ -39,7 +40,10 @@ public class Background {
                 Arrays.sort(files);
                 TextureRegion[] animationFrames = new TextureRegion[files.length];
                 for (int q = 0; q < files.length; q++) {
-                    animationFrames[q] = new TextureRegion(new Texture(way + files[q].getName()));
+                    GlobalAssetManager.assetManager.load(way + files[q].getName(), Texture.class);
+                    GlobalAssetManager.assetManager.finishLoadingAsset(way + files[q].getName());
+                    animationFrames[q] = new TextureRegion(GlobalAssetManager.assetManager.get(way + files[q].getName(),
+                            Texture.class));
                 }
                 tile[i][j] = new Animation<>(1 / 24f, animationFrames);
             }
@@ -64,11 +68,17 @@ public class Background {
     private void soundLoader() {
         for (int i = 0; i < MapSettings.TILETYPES; i++) {
             tileSound[i] = -1;
-            stepSound[i][0] = Gdx.audio.newSound(Gdx.files.internal("sounds/STEPS/" + i + "_0.ogg"));
-            stepSound[i][1] = Gdx.audio.newSound(Gdx.files.internal("sounds/STEPS/" + i + "_1.ogg"));
+            GlobalAssetManager.assetManager.load("sounds/STEPS/" + i + "_0.ogg", Sound.class);
+            GlobalAssetManager.assetManager.load("sounds/STEPS/" + i + "_1.ogg", Sound.class);
+            GlobalAssetManager.assetManager.finishLoading();
+            stepSound[i][0] = GlobalAssetManager.assetManager.get("sounds/STEPS/" + i + "_0.ogg", Sound.class);
+            stepSound[i][1] = GlobalAssetManager.assetManager.get("sounds/STEPS/" + i + "_1.ogg", Sound.class);
         }
+
         for (int to : tileWithSound) {
-            sound = Gdx.audio.newSound(Gdx.files.internal("sounds/TILES/" + to + ".ogg"));
+            GlobalAssetManager.assetManager.load("sounds/TILES/" + to + ".ogg", Sound.class);
+            GlobalAssetManager.assetManager.finishLoading();
+            sound = GlobalAssetManager.assetManager.get("sounds/TILES/" + to + ".ogg", Sound.class);
             tileSound[to] = sound.play();
             sound.setLooping(tileSound[to], true);
             sound.setVolume(tileSound[to], 0);
@@ -120,7 +130,7 @@ public class Background {
                     temp1 = Math.min(temp1, 1);
                     nearestTile[tile] = Math.min(nearestTile[tile], temp1);
 
-                    TextureRegion tempTexture = this.tile[tile][d].getKeyFrame(AnimationGlobalTime.x, true);
+                    TextureRegion tempTexture = this.tile[tile][d].getKeyFrame(AnimationGlobalTime.time(), true);
                     batch.draw(tempTexture, (i * MapSettings.TYLESIZE) - 25,
                             (j * MapSettings.TYLESIZE) - 25,
                             200,
@@ -174,11 +184,12 @@ public class Background {
 
         sound.setPitch(temp, 1 + (float) Math.random() * 0.2f - 0.1f);
         tempDistance.set(step.x, step.y);
+
+
         tempDistance.sub(playerPosition);
         float temp1 = tempDistance.len(); temp1 = temp1 / MapSettings.soundDistance;
         temp1 = Math.min(temp1, 1);
         sound.setVolume(temp,  (1 - temp1) * SoundSettings.soundVolume);
-
     }
 
 }

@@ -8,11 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.shrubyway.game.HealthBar;
-import com.shrubyway.game.Inventory;
-import com.shrubyway.game.ShrubyWay;
-import com.shrubyway.game.TextDrawer;
-import com.shrubyway.game.adapters.MyInputAdapter;
+import com.shrubyway.game.*;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
@@ -28,9 +24,10 @@ import com.shrubyway.game.visibleobject.entity.Shruby;
 import com.shrubyway.game.visibleobject.entity.mob.Mob;
 import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
+
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Game extends Screen{
+public class Game extends Screen {
     Shruby player;
     Map map;
     SpriteBatch batch;
@@ -53,14 +50,16 @@ public class Game extends Screen{
 
         cameraPosition = new Vector2(player.positionCenter());
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.position.set(cameraPosition.x, cameraPosition.y, 0);
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        camera.position.set(cameraPosition.x, cameraPosition.y, 0);
         camera.update();
-
         ObjectsList.add(player);
         ItemManager.init();
-        AnimationGlobalTime.x = 0f;
+        GlobalAssetManager.assetManager.finishLoading();
+        loaded = true;
+        AnimationGlobalTime.clear();
     }
+
     public void correctPosition() {
         Vector2 temp = new Vector2(player.position());
         if (temp.x < 0) {
@@ -83,6 +82,7 @@ public class Game extends Screen{
     }
 
     boolean leftClick = false, rightClick = false;
+
     public void playerInputWorking() {
         player.running(ShrubyWay.inputProcessor.isRuning());
         Vector2 movingVector = ShrubyWay.inputProcessor.getMovementDirection();
@@ -97,61 +97,62 @@ public class Game extends Screen{
         if (ShrubyWay.inputProcessor.isSpacePressed()) {
             player.attack();
         }
-        if((leftClick || rightClick) &&
+        if ((leftClick || rightClick) &&
                 !Inventory.checkClick(ShrubyWay.inputProcessor.mousePosition())) {
-            if(leftClick) {
-                if(player.canThrow()) {
+            if (leftClick) {
+                if (player.canThrow()) {
                     Item temp = Inventory.takeToThrow();
-                    if(temp != null) {
+                    if (temp != null) {
                         player.throwItem(mousePosition, temp, true);
                     }
 
                 }
             }
-            if(rightClick) {
+            if (rightClick) {
                 ObjectsList.add(new VisibleItem(new Item(0), mousePosition.x, mousePosition.y));
             }
             leftClick = false;
             rightClick = false;
         }
     }
+
     public float lastDrop = -1000000000f;
 
     public void menuInputWorking() {
-        if(ShrubyWay.inputProcessor.isEscPressed()) {
-            if(gamePaused) {
+        if (ShrubyWay.inputProcessor.isEscPressed()) {
+            if (gamePaused) {
                 resume();
             } else {
                 pause();
             }
         }
     }
+
     public void interfaceInputWorking() {
-        if(ShrubyWay.inputProcessor.isEPressed()){
+        if (ShrubyWay.inputProcessor.isEPressed()) {
             Inventory.changeOpenned();
         }
-
         int x = ShrubyWay.inputProcessor.numberPressed();
-        if(x > 0) {
+        if (x > 0) {
             Inventory.changeSelected(x);
         }
         x = ShrubyWay.inputProcessor.getScroll();
         Inventory.addSelected(x);
 
-        if(ShrubyWay.inputProcessor.isQPressed() && (AnimationGlobalTime.x -
+        if (ShrubyWay.inputProcessor.isQPressed() && (AnimationGlobalTime.time() -
                 lastDrop) > 0.1f) {
-            lastDrop = AnimationGlobalTime.x;
+            lastDrop = AnimationGlobalTime.time();
             Inventory.dropItem(player.faceDirection, player.positionItemDrop());
         }
-        if(leftClick){
+        if (leftClick) {
             leftClick = false;
             Inventory.leftClick(ShrubyWay.inputProcessor.mousePosition());
         }
-        if(rightClick){
+        if (rightClick) {
             rightClick = false;
             Inventory.rightClick(ShrubyWay.inputProcessor.mousePosition());
         }
-        if(!Inventory.opened) {
+        if (!Inventory.opened) {
             Inventory.dropItemHand(player.faceDirection, player.positionItemDrop());
         }
 
@@ -162,69 +163,67 @@ public class Game extends Screen{
     CopyOnWriteArrayList<InteractiveObject> temp2 = new CopyOnWriteArrayList<InteractiveObject>();
 
     float lastMobUpdate = 5f;
+
     public void globalProcessing() {
-        if(player.health.timeAfterHeal() >= 3 && Math.random() < 0.05f) {
+        if (player.health.timeAfterHeal() >= 3 && Math.random() < 0.05f) {
             player.health.heal(1);
         }
-        if(AnimationGlobalTime.x - lastMobUpdate > 1f) {
-            lastMobUpdate = AnimationGlobalTime.x;
+        if (AnimationGlobalTime.time() - lastMobUpdate > 1f) {
+            lastMobUpdate = AnimationGlobalTime.time();
             MobsManager.playerAddUpdate(1);
             MobsManager.tryGenerateMob(player.positionLegs());
         }
-
-        temp.clear(); temp2.clear();
-        for(VisibleObject obj: ObjectsList.getList()) {
+        temp.clear();
+        temp2.clear();
+        for (VisibleObject obj : ObjectsList.getList()) {
             temp.add(obj);
         }
         map.updateRenderingObjects(player.positionCenter());
 
         for (VisibleObject obj : temp) {
-            if(!ObjectsList.getList().contains(obj)) continue;
+            if (!ObjectsList.getList().contains(obj)) continue;
             if (obj instanceof Bullet) {
-                ((Bullet)obj).processBullet(player.positionCenter());
+                ((Bullet) obj).processBullet(player.positionCenter());
 
-            } else
-            if (obj instanceof Entity) {
+            } else if (obj instanceof Entity) {
                 Entity temp = (Entity) obj;
                 temp.liquidStatus(map.checkLiquid(((Entity) obj).positionLegs()));
-                if(obj instanceof Mob) {
+                if (obj instanceof Mob) {
                     ((Mob) obj).ai(player.positionLegs());
                 }
                 if (((Entity) obj).makingStep(map.checkTile(((Entity) obj).positionLegs()))) {
 
-                    map.makeStep(((Entity) obj).positionLegs(), player.positionCenter());
+                    map.makeStep(((Entity) obj).positionLegs(), player.positionLegs());
                 }
-            } else
-            if(obj instanceof VisibleItem){
+            } else if (obj instanceof VisibleItem) {
                 ((VisibleItem) obj).moveToPlayer(player.positionItemDrop());
             }
         }
 
-        for(VisibleObject obj: ObjectsList.getList()) {
-            if(obj instanceof InteractiveObject) temp2.add((InteractiveObject) obj);
+        for (VisibleObject obj : ObjectsList.getList()) {
+            if (obj instanceof InteractiveObject) temp2.add((InteractiveObject) obj);
         }
 
-        for(InteractiveObject obj : temp2){
-            if(!ObjectsList.getList().contains(obj)) continue;
+        for (InteractiveObject obj : temp2) {
+            if (!ObjectsList.getList().contains(obj)) continue;
 
-            if(obj.attackBox() != null && obj.attackBox().topLeftCorner.x < obj.attackBox().bottomRightCorner.x) {
-                for(InteractiveObject obj2 : temp2){
-                    if(!ObjectsList.getList().contains(obj2)) continue;
-                    if(obj == obj2) continue;
+            if (obj.attackBox() != null && obj.attackBox().topLeftCorner.x < obj.attackBox().bottomRightCorner.x) {
+                for (InteractiveObject obj2 : temp2) {
+                    if (!ObjectsList.getList().contains(obj2)) continue;
+                    if (obj == obj2) continue;
 
-                    if(obj2.hitBox() != null) {
+                    if (obj2.hitBox() != null) {
                         if (obj.attackBox().overlaps(obj2.hitBox())) {
-                            if(obj instanceof Bullet) {
-                                if(((Bullet)obj).whoThrow == obj2) continue;
+                            if (obj instanceof Bullet) {
+                                if (((Bullet) obj).whoThrow == obj2) continue;
                             }
-                            if(obj2 instanceof Decoration) {
+                            if (obj2 instanceof Decoration) {
                                 ((Decoration) obj2).interact();
-                            } else
-                            if(obj2 instanceof Entity) {
+                            } else if (obj2 instanceof Entity) {
                                 ((Entity) obj2).getDamage(obj.damage,
                                         obj.positionCenter());
                             }
-                            if(obj instanceof Bullet) {
+                            if (obj instanceof Bullet) {
                                 ((Bullet) obj).die();
                             }
                         }
@@ -233,8 +232,8 @@ public class Game extends Screen{
             }
         }
 
-        for(VisibleObject obj: ObjectsList.getList()) {
-            if(obj instanceof Entity) {
+        for (VisibleObject obj : ObjectsList.getList()) {
+            if (obj instanceof Entity) {
                 ((Entity) obj).update();
             }
         }
@@ -248,10 +247,10 @@ public class Game extends Screen{
         camera.position.set(Math.round(cameraPosition.x), Math.round(cameraPosition.y), 0);
         camera.update();
     }
+
     public void gameTick() {
         playerInputWorking();
         interfaceInputWorking();
-        AnimationGlobalTime.x += Gdx.graphics.getDeltaTime();
         globalProcessing();
         cameraUpdate();
     }
@@ -268,8 +267,9 @@ public class Game extends Screen{
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         HealthBar.render(batch, player.health);
         Inventory.render(batch, ShrubyWay.inputProcessor.mousePosition());
-
-        if(gamePaused) {
+        TextDrawer.drawWithShadow(batch, "" + Gdx.graphics.getFramesPerSecond(),
+                100, 100, 1);
+        if (gamePaused) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                     Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
@@ -282,15 +282,18 @@ public class Game extends Screen{
 
     public void pause() {
         gamePaused = true;
+        AnimationGlobalTime.pause();
         map.pauseSounds();
     }
 
     public void resume() {
         gamePaused = false;
+        AnimationGlobalTime.resume();
         map.resumeSounds();
     }
 
     ShapeRenderer shapeRenderer;
+
     public void renderFrame() {
         shapeRenderer = new ShapeRenderer();
         batch.setProjectionMatrix(camera.combined);
@@ -303,12 +306,14 @@ public class Game extends Screen{
 
     Boolean gamePaused = false;
 
-    @Override public void updateScreen() {
+    @Override
+    public void updateScreen() {
         menuInputWorking();
-        if(!gamePaused) gameTick();
+        if (!gamePaused) gameTick();
     }
 
-    @Override public void renderScreen() {
+    @Override
+    public void renderScreen() {
         renderFrame();
     }
 
