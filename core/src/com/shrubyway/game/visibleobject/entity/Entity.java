@@ -5,6 +5,7 @@ import com.badlogic.gdx.audio.Sound;
 
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.Health;
 
 import com.shrubyway.game.animation.AnimationGlobalTime;
@@ -20,6 +21,9 @@ import com.shrubyway.game.sound.SoundSettings;
 import java.util.TreeSet;
 
 abstract public class Entity extends InteractiveObject {
+
+
+
     public Health health;
     public byte faceDirection = 0;
     protected int action = 0;
@@ -35,7 +39,13 @@ abstract public class Entity extends InteractiveObject {
 
     protected char lastTile = '0';
     protected Boolean allowedMotion = false;
-    static Sound soundAttack = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/Swing.ogg"));
+    static Sound soundAttack;
+
+    static  {
+        GlobalAssetManager.assetManager.load("Sounds/EFFECTS/Swing.ogg", Sound.class);
+        GlobalAssetManager.assetManager.finishLoading();
+        soundAttack = GlobalAssetManager.assetManager.get("Sounds/EFFECTS/Swing.ogg");
+    }
 
 
     public float getSpeed() {
@@ -48,7 +58,6 @@ abstract public class Entity extends InteractiveObject {
     public void update() {
          tryMoveMomentum();
         attacking = false;
-        animationTime += Gdx.graphics.getDeltaTime();
     }
 
     public void getDamage(float damage) {
@@ -145,12 +154,12 @@ abstract public class Entity extends InteractiveObject {
     public void attack() {
         if(!allowedMotion && action != 2) return;
 
-        if((AnimationGlobalTime.x - lastAttackTime) > attackCooldown) {
+        if((AnimationGlobalTime.time() - lastAttackTime) > attackCooldown) {
             attacking = true;
-            animationTime = 0f;
+            animationTime = AnimationGlobalTime.time();
             allowedMotion = false;
             action = 2;
-            lastAttackTime = AnimationGlobalTime.x;
+            lastAttackTime = AnimationGlobalTime.time();
             soundAttack.play(SoundSettings.soundVolume);
         }
     }
@@ -160,11 +169,11 @@ abstract public class Entity extends InteractiveObject {
 
     public boolean canThrow() {
         if(!allowedMotion) return false;
-        return (AnimationGlobalTime.x - lastThrowTime >= throwCooldown);
+        return (AnimationGlobalTime.time() - lastThrowTime >= throwCooldown);
     }
     public void throwItem(Vector2 mousePosition, Item item, boolean rotating) {
         if(!canThrow()) return;
-        lastThrowTime = AnimationGlobalTime.x;
+        lastThrowTime = AnimationGlobalTime.time();
         Bullet bullet = new ThrowableItem(positionCenter(), mousePosition, item, this, rotating);
         changeAnimationsFor(bullet.direction, 2);
         ObjectsList.add(bullet);
@@ -205,8 +214,8 @@ abstract public class Entity extends InteractiveObject {
         if(tile != lastTile) lastStepTime = 0f;
         lastTile = tile;
         if(action != 1) return false;
-        if((AnimationGlobalTime.x - lastStepTime)  >= stepCooldown / (getSpeed() / 10)) {
-            lastStepTime = AnimationGlobalTime.x;
+        if((AnimationGlobalTime.time() - lastStepTime)  >= stepCooldown / (getSpeed() / 10)) {
+            lastStepTime = AnimationGlobalTime.time();
             return true;
         }
         return false;

@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.Health;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.AnimationLoader;
@@ -38,19 +39,19 @@ public class Shruby extends Entity {
         damage = 2f;
         health = new Health(20, 0.3f);
         speed = 10f;
-
         allowedMotion = false;
         action = 4;
-        throwCooldown = 0.2f;
-
+        throwCooldown = 0.7f;
         if(animations == null) animations =
                 AnimationLoader.load("ENTITIES/SHRUBY", actions, actionTypes, frameCount);
         position.set(x, y);
-        regionWidth = (animations.get(0).get(0)[0].getKeyFrame(AnimationGlobalTime.x)).getRegionWidth();
-        regionHeight = animations.get(0).get(0)[0].getKeyFrame(AnimationGlobalTime.x).getRegionHeight();
-
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/PortalOut.ogg"));
+        regionWidth = (animations.get(0).get(0)[0].getKeyFrame(0)).getRegionWidth();
+        regionHeight = animations.get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
+        GlobalAssetManager.assetManager.load("Sounds/EFFECTS/PortalOut.ogg", Sound.class);
+        GlobalAssetManager.assetManager.finishLoading();
+        Sound sound = GlobalAssetManager.assetManager.get("Sounds/EFFECTS/PortalOut.ogg", Sound.class);
         sound.play(SoundSettings.soundVolume);
+        animationTime = 0;
     }
    @Override public Rectangle hitBox() {
         if(hitBox == null) hitBox = new Rectangle(0,0,0,0);
@@ -114,7 +115,7 @@ public class Shruby extends Entity {
         if(action == 3) return;
         Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/ShrabyDeath1.wav"));
         sound.play(SoundSettings.soundVolume);
-        animationTime = 0f;
+        animationTime = AnimationGlobalTime.time();
         allowedMotion = false;
         action = 3;
     }
@@ -124,17 +125,18 @@ public class Shruby extends Entity {
         faceDirection = (byte)Math.min(faceDirection,
                 (animations.get(action).size() - 1));
 
-        if(action == 3 && animations.get(action).get(faceDirection)[inLiquid ? 1: 0].isAnimationFinished(animationTime)) {
+        if(action == 3 && animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
+                isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
             ObjectsList.del(this);
         }
 
-
         if(!allowedMotion) {
             if(action != 3 &&
-                    animations.get(action).get(faceDirection)[inLiquid ? 1: 0].isAnimationFinished(animationTime)) {
+                    animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
+                            isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
                 allowedMotion = true;
                 action = 0;
-                animationTime = 0;
+                animationTime = AnimationGlobalTime.time();
             }
         }
     }
@@ -143,7 +145,8 @@ public class Shruby extends Entity {
             batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
         }
         animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(2.4f * getSpeed()));
-           batch.draw(animations.get(action).get(faceDirection)[inLiquid ? 1: 0].getKeyFrame(animationTime, looping[action]),
+           batch.draw(animations.get(action).get(faceDirection)[inLiquid ? 1: 0]
+                           .getKeyFrame(AnimationGlobalTime.time() - animationTime, looping[action]),
                    Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
         batch.setColor(1, 1, 1, 1);
     }

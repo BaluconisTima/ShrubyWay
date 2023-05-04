@@ -28,7 +28,7 @@ public abstract class Bullet extends InteractiveObject {
 
     public void processBullet(Vector2 playerPossition) {
         this.tryMove();
-        if(this.throwingTime + 10f < AnimationGlobalTime.x) {
+        if(this.throwingTime + 10f < AnimationGlobalTime.time()) {
             this.die();
         }
     }

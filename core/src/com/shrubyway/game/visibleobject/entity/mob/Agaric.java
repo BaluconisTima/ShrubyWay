@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.Health;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.AnimationLoader;
@@ -25,6 +26,8 @@ public class Agaric extends Mob{
             new boolean[]{true, true, false, false};
     static protected ArrayList<ArrayList<Animation<TextureRegion>[]>> animations;
 
+
+
     static protected ArrayList<String>[] actionTypes = new ArrayList[]{
             new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
             new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
@@ -42,21 +45,21 @@ public class Agaric extends Mob{
     @Override public void ai(Vector2 playerPosition) {
         if(momentum.len() > 1) return;
 
-       if(lastTargetUpdate < AnimationGlobalTime.x - targetUpdateInterval) {
+       if(lastTargetUpdate < AnimationGlobalTime.time() - targetUpdateInterval) {
            tempDirection.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
            if(tempDirection.len() < 2000) {
                 target.set(playerPosition.x, playerPosition.y);
-                lastTargetUpdate = AnimationGlobalTime.x;
+                lastTargetUpdate = AnimationGlobalTime.time();
            } else {
                tempDirection.set(target.x - playerPosition.x, target.y - playerPosition.y);
                if(tempDirection.len() < 100) {
                    target.set(playerPosition.x, playerPosition.y);
-                   lastTargetUpdate = AnimationGlobalTime.x;
+                   lastTargetUpdate = AnimationGlobalTime.time();
                } else
                if(Math.random() < 0.02) {
                    target.set(positionLegs().x + (float) (Math.random() * 1000 - 500),
                            positionLegs().y + (float) (Math.random() * 1000 - 500));
-                   lastTargetUpdate = AnimationGlobalTime.x;
+                   lastTargetUpdate = AnimationGlobalTime.time();
                }
            }
 
@@ -74,7 +77,7 @@ public class Agaric extends Mob{
         tempDirection2.set(tempDirection.x, tempDirection.y);
 
         if(!tryMoveTo(tempDirection)) {
-                 if(AnimationGlobalTime.x - lastTargetUpdate < targetUpdateInterval) {
+                 if(AnimationGlobalTime.time() - lastTargetUpdate < targetUpdateInterval) {
                      tempDirection.nor();
                      if(Math.abs(tempDirection.x) < 70) {
                          tempDirection.set(1, 0);
@@ -106,20 +109,22 @@ public class Agaric extends Mob{
     }
 
     public Agaric(float x, float y) {
+
+
         health = new Health(10);
         speed = 8f;
         allowedMotion = true;
         attackCooldown = 1f;
         action = 0;
         damage = 1f;
-        regionWidth = (animations.get(0).get(0)[0].getKeyFrame(AnimationGlobalTime.x)).getRegionWidth();
-        regionHeight = animations.get(0).get(0)[0].getKeyFrame(AnimationGlobalTime.x).getRegionHeight();
+        regionWidth = animations.get(0).get(0)[0].getKeyFrame(0).getRegionWidth();
+        regionHeight = animations.get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
         position.set(x - regionWidth / 2, y);
         target.set(x - regionWidth / 2, y);
     }
     @Override public void die() {
         if(action == 3) return;
-        animationTime = 0f;
+        animationTime = AnimationGlobalTime.time();
         allowedMotion = false;
         action = 3;
     }
@@ -179,7 +184,8 @@ public class Agaric extends Mob{
             batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
         }
         animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(24f / 8 * getSpeed()));
-        batch.draw(animations.get(action).get(faceDirection)[inLiquid ? 1: 0].getKeyFrame(animationTime, looping[action]),
+        batch.draw(animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
+                        getKeyFrame(AnimationGlobalTime.time() - animationTime, looping[action]),
                 Math.round(position.x), Math.round(position.y + 10) - (inLiquid ? -5 : 83));
         collisionBox().render(batch);
         batch.setColor(1, 1, 1, 1);
@@ -199,17 +205,19 @@ public class Agaric extends Mob{
         faceDirection = (byte)Math.min(faceDirection,
                 (animations.get(action).size() - 1));
 
-        if(action == 3 && animations.get(action).get(faceDirection)[inLiquid ? 1: 0].isAnimationFinished(animationTime)) {
+        if(action == 3 && animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
+                isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
             ObjectsList.del(this);
         }
 
 
         if(!allowedMotion) {
             if(action != 3 &&
-                    animations.get(action).get(faceDirection)[inLiquid ? 1: 0].isAnimationFinished(animationTime)) {
+                    animations.get(action).get(faceDirection)[inLiquid ? 1: 0].isAnimationFinished(
+                            AnimationGlobalTime.time() - animationTime)) {
                 allowedMotion = true;
                 action = 0;
-                animationTime = 0;
+                animationTime = AnimationGlobalTime.time();
             }
         }
     }

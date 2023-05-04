@@ -9,12 +9,9 @@ public class Rectangle {
     public final Vector2 topLeftCorner = new Vector2();
     public final Vector2 bottomRightCorner = new Vector2();
 
-    private ShapeRenderer shapeRenderer;
-    private Texture texture;
     public Rectangle(float x, float y, float width, float height) {
         topLeftCorner.set(x, y);
         bottomRightCorner.set(x + width, y + height);
-        texture = new Texture("TEST.png");
     }
     public void change(float x, float y, float width, float height) {
         topLeftCorner.set(x, y);

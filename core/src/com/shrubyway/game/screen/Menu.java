@@ -41,7 +41,7 @@ public class Menu extends Screen {
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-        loaded = true;
+        loadingStatus.set(100);
     }
 
     static Batch batch = new SpriteBatch();

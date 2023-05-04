@@ -16,27 +16,27 @@ public class Health {
         this.maxHealth = maxHealth;
         this.health = maxHealth;
         this.cooldown = 0;
-        this.lastHitTime = 0;
+        this.lastHitTime = -1000;
     }
     public Health(float maxHealth, float cooldown) {
         this.maxHealth = maxHealth;
         this.health = maxHealth;
         this.cooldown = cooldown;
-        this.lastHitTime = 0;
+        this.lastHitTime = -1000;
     }
 
     public void getDamage(float damage) {
-        if(AnimationGlobalTime.x - lastHitTime < cooldown) return;
+        if(AnimationGlobalTime.time() - lastHitTime < cooldown) return;
             if(health <= 0) return;
             health -= damage;
-            lastHitTime = AnimationGlobalTime.x;
+            lastHitTime = AnimationGlobalTime.time();
     }
     public float lastHitTime() {
         return lastHitTime;
     }
     public void heal(float heal) {
         health += heal;
-        lastHealTime = AnimationGlobalTime.x;
+        lastHealTime = AnimationGlobalTime.time();
         if(health > maxHealth) health = maxHealth;
     }
     public float getHealth() {
@@ -46,9 +46,9 @@ public class Health {
         return maxHealth;
     }
     public float timeAfterHit() {
-        return AnimationGlobalTime.x - lastHitTime;
+        return AnimationGlobalTime.time() - lastHitTime;
     }
     public float timeAfterHeal() {
-        return AnimationGlobalTime.x - lastHealTime;
+        return AnimationGlobalTime.time() - lastHealTime;
     }
 }

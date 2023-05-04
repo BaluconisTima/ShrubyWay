@@ -94,51 +94,65 @@ public class Background {
 
     void pauseSounds() {
         for (int i : tileWithSound) {
-            sound.pause(i);
+            sound.pause(tileSound[i]);
         }
     }
 
     void resumeSounds() {
         for (int i : tileWithSound) {
-            sound.resume(i);
+            sound.resume(tileSound[i]);
         }
     }
 
-    public void render(Batch batch, Vector2 playerPosition) {
-        for (int i = 0; i < MapSettings.TILETYPES; i++) {
-            nearestTile[i] = 1;
-        }
+    public void update(Vector2 playerPosition) {
         int x = 0;
         x += playerPosition.x;
         x /= MapSettings.TYLESIZE;
         int y = 0;
         y += playerPosition.y;
         y /= MapSettings.TYLESIZE;
-        for (int d = 0; d < 2; d++)
+        for (int i = 0; i < MapSettings.TILETYPES; i++) {
+            nearestTile[i] = 1;
+        }
             for (int i = x - MapSettings.visibleDistanceX; i < x + MapSettings.visibleDistanceX; i++)
                 for (int j = y - MapSettings.visibleDistanceY; j < y + MapSettings.visibleDistanceY; j++) {
-                    if (Math.abs(i + j) % 2 != d) continue;
                     int i2 = (i + MapSettings.TILENUMBER) % MapSettings.TILENUMBER,
                             j2 = (j + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
                     int tile = backgroundMap[i2][j2] - '0';
                     tempDistance.set(i * MapSettings.TYLESIZE
-                            + MapSettings.TYLESIZE / 2,
+                                    + MapSettings.TYLESIZE / 2,
                             j * MapSettings.TYLESIZE
                                     + MapSettings.TYLESIZE / 2);
                     tempDistance.sub(playerPosition);
                     float temp1 = tempDistance.len(); temp1 = temp1 / MapSettings.soundDistance;
                     temp1 = Math.min(temp1, 1);
                     nearestTile[tile] = Math.min(nearestTile[tile], temp1);
+                }
+        for (int i : tileWithSound) {
+            sound.setVolume(tileSound[i], Math.max(0, 0.7f * (1 - nearestTile[i]) * SoundSettings.soundVolume));
+        }
+    }
+    public void render(Batch batch, Vector2 playerPosition) {
+        int x = 0;
+        x += playerPosition.x;
+        x /= MapSettings.TYLESIZE;
+        int y = 0;
+        y += playerPosition.y;
+        y /= MapSettings.TYLESIZE;
 
+        for (int d = 0; d < 2; d++)
+            for (int i = x - MapSettings.visibleDistanceX; i < x + MapSettings.visibleDistanceX; i++)
+                for (int j = y - MapSettings.visibleDistanceY; j < y + MapSettings.visibleDistanceY; j++) {
+                    if (Math.abs(i + j) % 2 != d) continue;
+                    int i2 = (i + MapSettings.TILENUMBER) % MapSettings.TILENUMBER,
+                    j2 = (j + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
+                    int tile = backgroundMap[i2][j2] - '0';
                     TextureRegion tempTexture = this.tile[tile][d].getKeyFrame(AnimationGlobalTime.time(), true);
                     batch.draw(tempTexture, (i * MapSettings.TYLESIZE) - 25,
                             (j * MapSettings.TYLESIZE) - 25,
                             200,
                             200);
                 }
-        for (int i : tileWithSound) {
-            sound.setVolume(tileSound[i], Math.max(0, 0.7f * (1 - nearestTile[i]) * SoundSettings.soundVolume));
-        }
     }
 
     public boolean checkLiquid(Vector2 playerPosition) {

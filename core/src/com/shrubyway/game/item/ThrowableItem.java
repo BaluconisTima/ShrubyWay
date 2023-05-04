@@ -24,7 +24,7 @@ public class ThrowableItem extends Bullet {
                          VisibleObject thrower, boolean rotation) {
            this.rotation = rotation;
             whoThrow = thrower;
-            throwingTime = AnimationGlobalTime.x;
+            throwingTime = AnimationGlobalTime.time();
             id = item.id;
             position.set(startPosition);
             speed = 20f;
@@ -76,7 +76,7 @@ public class ThrowableItem extends Bullet {
                 ItemManager.itemTexture[id].getRegionHeight(),
                 0.5f,
                 0.5f,
-                (AnimationGlobalTime.x - throwingTime) *  1500);
+                (AnimationGlobalTime.time() - throwingTime) *  1500);
 
     }
 

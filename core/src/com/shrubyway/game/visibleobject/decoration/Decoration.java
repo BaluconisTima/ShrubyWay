@@ -37,7 +37,7 @@ abstract public class Decoration extends InteractiveObject {
     }
 
     public void interact() {
-        lastInteraction = AnimationGlobalTime.x;
+        lastInteraction = AnimationGlobalTime.time();
     }
 
 

@@ -11,31 +11,47 @@ import com.shrubyway.game.screen.Menu;
 import com.shrubyway.game.sound.SoundSettings;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ShrubyWay extends ApplicationAdapter {
     static Screen screen;
+    static Screen menu;
+
+    //static Screen gameOver = new GameOver();
+
+    //static Screen loadScreen = new loadScreen();
+
     static public MyInputAdapter inputProcessor = new MyInputAdapter();
+
     @Override public void create() {
         Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_LINEAR);
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         Gdx.graphics.setVSync(true);
-        screen = new Menu();
+        menu = new Menu();
+        screen = menu;
         Gdx.input.setInputProcessor(inputProcessor);
     }
 
     @Override public void render() {
         SoundSettings.update();
-        if(screen.loaded) screen.updateScreen();
-        if(screen instanceof Menu) {
-            if(((Menu) screen).goToGame) {
-                screen = new Game();
-                render();
-            }
-        } else
-            if(screen instanceof Game) {
+        GlobalAssetManager.assetManager.finishLoading();
 
+        if(Screen.loadingStatus.get() == 100) {
+            screen.updateScreen();
+            if(screen instanceof Menu && ((Menu)screen).goToGame) {
+                screen = new Game();
+                Menu.goToGame = false;
+                render();
+            } else if(screen instanceof Game) {
+                  //TODO
+            }
+            screen.renderScreen();
+        } else {
+
+            Gdx.gl.glClearColor((float)Math.random(), (float)Math.random(), (float)Math.random(), 1);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         }
-        if(screen.loaded) screen.renderScreen();
     }
 }

@@ -175,6 +175,11 @@ public class Map {
 
     }
 
+    public void update(Vector2 playerPosition) {
+        updateRenderingObjects(playerPosition);
+        background.update(playerPosition);
+    }
+
     public void addVisibleObject(VisibleObject visibleObject) {
         int x = (int) visibleObject.position.x;
         if (x < 0) x += 38400;

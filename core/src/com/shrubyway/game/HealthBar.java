@@ -5,8 +5,15 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class HealthBar {
-    static Texture base = new Texture("interface/heartBase.png");
-    static Texture bar = new Texture("interface/heart.png");
+    static Texture base, bar;
+
+    static {
+        GlobalAssetManager.assetManager.load("interface/heartBase.png", Texture.class);
+        GlobalAssetManager.assetManager.load("interface/heart.png", Texture.class);
+        GlobalAssetManager.assetManager.finishLoading();
+        base = GlobalAssetManager.assetManager.get("interface/heartBase.png");
+        bar = GlobalAssetManager.assetManager.get("interface/heart.png");
+    }
     static TextureRegion halfbar = new TextureRegion(bar, 38, 0, 38, 70);
     static public void render(Batch batch, Health health) {
         float x = health.getHealth() / health.getMaxHealth() * 10;

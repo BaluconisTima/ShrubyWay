@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.shapes.Rectangle;
 
 public abstract class VisibleObject implements Comparable<VisibleObject> {
+
     public final Vector2 position = new Vector2();
     public static long ids;
     long id = ids++;

@@ -3,6 +3,7 @@ package com.shrubyway.game.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
@@ -37,16 +38,22 @@ public class Game extends Screen {
 
 
     public Game() {
+        loadingStatus.set(0);
         batch = new SpriteBatch();
-        batch.enableBlending();
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-
+        loadingStatus.set(10);
         MobsManager.init();
+        loadingStatus.set(30);
         DecorationsManager.init();
+        loadingStatus.set(40);
+        ItemManager.init();
+        loadingStatus.set(50);
         map = new Map(1);
+        loadingStatus.set(75);
         player = new Shruby(50, 50);
+
 
         cameraPosition = new Vector2(player.positionCenter());
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -54,10 +61,10 @@ public class Game extends Screen {
         camera.position.set(cameraPosition.x, cameraPosition.y, 0);
         camera.update();
         ObjectsList.add(player);
-        ItemManager.init();
         GlobalAssetManager.assetManager.finishLoading();
-        loaded = true;
         AnimationGlobalTime.clear();
+        loadingStatus.set(100);
+
     }
 
     public void correctPosition() {
@@ -178,7 +185,7 @@ public class Game extends Screen {
         for (VisibleObject obj : ObjectsList.getList()) {
             temp.add(obj);
         }
-        map.updateRenderingObjects(player.positionCenter());
+        map.update(player.positionLegs());
 
         for (VisibleObject obj : temp) {
             if (!ObjectsList.getList().contains(obj)) continue;
@@ -256,7 +263,6 @@ public class Game extends Screen {
     }
 
     public void renderObjects() {
-        map.render(batch, player.position());
         for (VisibleObject obj : ObjectsList.getList()) {
             obj.render(batch);
         }
@@ -299,6 +305,7 @@ public class Game extends Screen {
         batch.setProjectionMatrix(camera.combined);
         ScreenUtils.clear(1, 1, 1, 1);
         batch.begin();
+        map.render(batch, player.position());
         renderObjects();
         renderInterface();
         batch.end();
