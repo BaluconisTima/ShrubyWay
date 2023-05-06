@@ -5,7 +5,8 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 
 public class MyInputAdapter extends InputAdapter {
-    private boolean leftPressed, rightPressed, upPressed, downPressed, spacePressed, ePressed, qPressed, escPressed;
+    private boolean leftPressed, rightPressed, upPressed, downPressed,
+            spacePressed, ePressed, qPressed, escPressed, lPressed, cPressed;
     private boolean numberPressed[] = new boolean[10];
     private boolean mouseLeft, mouseRight;
     private boolean runing;
@@ -25,6 +26,8 @@ public class MyInputAdapter extends InputAdapter {
         if(keycode == Input.Keys.SPACE) spacePressed = true;
         if(keycode == Input.Keys.Q) qPressed = true;
         if(keycode == Input.Keys.ESCAPE) escPressed = true;
+        if(keycode == Input.Keys.L) lPressed = true;
+        if(keycode == Input.Keys.C) cPressed = true;
 
         for(int i = 0; i < 10; i++) {
             if(keycode == Input.Keys.NUM_0 + i) numberPressed[i] = true;
@@ -43,6 +46,8 @@ public class MyInputAdapter extends InputAdapter {
         if(keycode == Input.Keys.SPACE) spacePressed = false;
         if(keycode == Input.Keys.Q) qPressed = false;
         if(keycode == Input.Keys.ESCAPE) escPressed = false;
+        if(keycode == Input.Keys.L) lPressed = false;
+        if(keycode == Input.Keys.C) cPressed = false;
         return false;
     }
     @Override
@@ -102,17 +107,31 @@ public class MyInputAdapter extends InputAdapter {
         return false;
     }
     public boolean isMouseRight() {
-        if(mouseRight) {mouseRight = false; return true;}
-        return false;
+        return mouseRight;
+    }
+    public void setMouseRight(boolean mouseRight) {
+        this.mouseRight = mouseRight;
     }
     public boolean isEPressed() {
         if(ePressed) {ePressed = false; return true;}
         return ePressed;
     }
 
+
+
     public boolean isEscPressed() {
         if(escPressed) {escPressed = false; return true;}
         return escPressed;
+    }
+
+    public boolean isLPressed() {
+        if(lPressed) {lPressed = false; return true;}
+        return lPressed;
+    }
+
+    public boolean isCPressed() {
+        if(cPressed) {cPressed = false; return true;}
+        return cPressed;
     }
 
     public int numberPressed() {

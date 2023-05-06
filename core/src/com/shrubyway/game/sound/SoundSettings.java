@@ -34,4 +34,5 @@ public class SoundSettings {
             music.setVolume(musicID, musicVolume * musicLocalVolume);
     }
 
+
 }

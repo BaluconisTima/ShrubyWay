@@ -7,18 +7,20 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.GlobalAssetManager;
 
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AnimationLoader {
        static Animator animator = new Animator();
        static Texture animationList;
-       static public ArrayList<ArrayList<Animation<TextureRegion>[]>>
+       static public CopyOnWriteArrayList<CopyOnWriteArrayList<Animation<TextureRegion>[]>>
 
-       load(String s, String actions[], ArrayList<String>[] actionsTypes, int frameCount[]){
+       load(String s, String actions[], CopyOnWriteArrayList<String>[] actionsTypes, int frameCount[]){
 
-              ArrayList<ArrayList<Animation<TextureRegion>[]>> currentAnimation = new ArrayList<>();
+              CopyOnWriteArrayList<CopyOnWriteArrayList<Animation<TextureRegion>[]>> currentAnimation =
+                      new CopyOnWriteArrayList<>();
 
               for(int i = 0; i < actions.length; i++) {
-                        currentAnimation.add(new ArrayList<Animation<TextureRegion>[]>());
+                        currentAnimation.add(new CopyOnWriteArrayList<>());
 
                         int x = actionsTypes[i].toArray().length;
                      for(int j = 0; j < x; j++) {

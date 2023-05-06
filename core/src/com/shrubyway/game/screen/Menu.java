@@ -16,11 +16,10 @@ import com.shrubyway.game.sound.SoundSettings;
 public class Menu extends Screen {
     static Texture Background = new Texture("interface/SWmenuBackground.png");
     static Texture logo = new Texture("interface/SWlogo.png");
-
-
     static public Boolean goToGame = false;
     Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/Click.ogg"));
 
+    static Batch batch = new SpriteBatch();
     static Button playButton = new Button(new Texture("interface/SWplayButton.png"),
             new Texture("interface/SWplayButtonSellected.png"), 135, 90 + 159 * 2) {
     },
@@ -44,7 +43,7 @@ public class Menu extends Screen {
         loadingStatus.set(100);
     }
 
-    static Batch batch = new SpriteBatch();
+
 
     @Override public void updateScreen() {
         if(ShrubyWay.inputProcessor.isMouseLeft()) {

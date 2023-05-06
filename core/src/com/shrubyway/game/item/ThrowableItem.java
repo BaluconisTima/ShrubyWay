@@ -12,12 +12,12 @@ import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 
 import javax.swing.text.Position;
+import java.io.Serializable;
 
 public class ThrowableItem extends Bullet {
     int id;
     Sound sound;
     Boolean rotation;
-
     long RotationSound;
 
     public ThrowableItem(Vector2 startPosition, Vector2 finishPosition, Item item,

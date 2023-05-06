@@ -29,7 +29,8 @@ public class Inventory {
 
     static Item itemInHand = null;
     static Integer numberOfItemInHand = 0;
-    static {
+
+    static public void clear() {
         for(int i = 0; i < 9; i++) {
             buttons[0][i] = new Rectangle(27 + 79.1f * i,1080 - 70 - 28,70,70);
         }
@@ -43,6 +44,9 @@ public class Inventory {
                 items[i][j] = null;
                 numberOfItem[i][j] = 0;
             }
+    }
+    static {
+        clear();
     }
 
     static private void nameAndDesc(Batch batch, Vector2 mousePosition, int i, int j) {
@@ -226,15 +230,21 @@ public class Inventory {
         }
     }
 
-    static public Item takeToThrow() {
-        if(items[0][selected] != null
-                && ItemManager.throwingDamage[items[0][selected].id] > 0) {
+    static public Item take() {
+
+        if(items[0][selected] != null) {
             Item temp = items[0][selected];
             numberOfItem[0][selected]--;
             if(numberOfItem[0][selected] == 0) items[0][selected] = null;
+
             return temp;
         }
         return null;
+    }
+
+    static public int selectedItem() {
+        if(items[0][selected] == null) return -1;
+        return items[0][selected].id;
     }
     static public void changeSelected(int i) {
         selected = i - 1;

@@ -11,6 +11,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.shrubyway.game.*;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.item.Food;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.Map;
@@ -26,6 +27,7 @@ import com.shrubyway.game.visibleobject.entity.mob.Mob;
 import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
+import java.io.Serializable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Game extends Screen {
@@ -36,8 +38,11 @@ public class Game extends Screen {
     Vector2 cameraPosition;
     Vector2 mousePosition;
 
+    public boolean gameOver = false, menu = false;
+
 
     public Game() {
+        ObjectsList.getList().clear();
         loadingStatus.set(0);
         batch = new SpriteBatch();
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -53,8 +58,6 @@ public class Game extends Screen {
         map = new Map(1);
         loadingStatus.set(75);
         player = new Shruby(50, 50);
-
-
         cameraPosition = new Vector2(player.positionCenter());
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -108,15 +111,33 @@ public class Game extends Screen {
                 !Inventory.checkClick(ShrubyWay.inputProcessor.mousePosition())) {
             if (leftClick) {
                 if (player.canThrow()) {
-                    Item temp = Inventory.takeToThrow();
-                    if (temp != null) {
+                    int selected = Inventory.selectedItem();
+                    if (selected != -1 && ItemManager.throwingDamage[selected] != 0) {
+                        Item temp = Inventory.take();
                         player.throwItem(mousePosition, temp, true);
                     }
-
                 }
             }
             if (rightClick) {
-                ObjectsList.add(new VisibleItem(new Item(0), mousePosition.x, mousePosition.y));
+                int temp = Inventory.selectedItem();
+                if(temp != -1) {
+                    Boolean f = true;
+                    if((ItemManager.itemActing[temp] instanceof Food && player.health.getHealth()
+                            == player.health.getMaxHealth())) f = false;
+                    if(ItemManager.itemActing[temp] == null) f = false;
+
+                       if(f) {
+                           ItemManager.itemActing[temp].Acting();
+                           if (ItemManager.itemActing[temp].checkAct()) {
+                               if (ItemManager.itemActing[temp] instanceof Food) {
+
+                                   Item temp2 = Inventory.take();
+                                   player.health.heal(
+                                           ((Food) ItemManager.itemActing[temp2.id]).heling);
+                               }
+                           }
+                       }
+                }
             }
             leftClick = false;
             rightClick = false;
@@ -159,6 +180,7 @@ public class Game extends Screen {
             rightClick = false;
             Inventory.rightClick(ShrubyWay.inputProcessor.mousePosition());
         }
+       // ShrubyWay.inputProcessor.setMouseRight(false);
         if (!Inventory.opened) {
             Inventory.dropItemHand(player.faceDirection, player.positionItemDrop());
         }
@@ -172,9 +194,7 @@ public class Game extends Screen {
     float lastMobUpdate = 5f;
 
     public void globalProcessing() {
-        if (player.health.timeAfterHeal() >= 3 && Math.random() < 0.05f) {
-            player.health.heal(1);
-        }
+
         if (AnimationGlobalTime.time() - lastMobUpdate > 1f) {
             lastMobUpdate = AnimationGlobalTime.time();
             MobsManager.playerAddUpdate(1);
@@ -245,6 +265,10 @@ public class Game extends Screen {
             }
         }
         ObjectsList.sort();
+        if(!ObjectsList.contains(player)) {
+            gameOver = true;
+            map.pauseSounds();
+        }
     }
 
     public void cameraUpdate() {
@@ -317,6 +341,7 @@ public class Game extends Screen {
     public void updateScreen() {
         menuInputWorking();
         if (!gamePaused) gameTick();
+
     }
 
     @Override

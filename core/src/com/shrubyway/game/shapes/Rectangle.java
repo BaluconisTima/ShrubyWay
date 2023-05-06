@@ -5,7 +5,9 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
-public class Rectangle {
+import java.io.Serializable;
+
+public class Rectangle  {
     public final Vector2 topLeftCorner = new Vector2();
     public final Vector2 bottomRightCorner = new Vector2();
 

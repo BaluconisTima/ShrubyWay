@@ -15,9 +15,11 @@ import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.ObjectsList;
 
+import java.io.IOException;
 import java.lang.Math;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 public class Shruby extends Entity {
@@ -25,14 +27,14 @@ public class Shruby extends Entity {
     static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH", "PORTAL"};
     static protected boolean looping[] =
             new boolean[]{true, true, false, false, false};
-    static protected ArrayList<ArrayList<Animation<TextureRegion>[]>> animations;
+    static protected CopyOnWriteArrayList<CopyOnWriteArrayList<Animation<TextureRegion>[]>> animations;
 
-    static protected ArrayList<String>[] actionTypes = new ArrayList[]{
-            new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new ArrayList<>(Arrays.asList("1")),
-            new ArrayList<>(Arrays.asList("OUT"))};
+    static protected CopyOnWriteArrayList<String>[] actionTypes = new CopyOnWriteArrayList[]{
+            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+            new CopyOnWriteArrayList<>(Arrays.asList("1")),
+            new CopyOnWriteArrayList<>(Arrays.asList("OUT"))};
     static int frameCount[] = {30, 30, 14, 34, 34};
 
     public Shruby(float x, float y) {
@@ -53,6 +55,15 @@ public class Shruby extends Entity {
         sound.play(SoundSettings.soundVolume);
         animationTime = 0;
     }
+
+    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+    }
+
+    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+    }
+
    @Override public Rectangle hitBox() {
         if(hitBox == null) hitBox = new Rectangle(0,0,0,0);
         hitBox.change(position.x + 150,

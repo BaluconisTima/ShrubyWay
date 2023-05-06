@@ -4,11 +4,17 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.shapes.Rectangle;
+import com.shrubyway.game.visibleobject.ObjectsList;
+import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
-public class Bush extends Decoration {
+import java.io.Serializable;
+
+public class Bush extends Decoration  {
     static Animation<TextureRegion> texture;
     static String way = "Decorations/BUSH.png";
 
@@ -16,6 +22,15 @@ public class Bush extends Decoration {
         GlobalAssetManager.assetManager.load(way, Texture.class);
         GlobalAssetManager.assetManager.finishLoading();
         texture = animator.toAnimation((Texture)GlobalAssetManager.assetManager.get(way), 8, 0, 0);
+    }
+
+    @Override public void interact() {
+        super.interact();
+        if(Math.random() < 0.2) {
+            ObjectsList.add(new VisibleItem(ItemManager.newItem(3),
+                    position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),
+                    position().y + 50, new Vector2(0, -0.2f)));
+        }
     }
     static float halfTextureWidth = texture.getKeyFrame(0f).getRegionWidth() / 2f;
     @Override

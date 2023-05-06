@@ -18,25 +18,33 @@ import com.shrubyway.game.visibleobject.ObjectsList;
 import javax.swing.text.Position;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Agaric extends Mob{
 
     static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH"};
     static protected boolean looping[] =
             new boolean[]{true, true, false, false};
-    static protected ArrayList<ArrayList<Animation<TextureRegion>[]>> animations;
+    static protected CopyOnWriteArrayList<CopyOnWriteArrayList<Animation<TextureRegion>[]>> animations;
 
+    static Sound soundDeath, soundDamage;
 
-
-    static protected ArrayList<String>[] actionTypes = new ArrayList[]{
-            new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new ArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new ArrayList<>(Arrays.asList("1"))};
+    static protected CopyOnWriteArrayList<String>[] actionTypes = new CopyOnWriteArrayList[]{
+            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+            new CopyOnWriteArrayList<>(Arrays.asList("1"))};
 
     static int frameCount[] = {30, 30, 14, 22};
 
     static {
+        GlobalAssetManager.assetManager.load("Sounds/EFFECTS/AgaricDeath.ogg", Sound.class);
+        GlobalAssetManager.assetManager.load("Sounds/EFFECTS/AgaricDamage.ogg", Sound.class);
+        GlobalAssetManager.assetManager.finishLoading();
+        soundDeath =
+                GlobalAssetManager.assetManager.get("Sounds/EFFECTS/AgaricDeath.ogg", Sound.class);
+        soundDamage =
+                GlobalAssetManager.assetManager.get("Sounds/EFFECTS/AgaricDamage.ogg", Sound.class);
         if(animations == null) animations =
                 AnimationLoader.load("ENTITIES/AGARIC", actions, actionTypes, frameCount);
     }
@@ -103,20 +111,24 @@ public class Agaric extends Mob{
         tempDirection.set(playerPosition.x - positionLegs().x,
                 playerPosition.y - positionLegs().y);
 
-        if(tempDirection.len() < 150) {
+        if(tempDirection.len() < 100) {
             attack();
         }
     }
 
+    @Override public void getDamage(float damage) {
+        super.getDamage(damage);
+        soundDamage.play(SoundSettings.soundVolume);
+    }
+
     public Agaric(float x, float y) {
-
-
+        id = 0;
         health = new Health(10);
         speed = 8f;
         allowedMotion = true;
         attackCooldown = 1f;
         action = 0;
-        damage = 1f;
+        damage = 2f;
         regionWidth = animations.get(0).get(0)[0].getKeyFrame(0).getRegionWidth();
         regionHeight = animations.get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
         position.set(x - regionWidth / 2, y);
@@ -124,6 +136,8 @@ public class Agaric extends Mob{
     }
     @Override public void die() {
         if(action == 3) return;
+        soundDeath.play(SoundSettings.soundVolume);
+        MobsManager.makeDrop(id, positionLegs().x, positionLegs().y);
         animationTime = AnimationGlobalTime.time();
         allowedMotion = false;
         action = 3;
@@ -208,6 +222,8 @@ public class Agaric extends Mob{
         if(action == 3 && animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
                 isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
             ObjectsList.del(this);
+
+
         }
 
 

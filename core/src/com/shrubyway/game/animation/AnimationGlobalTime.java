@@ -1,8 +1,9 @@
 package com.shrubyway.game.animation;
 
 import com.badlogic.gdx.utils.TimeUtils;
+import java.io.Serializable;
 
-public class AnimationGlobalTime {
+public class AnimationGlobalTime implements Serializable {
     public static float lastTime = 0;
     public static float stopedTime = -1;
 
@@ -11,7 +12,6 @@ public class AnimationGlobalTime {
         lastTime = TimeUtils.nanoTime() / 1000000000.0f;
     }
     static public float time(){
-
         if(stopedTime == -1) return  TimeUtils.nanoTime() / 1000000000.0f - lastTime;
         else return stopedTime - lastTime;
     }

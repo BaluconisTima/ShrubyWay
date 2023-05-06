@@ -2,8 +2,10 @@ package com.shrubyway.game.shapes;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 
+import java.io.Serializable;
 
-public class Circle {
+
+public class Circle{
     public final Vector2 centerPosition = new Vector2();
     public float radius;
     private final ShapeRenderer shapeRenderer;
