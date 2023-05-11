@@ -22,9 +22,8 @@ public class Map {
     public List<VisibleObject> tempList;
 
     private void decorationsLoad(int level) {
-
         String fileName = "maps/" + level + "/Decorations.txt";
-        try (Scanner scanner = new Scanner(new File(fileName))) {
+        try (Scanner scanner = new Scanner(getClass().getResourceAsStream("/" + fileName))) {
             int j = 0;
             while (scanner.hasNextLine()) {
                 String temp = scanner.nextLine();
@@ -33,7 +32,7 @@ public class Map {
                 }
                 j++;
             }
-        } catch (FileNotFoundException e) {
+        } catch (Exception e) {
         }
     }
 

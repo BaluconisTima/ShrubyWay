@@ -49,9 +49,9 @@ public class Shruby extends Entity {
         position.set(x, y);
         regionWidth = (animations.get(0).get(0)[0].getKeyFrame(0)).getRegionWidth();
         regionHeight = animations.get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
-        GlobalAssetManager.assetManager.load("Sounds/EFFECTS/PortalOut.ogg", Sound.class);
+        GlobalAssetManager.assetManager.load("sounds/EFFECTS/PortalOut.ogg", Sound.class);
         GlobalAssetManager.assetManager.finishLoading();
-        Sound sound = GlobalAssetManager.assetManager.get("Sounds/EFFECTS/PortalOut.ogg", Sound.class);
+        Sound sound = GlobalAssetManager.assetManager.get("sounds/EFFECTS/PortalOut.ogg", Sound.class);
         sound.play(SoundSettings.soundVolume);
         animationTime = 0;
     }
@@ -116,7 +116,7 @@ public class Shruby extends Entity {
     @Override
     public void getDamage(float damage, Vector2 hitPosition) {
         if(health.getHealth() > 0 && damage != 0) {
-            Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/ShrabyDamage.ogg"));
+            Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/ShrabyDamage.ogg"));
             sound.play(SoundSettings.soundVolume);
         }
         super.getDamage(damage, hitPosition);
@@ -124,7 +124,7 @@ public class Shruby extends Entity {
 
     @Override public void die() {
         if(action == 3) return;
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("Sounds/EFFECTS/ShrabyDeath1.wav"));
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/ShrabyDeath1.wav"));
         sound.play(SoundSettings.soundVolume);
         animationTime = AnimationGlobalTime.time();
         allowedMotion = false;

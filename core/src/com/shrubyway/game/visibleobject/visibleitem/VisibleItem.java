@@ -19,7 +19,7 @@ public class VisibleItem extends VisibleObject {
     private Vector2 direction;
     private Vector2 globalDir;
     private Vector2 tempVector = new Vector2();
-    static Sound pop = Gdx.audio.newSound(Gdx.files.internal("sounds/Effects/Pop.ogg"));
+    static Sound pop = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/Pop.ogg"));
 
     public VisibleItem(Item item, float x, float y) {
         globalDir = new Vector2(0,0);

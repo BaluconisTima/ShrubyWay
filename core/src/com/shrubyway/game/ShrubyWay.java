@@ -31,19 +31,19 @@ public class ShrubyWay extends ApplicationAdapter {
         Gdx.graphics.setVSync(true);
         menu = new Menu();
         gameOver = new GameOver();
-        errorInformationScreen = new ErrorInformationScreen("!");
+        //errorInformationScreen = new ErrorInformationScreen("!");
 
-        LocalDate today = LocalDate.now();
-        LocalDate targetDate = LocalDate.of(2023, 5, 7);
+      /*  LocalDate today = LocalDate.now();
+        LocalDate targetDate = LocalDate.of(2023, 5, 10);
         if(today.isBefore(targetDate)) {
-            screen = new ErrorInformationScreen("It's too soon! The game will be open on 07.05.2023");
+            screen = new ErrorInformationScreen("It's too soon! The game will be open on 10.05.2023");
             Gdx.input.setInputProcessor(inputProcessor);
             return;
         } else if(today.isAfter(targetDate)) {
-            screen = new ErrorInformationScreen("It's too late! The game was open on 07.05.2023");
+            screen = new ErrorInformationScreen("It's too late! The game was open on 10.05.2023");
             Gdx.input.setInputProcessor(inputProcessor);
             return;
-        }
+        } */
         screen = menu;
         Gdx.input.setInputProcessor(inputProcessor);
     }

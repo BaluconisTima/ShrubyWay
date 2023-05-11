@@ -42,6 +42,7 @@ public class Game extends Screen {
 
 
     public Game() {
+        GlobalAssetManager.assetManager.finishLoading();
         ObjectsList.getList().clear();
         loadingStatus.set(0);
         batch = new SpriteBatch();
@@ -49,11 +50,12 @@ public class Game extends Screen {
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         loadingStatus.set(10);
-        MobsManager.init();
+
         loadingStatus.set(30);
         DecorationsManager.init();
         loadingStatus.set(40);
         ItemManager.init();
+        MobsManager.init();
         loadingStatus.set(50);
         map = new Map(1);
         loadingStatus.set(75);
@@ -179,8 +181,9 @@ public class Game extends Screen {
         if (rightClick) {
             rightClick = false;
             Inventory.rightClick(ShrubyWay.inputProcessor.mousePosition());
+            ShrubyWay.inputProcessor.setMouseRight(false);
         }
-       // ShrubyWay.inputProcessor.setMouseRight(false);
+
         if (!Inventory.opened) {
             Inventory.dropItemHand(player.faceDirection, player.positionItemDrop());
         }
@@ -297,8 +300,7 @@ public class Game extends Screen {
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         HealthBar.render(batch, player.health);
         Inventory.render(batch, ShrubyWay.inputProcessor.mousePosition());
-        TextDrawer.drawWithShadow(batch, "" + Gdx.graphics.getFramesPerSecond(),
-                100, 100, 1);
+       // TextDrawer.drawWithShadow(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 100, 100, 1);
         if (gamePaused) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
@@ -346,7 +348,7 @@ public class Game extends Screen {
 
     @Override
     public void renderScreen() {
-        renderFrame();
+       renderFrame();
     }
 
 }

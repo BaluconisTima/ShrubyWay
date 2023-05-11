@@ -19,7 +19,7 @@ public class Inventory {
             full = new Texture("interface/fullInv.png"),
             select = new Texture("interface/selectInv.png");
     static public Boolean opened = false;
-    static Sound click = Gdx.audio.newSound(Gdx.files.internal("sounds/Effects/Click.ogg"));
+    static Sound click = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/Click.ogg"));
     static Rectangle buttons[][] = new Rectangle[5][9];
     static Item items[][] = new Item[5][9];
     static Integer numberOfItem[][] = new Integer[5][9];

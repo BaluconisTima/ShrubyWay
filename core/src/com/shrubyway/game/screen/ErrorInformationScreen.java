@@ -6,8 +6,10 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.video.VideoPlayer;
+import com.badlogic.gdx.video.VideoPlayerCreator;
+import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.TextDrawer;
-import com.badlogic.gdx.video.*;
 
 public class ErrorInformationScreen extends Screen {
     static FileHandle fileHandle;
@@ -26,8 +28,9 @@ public class ErrorInformationScreen extends Screen {
        } );
 
        try {
-         videoPlayer.play(Gdx.files.absolute("interface/ERROR.webm"));
+         videoPlayer.play(Gdx.files.internal("interface/ERROR.webm"));
          } catch (Exception e) {
+              e.printStackTrace();
             Gdx.app.exit();
        }
 

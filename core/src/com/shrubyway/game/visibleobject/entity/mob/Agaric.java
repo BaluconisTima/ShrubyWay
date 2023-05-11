@@ -38,13 +38,13 @@ public class Agaric extends Mob{
     static int frameCount[] = {30, 30, 14, 22};
 
     static {
-        GlobalAssetManager.assetManager.load("Sounds/EFFECTS/AgaricDeath.ogg", Sound.class);
-        GlobalAssetManager.assetManager.load("Sounds/EFFECTS/AgaricDamage.ogg", Sound.class);
+        GlobalAssetManager.assetManager.load("sounds/EFFECTS/AgaricDeath.ogg", Sound.class);
+        GlobalAssetManager.assetManager.load("sounds/EFFECTS/AgaricDamage.ogg", Sound.class);
         GlobalAssetManager.assetManager.finishLoading();
         soundDeath =
-                GlobalAssetManager.assetManager.get("Sounds/EFFECTS/AgaricDeath.ogg", Sound.class);
+                GlobalAssetManager.assetManager.get("sounds/EFFECTS/AgaricDeath.ogg", Sound.class);
         soundDamage =
-                GlobalAssetManager.assetManager.get("Sounds/EFFECTS/AgaricDamage.ogg", Sound.class);
+                GlobalAssetManager.assetManager.get("sounds/EFFECTS/AgaricDamage.ogg", Sound.class);
         if(animations == null) animations =
                 AnimationLoader.load("ENTITIES/AGARIC", actions, actionTypes, frameCount);
     }

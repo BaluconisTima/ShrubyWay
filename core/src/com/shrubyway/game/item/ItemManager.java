@@ -13,7 +13,7 @@ public class ItemManager {
 
     public static void init() {
         for (int i = 0; i < itemNumber; i++) {
-            itemTexture[i] = new TextureRegion(new Texture("Items/" + i + ".png"));
+            itemTexture[i] = new TextureRegion(new Texture("ITEMS/" + i + ".png"));
         }
         itemName[0] = "Stone";
         itemDescription[0] = "A small stone.";

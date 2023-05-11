@@ -7,7 +7,7 @@ public class Animator {
     public Animator(){
 
     }
-     public Animation<TextureRegion> toAnimation(Texture texture, int n, int szN, int szM) {
+     static public Animation<TextureRegion> toAnimation(Texture texture, int n, int szN, int szM) {
         TextureRegion[] animationFrames = new TextureRegion[n];
         int textureWidth = texture.getWidth() / n, textureHeight = texture.getHeight();
         int index = 0;

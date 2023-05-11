@@ -2,6 +2,7 @@ package com.shrubyway.game.map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -9,10 +10,13 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.sound.SoundSettings;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 public class Background {
@@ -35,23 +39,17 @@ public class Background {
         for (int i = 0; i < MapSettings.TILETYPES; i++)
             for (int j = 0; j < 2; j++) {
                 String way = "TILES/" + i + "/" + j + "/";
-                File folder = new File(way);
-                File[] files = folder.listFiles();
-                Arrays.sort(files);
-                TextureRegion[] animationFrames = new TextureRegion[files.length];
-                for (int q = 0; q < files.length; q++) {
-                    GlobalAssetManager.assetManager.load(way + files[q].getName(), Texture.class);
-                    GlobalAssetManager.assetManager.finishLoadingAsset(way + files[q].getName());
-                    animationFrames[q] = new TextureRegion(GlobalAssetManager.assetManager.get(way + files[q].getName(),
-                            Texture.class));
-                }
-                tile[i][j] = new Animation<>(1 / 24f, animationFrames);
+                GlobalAssetManager.assetManager.load(way + "0001.png", Texture.class);
+                GlobalAssetManager.assetManager.finishLoadingAsset(way + "0001.png");
+                Texture texture = GlobalAssetManager.assetManager.get( way + "0001.png", Texture.class);
+                tile[i][j] = Animator.toAnimation(texture, texture.getWidth() / texture.getHeight(), 0, 0);
             }
     }
 
     private void tileMapLoader() {
         String fileName = "maps/" + level + "/basicMap.txt";
-        try (Scanner scanner = new Scanner(new File(fileName))) {
+        try (InputStream inputStream = getClass().getResourceAsStream("/" + fileName);
+             Scanner scanner = new Scanner(inputStream)) {
             int j = 0;
             while (scanner.hasNextLine()) {
                 String temp = scanner.nextLine();
@@ -60,9 +58,10 @@ public class Background {
                 }
                 j++;
             }
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        ;
+
     }
 
     private void soundLoader() {

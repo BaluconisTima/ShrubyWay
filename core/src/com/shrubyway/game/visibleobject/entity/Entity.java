@@ -42,9 +42,9 @@ abstract public class Entity extends InteractiveObject {
     static Sound soundAttack;
 
     static  {
-        GlobalAssetManager.assetManager.load("Sounds/EFFECTS/Swing.ogg", Sound.class);
+        GlobalAssetManager.assetManager.load("sounds/EFFECTS/Swing.ogg", Sound.class);
         GlobalAssetManager.assetManager.finishLoading();
-        soundAttack = GlobalAssetManager.assetManager.get("Sounds/EFFECTS/Swing.ogg");
+        soundAttack = GlobalAssetManager.assetManager.get("sounds/EFFECTS/Swing.ogg");
     }
 
 
