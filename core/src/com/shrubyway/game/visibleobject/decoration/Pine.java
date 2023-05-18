@@ -16,9 +16,7 @@ public class Pine extends Decoration {
     static String way = "Decorations/PINE.png";
 
     static {
-        GlobalAssetManager.assetManager.load(way, Texture.class);
-        GlobalAssetManager.assetManager.finishLoadingAsset(way);
-        texture = animator.toAnimation((Texture)GlobalAssetManager.assetManager.get(way), 8, 0, 0);
+        texture = animator.toAnimation((Texture)GlobalAssetManager.get(way, Texture.class), 8, 0, 0);
     }
     static float halfTextureWidth = texture.getKeyFrame(0f).getRegionWidth() / 2f;
 

@@ -14,9 +14,7 @@ public class Food extends ItemActing {
     long soundID = -1;
 
     static {
-        GlobalAssetManager.assetManager.load("sounds/EFFECTS/Eating.ogg", Sound.class);
-        GlobalAssetManager.assetManager.finishLoading();
-        eatingSound = GlobalAssetManager.assetManager.get("sounds/EFFECTS/Eating.ogg", Sound.class);
+        eatingSound = GlobalAssetManager.get("sounds/EFFECTS/Eating.ogg", Sound.class);
     }
     public Food(float eatingTime, float heling) {
             this.actingTime = eatingTime;

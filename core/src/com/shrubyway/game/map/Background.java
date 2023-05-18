@@ -39,9 +39,7 @@ public class Background {
         for (int i = 0; i < MapSettings.TILETYPES; i++)
             for (int j = 0; j < 2; j++) {
                 String way = "TILES/" + i + "/" + j + "/";
-                GlobalAssetManager.assetManager.load(way + "0001.png", Texture.class);
-                GlobalAssetManager.assetManager.finishLoadingAsset(way + "0001.png");
-                Texture texture = GlobalAssetManager.assetManager.get( way + "0001.png", Texture.class);
+                Texture texture = GlobalAssetManager.get( way + "0001.png", Texture.class);
                 tile[i][j] = Animator.toAnimation(texture, texture.getWidth() / texture.getHeight(), 0, 0);
             }
     }
@@ -67,17 +65,12 @@ public class Background {
     private void soundLoader() {
         for (int i = 0; i < MapSettings.TILETYPES; i++) {
             tileSound[i] = -1;
-            GlobalAssetManager.assetManager.load("sounds/STEPS/" + i + "_0.ogg", Sound.class);
-            GlobalAssetManager.assetManager.load("sounds/STEPS/" + i + "_1.ogg", Sound.class);
-            GlobalAssetManager.assetManager.finishLoading();
-            stepSound[i][0] = GlobalAssetManager.assetManager.get("sounds/STEPS/" + i + "_0.ogg", Sound.class);
-            stepSound[i][1] = GlobalAssetManager.assetManager.get("sounds/STEPS/" + i + "_1.ogg", Sound.class);
+            stepSound[i][0] = GlobalAssetManager.get("sounds/STEPS/" + i + "_0.ogg", Sound.class);
+            stepSound[i][1] = GlobalAssetManager.get("sounds/STEPS/" + i + "_1.ogg", Sound.class);
         }
 
         for (int to : tileWithSound) {
-            GlobalAssetManager.assetManager.load("sounds/TILES/" + to + ".ogg", Sound.class);
-            GlobalAssetManager.assetManager.finishLoading();
-            sound = GlobalAssetManager.assetManager.get("sounds/TILES/" + to + ".ogg", Sound.class);
+            sound = GlobalAssetManager.get("sounds/TILES/" + to + ".ogg", Sound.class);
             tileSound[to] = sound.play();
             sound.setLooping(tileSound[to], true);
             sound.setVolume(tileSound[to], 0);

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
 public class TextDrawer {
     static public BitmapFont fontBlack = new BitmapFont(Gdx.files.internal("fonts/black.fnt"));
@@ -25,6 +26,20 @@ public class TextDrawer {
         fontWhite.getData().setScale(scale);
         fontWhite.draw(batch, text, x, y);
         fontWhite.getData().setScale(0.5f);
+    }
+
+    static public void drawCenterWhite(Batch batch, String text, float x, float y, float scale) {
+        fontWhite.getData().setScale(scale);
+        GlyphLayout layout = new GlyphLayout(fontWhite, text);
+        fontWhite.draw(batch, text, (1920 - layout.width) / 2, y);
+        fontWhite.getData().setScale(0.5f);
+    }
+
+    static public void drawCenterBlack(Batch batch, String text, float x, float y, float scale) {
+        fontBlack.getData().setScale(scale);
+        GlyphLayout layout = new GlyphLayout(fontBlack, text);
+        fontBlack.draw(batch, text, (1920 - layout.width) / 2, y);
+        fontBlack.getData().setScale(0.5f);
     }
 
     static public void drawWithShadow(Batch batch, String text, float x, float y, float scale) {

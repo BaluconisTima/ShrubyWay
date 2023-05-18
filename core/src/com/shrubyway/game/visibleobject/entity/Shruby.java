@@ -49,19 +49,9 @@ public class Shruby extends Entity {
         position.set(x, y);
         regionWidth = (animations.get(0).get(0)[0].getKeyFrame(0)).getRegionWidth();
         regionHeight = animations.get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
-        GlobalAssetManager.assetManager.load("sounds/EFFECTS/PortalOut.ogg", Sound.class);
-        GlobalAssetManager.assetManager.finishLoading();
-        Sound sound = GlobalAssetManager.assetManager.get("sounds/EFFECTS/PortalOut.ogg", Sound.class);
+        Sound sound = GlobalAssetManager.get("sounds/EFFECTS/PortalOut.ogg", Sound.class);
         sound.play(SoundSettings.soundVolume);
         animationTime = 0;
-    }
-
-    private void writeObject(java.io.ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-    }
-
-    private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
     }
 
    @Override public Rectangle hitBox() {

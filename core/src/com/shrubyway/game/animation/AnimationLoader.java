@@ -25,9 +25,7 @@ public class AnimationLoader {
                         int x = actionsTypes[i].toArray().length;
                      for(int j = 0; j < x; j++) {
                             String tempAnimation = s + "/" + actions[i] + "/" + actionsTypes[i].get(j) + ".png";
-                            GlobalAssetManager.assetManager.load(tempAnimation, Texture.class);
-                            GlobalAssetManager.assetManager.finishLoadingAsset(tempAnimation);
-                            animationList = GlobalAssetManager.assetManager.get(tempAnimation, Texture.class);
+                            animationList = GlobalAssetManager.get(tempAnimation, Texture.class);
                             Animation temp[]
                                     = {animator.toAnimation(animationList, frameCount[i], 0, 0),
                                        animator.toAnimation(animationList, frameCount[i], 0, 130)};

@@ -39,26 +39,26 @@ public class Game extends Screen {
     Vector2 mousePosition;
 
     public boolean gameOver = false, menu = false;
+    static LoadingScreen loadingScreen;
 
 
     public Game() {
-        GlobalAssetManager.assetManager.finishLoading();
+       GlobalAssetManager.loadAll();
+       if(loadingScreen == null)
+           loadingScreen = new LoadingScreen();
+       loadingScreen.startLoading();
+    }
+
+    private void init() {
         ObjectsList.getList().clear();
-        loadingStatus.set(0);
         batch = new SpriteBatch();
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-        loadingStatus.set(10);
-
-        loadingStatus.set(30);
         DecorationsManager.init();
-        loadingStatus.set(40);
         ItemManager.init();
         MobsManager.init();
-        loadingStatus.set(50);
         map = new Map(1);
-        loadingStatus.set(75);
         player = new Shruby(50, 50);
         cameraPosition = new Vector2(player.positionCenter());
         camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -66,10 +66,7 @@ public class Game extends Screen {
         camera.position.set(cameraPosition.x, cameraPosition.y, 0);
         camera.update();
         ObjectsList.add(player);
-        GlobalAssetManager.assetManager.finishLoading();
         AnimationGlobalTime.clear();
-        loadingStatus.set(100);
-
     }
 
     public void correctPosition() {
@@ -107,11 +104,33 @@ public class Game extends Screen {
 
 
         if (ShrubyWay.inputProcessor.isSpacePressed()) {
-            player.attack();
+            int temp = Inventory.selectedItem();
+            if(temp != -1) {
+                Boolean f = true;
+                if((ItemManager.itemActing[temp] instanceof Food && player.health.getHealth()
+                        == player.health.getMaxHealth())) f = false;
+                if(ItemManager.itemActing[temp] == null) f = false;
+
+                if(f) {
+                    ItemManager.itemActing[temp].Acting();
+                    if (ItemManager.itemActing[temp].checkAct()) {
+                        if (ItemManager.itemActing[temp] instanceof Food) {
+
+                            Item temp2 = Inventory.take();
+                            player.health.heal(
+                                    ((Food) ItemManager.itemActing[temp2.id]).heling);
+                        }
+                    }
+                }
+            }
         }
+
         if ((leftClick || rightClick) &&
                 !Inventory.checkClick(ShrubyWay.inputProcessor.mousePosition())) {
             if (leftClick) {
+                player.attack(mousePosition);
+            }
+            if (rightClick) {
                 if (player.canThrow()) {
                     int selected = Inventory.selectedItem();
                     if (selected != -1 && ItemManager.throwingDamage[selected] != 0) {
@@ -120,27 +139,7 @@ public class Game extends Screen {
                     }
                 }
             }
-            if (rightClick) {
-                int temp = Inventory.selectedItem();
-                if(temp != -1) {
-                    Boolean f = true;
-                    if((ItemManager.itemActing[temp] instanceof Food && player.health.getHealth()
-                            == player.health.getMaxHealth())) f = false;
-                    if(ItemManager.itemActing[temp] == null) f = false;
 
-                       if(f) {
-                           ItemManager.itemActing[temp].Acting();
-                           if (ItemManager.itemActing[temp].checkAct()) {
-                               if (ItemManager.itemActing[temp] instanceof Food) {
-
-                                   Item temp2 = Inventory.take();
-                                   player.health.heal(
-                                           ((Food) ItemManager.itemActing[temp2.id]).heling);
-                               }
-                           }
-                       }
-                }
-            }
             leftClick = false;
             rightClick = false;
         }
@@ -338,17 +337,34 @@ public class Game extends Screen {
     }
 
     Boolean gamePaused = false;
-
+    Boolean gameInitialized = false;
     @Override
     public void updateScreen() {
-        menuInputWorking();
-        if (!gamePaused) gameTick();
+        if(!gameInitialized) {
+            for(int i = 0; i < 200; i++) {
+                if (GlobalAssetManager.update()) {
+                    gameInitialized = true;
+                    init();
+                    break;
+                }
+
+            }
+            loadingScreen.updateStatus((int)(GlobalAssetManager.getProgress() * 100));
+            loadingScreen.updateScreen();
+        } else {
+            menuInputWorking();
+            if (!gamePaused) gameTick();
+        }
 
     }
 
     @Override
     public void renderScreen() {
-       renderFrame();
+        if(!gameInitialized) {
+            loadingScreen.renderScreen();
+        }else {
+            renderFrame();
+        }
     }
 
 }

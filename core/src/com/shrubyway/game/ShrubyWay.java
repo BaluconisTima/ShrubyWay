@@ -20,7 +20,7 @@ public class ShrubyWay extends ApplicationAdapter {
 
     static Screen errorInformationScreen;
 
-    //static Screen loadScreen = new loadScreen();
+    static Screen loadScreen;
 
     static public MyInputAdapter inputProcessor = new MyInputAdapter();
 
@@ -31,6 +31,7 @@ public class ShrubyWay extends ApplicationAdapter {
         Gdx.graphics.setVSync(true);
         menu = new Menu();
         gameOver = new GameOver();
+        loadScreen = new LoadingScreen();
         //errorInformationScreen = new ErrorInformationScreen("!");
 
       /*  LocalDate today = LocalDate.now();
@@ -50,9 +51,8 @@ public class ShrubyWay extends ApplicationAdapter {
 
     @Override public void render() {
         SoundSettings.update();
-        GlobalAssetManager.assetManager.finishLoading();
 
-        if(Screen.loadingStatus.get() == 100) {
+
             screen.updateScreen();
             if(screen instanceof Menu && ((Menu)screen).goToGame) {
                 Menu.goToGame = false;
@@ -80,9 +80,5 @@ public class ShrubyWay extends ApplicationAdapter {
                    }
             }
             screen.renderScreen();
-        } else {
-            Gdx.gl.glClearColor((float)Math.random(), (float)Math.random(), (float)Math.random(), 1);
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        }
     }
 }

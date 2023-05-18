@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class Screen {
 
-    static public AtomicInteger loadingStatus = new AtomicInteger(0);
+    static public int loadingStatus = 0;
 
     public void updateScreen() {
 

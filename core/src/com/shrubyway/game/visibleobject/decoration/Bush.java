@@ -19,9 +19,7 @@ public class Bush extends Decoration  {
     static String way = "Decorations/BUSH.png";
 
     static {
-        GlobalAssetManager.assetManager.load(way, Texture.class);
-        GlobalAssetManager.assetManager.finishLoading();
-        texture = animator.toAnimation((Texture)GlobalAssetManager.assetManager.get(way), 8, 0, 0);
+        texture = animator.toAnimation((Texture)GlobalAssetManager.get(way, Texture.class), 8, 0, 0);
     }
 
     @Override public void interact() {

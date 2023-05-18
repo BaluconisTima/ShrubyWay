@@ -99,8 +99,7 @@ public class MyInputAdapter extends InputAdapter {
         return movementDirection;
     }
     public boolean isSpacePressed() {
-        if(spacePressed) {spacePressed = false; return true;}
-        return false;
+        return spacePressed;
     }
     public boolean isMouseLeft() {
         if(mouseLeft) {mouseLeft = false; return true;}

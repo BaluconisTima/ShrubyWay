@@ -42,9 +42,7 @@ abstract public class Entity extends InteractiveObject {
     static Sound soundAttack;
 
     static  {
-        GlobalAssetManager.assetManager.load("sounds/EFFECTS/Swing.ogg", Sound.class);
-        GlobalAssetManager.assetManager.finishLoading();
-        soundAttack = GlobalAssetManager.assetManager.get("sounds/EFFECTS/Swing.ogg");
+        soundAttack = GlobalAssetManager.get("sounds/EFFECTS/Swing.ogg", Sound.class);
     }
 
 
@@ -151,10 +149,14 @@ abstract public class Entity extends InteractiveObject {
     protected float animationTime = 0f;
     protected float lastAttackTime;
 
-    public void attack() {
+    public void attack(Vector2 direction) {
+
         if(!allowedMotion && action != 2) return;
 
         if((AnimationGlobalTime.time() - lastAttackTime) > attackCooldown) {
+            Vector2 directionTemp =
+                    new Vector2(direction.x - positionCenter().x, direction.y - positionCenter().y);
+            changeAnimationsFor(directionTemp, 2);
             attacking = true;
             animationTime = AnimationGlobalTime.time();
             allowedMotion = false;
