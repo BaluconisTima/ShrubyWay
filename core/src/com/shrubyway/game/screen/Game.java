@@ -299,7 +299,7 @@ public class Game extends Screen {
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         HealthBar.render(batch, player.health);
         Inventory.render(batch, ShrubyWay.inputProcessor.mousePosition());
-       // TextDrawer.drawWithShadow(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 100, 100, 1);
+        TextDrawer.drawWithShadow(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 100, 100, 1);
         if (gamePaused) {
             shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
             shapeRenderer.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
@@ -341,10 +341,11 @@ public class Game extends Screen {
     @Override
     public void updateScreen() {
         if(!gameInitialized) {
-            for(int i = 0; i < 200; i++) {
+            for(int i = 0; i < 5; i++) {
                 if (GlobalAssetManager.update()) {
                     gameInitialized = true;
                     init();
+                    updateScreen();
                     break;
                 }
 

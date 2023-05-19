@@ -35,7 +35,7 @@ public class Pine extends Decoration {
     }
     @Override public void change(float x, float y, int i, int j) {
         texture.setPlayMode(Animation.PlayMode.NORMAL);
-        position.set(x - halfTextureWidth + 150/2, y);
+        position.set(x - halfTextureWidth + 150/2, y + 30);
         decorationI = i;
         decorationI = j;
         decorationType = '2';

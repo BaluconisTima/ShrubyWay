@@ -24,9 +24,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Shruby extends Entity {
 
-    static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH", "PORTAL"};
+    static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH", "PORTAL", "HARMONICA", "EAT"};
     static protected boolean looping[] =
-            new boolean[]{true, true, false, false, false};
+            new boolean[]{true, true, false, false, false, false, false};
     static protected CopyOnWriteArrayList<CopyOnWriteArrayList<Animation<TextureRegion>[]>> animations;
 
     static protected CopyOnWriteArrayList<String>[] actionTypes = new CopyOnWriteArrayList[]{
@@ -34,8 +34,10 @@ public class Shruby extends Entity {
             new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
             new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
             new CopyOnWriteArrayList<>(Arrays.asList("1")),
-            new CopyOnWriteArrayList<>(Arrays.asList("OUT"))};
-    static int frameCount[] = {30, 30, 14, 34, 34};
+            new CopyOnWriteArrayList<>(Arrays.asList("OUT")),
+            new CopyOnWriteArrayList<>(Arrays.asList("1")),
+            new CopyOnWriteArrayList<>(Arrays.asList("1")) };
+    static int frameCount[] = {30, 30, 14, 34, 34, 26, 16};
 
     public Shruby(float x, float y) {
         damage = 2f;

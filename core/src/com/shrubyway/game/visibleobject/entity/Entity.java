@@ -189,8 +189,6 @@ abstract public class Entity extends InteractiveObject {
         for(VisibleObject object : ObjectsList.getList()) {
             if(!(object instanceof InteractiveObject)) continue;
             if(object == this) continue;
-              if(Math.abs(object.position.x - position.x) > 300) continue;
-            if(Math.abs(object.position.y - position.y) > 300) continue;
             if(((InteractiveObject)object).collisionBox() == null) continue;
             if(((InteractiveObject)object).collisionBox().overlaps(temp)) {
                 return true;
