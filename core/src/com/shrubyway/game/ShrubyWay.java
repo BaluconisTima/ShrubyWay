@@ -3,6 +3,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.screen.*;
@@ -19,19 +21,19 @@ public class ShrubyWay extends ApplicationAdapter {
     static Screen gameOver;
 
     static Screen errorInformationScreen;
-
     static Screen loadScreen;
-
     static public MyInputAdapter inputProcessor = new MyInputAdapter();
 
     @Override public void create() {
         Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_LINEAR);
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        GlobalBatch.create();
         Gdx.graphics.setVSync(true);
         menu = new Menu();
         gameOver = new GameOver();
         loadScreen = new LoadingScreen();
+
         //errorInformationScreen = new ErrorInformationScreen("!");
 
       /*  LocalDate today = LocalDate.now();
@@ -79,6 +81,8 @@ public class ShrubyWay extends ApplicationAdapter {
                        render();
                    }
             }
+            GlobalBatch.begin();
             screen.renderScreen();
+            GlobalBatch.end();
     }
 }

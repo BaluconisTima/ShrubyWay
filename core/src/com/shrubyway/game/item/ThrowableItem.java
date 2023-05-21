@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.shapes.Rectangle;
@@ -64,19 +65,16 @@ public class ThrowableItem extends Bullet {
         super.die();
     }
 
-    @Override public void render(Batch batch) {
-        batch.draw(ItemManager.itemTexture[id],
-                Math.round(position.x -
-                        ItemManager.itemTexture[id].getRegionWidth() / 2),
-                Math.round(position.y -
-                        ItemManager.itemTexture[id].getRegionHeight() / 2) ,
-                Math.round(ItemManager.itemTexture[id].getRegionWidth() * 0.5f),
-                Math.round(ItemManager.itemTexture[id].getRegionHeight() * 0.5f),
-                ItemManager.itemTexture[id].getRegionWidth(),
-                ItemManager.itemTexture[id].getRegionHeight(),
-                0.5f,
-                0.5f,
+    @Override public void render() {
+
+        GlobalBatch.render(ItemManager.itemTexture[id], position.x -
+                        ItemManager.itemTexture[id].getRegionWidth() * 0.25f,
+                position.y - ItemManager.itemTexture[id].getRegionHeight() * 0.25f,
+                ItemManager.itemTexture[id].getRegionWidth() * 0.5f,
+                ItemManager.itemTexture[id].getRegionHeight() * 0.5f,
                 (AnimationGlobalTime.time() - throwingTime) *  1500);
+
+        attackBox().render();
 
     }
 

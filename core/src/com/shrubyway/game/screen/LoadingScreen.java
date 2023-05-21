@@ -4,7 +4,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.shrubyway.game.TextDrawer;
+import com.shrubyway.game.GlobalBatch;
+import com.shrubyway.game.myinterface.TextDrawer;
 
 import java.util.ArrayList;
 
@@ -14,7 +15,6 @@ public class LoadingScreen extends Screen{
     static Texture loadStatus = new Texture("interface/loadingStatus.png");
     static Texture logo = new Texture("interface/SWlogo.png");
     static Texture phrase = new Texture("interface/phrase.png");
-    static Batch batch = new SpriteBatch();
     static int maxStatus = 0;
     static ArrayList<String> phrases = new ArrayList<>();
     static {
@@ -61,18 +61,13 @@ public class LoadingScreen extends Screen{
         }
     }
     @Override public void renderScreen() {
-        batch.begin();
-        batch.draw(background, 0, 0);
-        batch.draw(logo, 564, 450);
-        batch.draw(loadingBar, 342, 50);
-        batch.draw(new TextureRegion(loadStatus, 0, 0, loadingStatus * loadStatus.getWidth() / 100,
+        GlobalBatch.render(background, 0, 0);
+        GlobalBatch.render(logo, 564, 450);
+        GlobalBatch.render(loadingBar, 342, 50);
+        GlobalBatch.render(new TextureRegion(loadStatus, 0, 0, loadingStatus * loadStatus.getWidth() / 100,
                 loadStatus.getHeight()), 378, 80);
-        batch.draw(phrase, 454, 230);
-        batch.end();
-
-        batch.begin();
-        TextDrawer.drawCenterWhite(batch, phrases.get(phraseOfday), 0, 325, 0.7f);
-        batch.end();
+        GlobalBatch.render(phrase, 454, 230);
+        TextDrawer.drawCenterWhite(phrases.get(phraseOfday), 0, 325, 0.7f);
     }
 
 

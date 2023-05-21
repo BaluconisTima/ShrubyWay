@@ -4,7 +4,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.shapes.Rectangle;
 
 
@@ -19,7 +21,7 @@ public class Rock extends Decoration {
 
     @Override public void change(float x, float y, int i, int j) {
         texture.setPlayMode(Animation.PlayMode.NORMAL);
-        position.set(x - halfTextureWidth + 150/2, y + 10);
+        position.set(x - halfTextureWidth + MapSettings.TYLESIZE/2, y + 10);
         decorationI = i;
         decorationJ = j;
         decorationType = '3';
@@ -37,11 +39,11 @@ public class Rock extends Decoration {
                 position.y + 30, 60, 50);
     }
 
-    @Override public void render(Batch batch){
-        batch.draw(texture.getKeyFrame(AnimationGlobalTime.time() - lastInteraction), Math.round(position.x),
+    @Override public void render(){
+        GlobalBatch.render(texture.getKeyFrame(AnimationGlobalTime.time() - lastInteraction), Math.round(position.x),
                 Math.round(position.y));
-        collisionBox().render(batch);
-        hitBox().render(batch);
+        collisionBox().render();
+        hitBox().render();
     };
 
 

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.Health;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.AnimationLoader;
@@ -189,17 +190,17 @@ public class Agaric extends Mob{
 
 
 
-    @Override public void render(Batch batch) {
+    @Override public void render() {
 
         if(health.timeAfterHit() < 0.2f) {
-            batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
+            GlobalBatch.batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
         }
         animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(24f / 8 * getSpeed()));
-        batch.draw(animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
+        GlobalBatch.render(animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
                         getKeyFrame(AnimationGlobalTime.time() - animationTime, looping[action]),
                 Math.round(position.x), Math.round(position.y + 10) - (inLiquid ? -5 : 83));
-        collisionBox().render(batch);
-        batch.setColor(1, 1, 1, 1);
+        collisionBox().render();
+        GlobalBatch.batch.setColor(1, 1, 1, 1);
     }
 
 

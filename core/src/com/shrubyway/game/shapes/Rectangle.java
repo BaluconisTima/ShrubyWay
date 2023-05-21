@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.GlobalBatch;
 
 import java.io.Serializable;
 
@@ -46,9 +47,8 @@ public class Rectangle  {
                 point.y >= topLeftCorner.y && point.y <= bottomRightCorner.y);
     }
 
-    public void render(Batch batch) {
-      //  batch.draw(GlobalAssetManager.get("TEST.png", Texture.class),
-       //         topLeftCorner.x, topLeftCorner.y, bottomRightCorner.x - topLeftCorner.x, bottomRightCorner.y - topLeftCorner.y);
+    public void render() {
+     //  GlobalBatch.render(GlobalAssetManager.get("TEST.png", Texture.class), topLeftCorner.x, topLeftCorner.y, bottomRightCorner.x - topLeftCorner.x, bottomRightCorner.y - topLeftCorner.y);
     }
 
 }

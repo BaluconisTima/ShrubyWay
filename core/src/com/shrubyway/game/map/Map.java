@@ -20,6 +20,7 @@ public class Map {
 
     char decorations[][] = new char[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
     public List<VisibleObject> tempList;
+    public int lvl;
 
     private void decorationsLoad(int level) {
         String fileName = "maps/" + level + "/Decorations.txt";
@@ -28,7 +29,7 @@ public class Map {
             while (scanner.hasNextLine()) {
                 String temp = scanner.nextLine();
                 for (int q = 0; q < MapSettings.TILENUMBER; q++) {
-                    decorations[j][q] = temp.charAt(q);
+                    decorations[q][MapSettings.TILENUMBER - 1 -j] = temp.charAt(q);
                 }
                 j++;
             }
@@ -46,6 +47,7 @@ public class Map {
 
     public Map(int level) {
         tempList = new ArrayList<>();
+        lvl = level;
         background = new Background(level);
         decorationsLoad(level);
 
@@ -76,17 +78,17 @@ public class Map {
                         && check.position.x <
                         playerPosition.x + MapSettings.TYLESIZE * MapSettings.calculationDistanceX)
                     fx = true;
-                else if (check.position.x - 38400 >
+                else if (check.position.x - MapSettings.MAPSIZE >
                         playerPosition.x - MapSettings.TYLESIZE * MapSettings.calculationDistanceX
-                        && check.position.x - 38400 <
+                        && check.position.x - MapSettings.MAPSIZE <
                         playerPosition.x + MapSettings.TYLESIZE * MapSettings.calculationDistanceX) {
-                    check.position.x -= 38400;
+                    check.position.x -= MapSettings.MAPSIZE;
                     fx = true;
-                } else if (check.position.x + 38400 >
+                } else if (check.position.x + MapSettings.MAPSIZE >
                         playerPosition.x - MapSettings.TYLESIZE * MapSettings.calculationDistanceX
-                        && check.position.x + 38400 <
+                        && check.position.x + MapSettings.MAPSIZE <
                         playerPosition.x + MapSettings.TYLESIZE * MapSettings.calculationDistanceX) {
-                    check.position.x += 38400;
+                    check.position.x += MapSettings.MAPSIZE;
                     fx = true;
                 }
 
@@ -95,17 +97,17 @@ public class Map {
                         && check.position.y <
                         playerPosition.y + MapSettings.TYLESIZE * MapSettings.calculationDistanceY)
                     fy = true;
-                else if (check.position.y - 38400 >
+                else if (check.position.y - MapSettings.MAPSIZE >
                         playerPosition.y - MapSettings.TYLESIZE * MapSettings.calculationDistanceY
-                        && check.position.y - 38400 <
+                        && check.position.y - MapSettings.MAPSIZE <
                         playerPosition.y + MapSettings.TYLESIZE * MapSettings.calculationDistanceY) {
-                    check.position.y -= 38400;
+                    check.position.y -= MapSettings.MAPSIZE;
                     fy = true;
-                } else if (check.position.y + 38400 >
+                } else if (check.position.y + MapSettings.MAPSIZE >
                         playerPosition.y - MapSettings.TYLESIZE * MapSettings.calculationDistanceY
-                        && check.position.y + 38400 <
+                        && check.position.y + MapSettings.MAPSIZE <
                         playerPosition.y + MapSettings.TYLESIZE * MapSettings.calculationDistanceY) {
-                    check.position.y += 38400;
+                    check.position.y += MapSettings.MAPSIZE;
                     fy = true;
                 }
 
@@ -134,13 +136,13 @@ public class Map {
                     Math.abs(check.position.y - playerPosition.y) >
                             MapSettings.TYLESIZE * MapSettings.calculationDistanceY) {
                 x = (int) check.position.x;
-                while (x < 0) x += 38400;
-                while (x >= 38400) x -= 38400;
+                while (x < 0) x += MapSettings.MAPSIZE;
+                while (x >= MapSettings.MAPSIZE) x -= MapSettings.MAPSIZE;
                 x /= MapSettings.TYLESIZE;
                 x /= 16;
                 y = (int) check.position.y;
-                while (y < 0) y += 38400;
-                while (y >= 38400) y -= 38400;
+                while (y < 0) y += MapSettings.MAPSIZE;
+                while (y >= MapSettings.MAPSIZE) y -= MapSettings.MAPSIZE;
                 y /= MapSettings.TYLESIZE;
                 y /= 16;
                 chunks[x][y].add(check);
@@ -181,20 +183,20 @@ public class Map {
 
     public void addVisibleObject(VisibleObject visibleObject) {
         int x = (int) visibleObject.position.x;
-        if (x < 0) x += 38400;
-        if (x >= 38400) x -= 38400;
-        x /= 150;
+        if (x < 0) x += MapSettings.MAPSIZE;
+        if (x >= MapSettings.MAPSIZE) x -= MapSettings.MAPSIZE;
+        x /= MapSettings.TYLESIZE;
         x /= 16;
         int y = (int) visibleObject.position.y;
-        if (y < 0) y += 38400;
-        if (y >= 38400) y -= 38400;
-        y /= 150;
+        if (y < 0) y += MapSettings.MAPSIZE;
+        if (y >= MapSettings.MAPSIZE) y -= MapSettings.MAPSIZE;
+        y /= MapSettings.TYLESIZE;
         y /= 16;
         chunks[x][y].add(visibleObject);
     }
 
-    public void render(SpriteBatch batch, Vector2 playerPosition) {
-        background.render(batch, playerPosition);
+    public void render(Vector2 playerPosition) {
+        background.render(playerPosition);
     }
 
     public void makeStep(Vector2 step, Vector2 playerPosition) {

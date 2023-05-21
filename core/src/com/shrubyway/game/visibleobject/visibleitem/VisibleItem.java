@@ -4,14 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.Inventory;
+import com.shrubyway.game.GlobalBatch;
+import com.shrubyway.game.myinterface.Inventory;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
-import com.shrubyway.game.shapes.Rectangle;
 
 public class VisibleItem extends VisibleObject {
     public Item item;
@@ -38,8 +38,8 @@ public class VisibleItem extends VisibleObject {
     }
 
     @Override
-    public void render(Batch batch) {
-        batch.draw(ItemManager.itemTexture[item.id],
+    public void render() {
+        GlobalBatch.render(ItemManager.itemTexture[item.id],
                 Math.round(position.x - ItemManager.itemTexture[item.id].getRegionWidth() / 4),
                 Math.round(position.y - 16 * Math.sin(5 * (AnimationGlobalTime.time() - dropTime))),
                 Math.round(ItemManager.itemTexture[item.id].getRegionWidth() * 0.5f),

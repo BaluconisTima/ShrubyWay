@@ -1,12 +1,11 @@
-package com.shrubyway.game;
+package com.shrubyway.game.myinterface;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.sound.SoundSettings;
@@ -49,13 +48,13 @@ public class Inventory {
         clear();
     }
 
-    static private void nameAndDesc(Batch batch, Vector2 mousePosition, int i, int j) {
+    static private void nameAndDesc(Vector2 mousePosition, int i, int j) {
         if(buttons[i][j].checkPoint(mousePosition)) {
             if(items[i][j] != null) {
-                TextDrawer.drawWithShadow(batch, ItemManager.itemName[items[i][j].id],
+                TextDrawer.drawWithShadow(ItemManager.itemName[items[i][j].id],
                         mousePosition.x + 15,
                         mousePosition.y + 35, 0.5f);
-                TextDrawer.drawWithShadow(batch, ItemManager.itemDescription[items[i][j].id],
+                TextDrawer.drawWithShadow(ItemManager.itemDescription[items[i][j].id],
                         mousePosition.x + 15,
                         mousePosition.y + 5, 0.3f, 0.6f);
             }
@@ -63,17 +62,17 @@ public class Inventory {
     }
 
 
-    static public void render(Batch batch, Vector2 mousePosition) {
-       batch.draw(base,0,0);
-       if(opened) batch.draw(full,0,0);
+    static public void render(Vector2 mousePosition) {
+        GlobalBatch.render(base,0,0);
+       if(opened) GlobalBatch.render(full,0,0);
 
         for(int i = 0; i < 9; i++) {
-            buttons[0][i].render(batch);
+            buttons[0][i].render();
             if(items[0][i] != null) {
-                batch.draw(ItemManager.itemTexture[items[0][i].id],
+                GlobalBatch.render(ItemManager.itemTexture[items[0][i].id],
                         27 + 79.1f * i, 1080 - 70 - 28, 70, 70);
                 if(numberOfItem[0][i] > 1)
-                    TextDrawer.drawWithShadow(batch, numberOfItem[0][i].toString(),
+                    TextDrawer.drawWithShadow(numberOfItem[0][i].toString(),
                         27 + 79.1f * i + 50 - (numberOfItem[0][i].toString().length()-1) * 17,
                         1080 - 70, 0.5f);
             }
@@ -81,34 +80,34 @@ public class Inventory {
         if(opened)
             for (int i = 1; i < 5; i++)
                 for (int j = 0; j < 9; j++) {
-                    buttons[i][j].render(batch);
+                    buttons[i][j].render();
                     if (items[i][j] != null) {
-                        batch.draw(ItemManager.itemTexture[items[i][j].id],
+                        GlobalBatch.render(ItemManager.itemTexture[items[i][j].id],
                                 27 + 79.1f * j,
                                 1080 - 70 - 55 - 79.1f * i, 70, 70);
                         if (numberOfItem[i][j] > 1)
-                            TextDrawer.drawWithShadow(batch, numberOfItem[i][j].toString(),
+                            TextDrawer.drawWithShadow(numberOfItem[i][j].toString(),
                                     27 + 79.1f * j + 50 - (numberOfItem[i][j].toString().length() - 1) * 17,
                                     1080 - 70 - 28
                                             - 79.1f * i, 0.5f);
                     }
                 }
 
-        batch.draw(select, 12 + 79.1f * selected, 1080 - 111.55f);
+        GlobalBatch.render(select, 12 + 79.1f * selected, 1080 - 111.55f);
         for(int j = 0; j < 9; j++) {
-            nameAndDesc(batch, mousePosition, 0, j);
+            nameAndDesc(mousePosition, 0, j);
         }
         if(opened) {
             for(int i = 1; i < 5; i++) {
                for(int j = 0; j < 9; j++) {
-                   nameAndDesc(batch, mousePosition, i, j);
+                   nameAndDesc(mousePosition, i, j);
                }
             }
             if(itemInHand != null) {
-                batch.draw(ItemManager.itemTexture[itemInHand.id],
+                GlobalBatch.render(ItemManager.itemTexture[itemInHand.id],
                         mousePosition.x - 35, mousePosition.y - 35, 70, 70);
                 if(numberOfItemInHand > 1) {
-                    TextDrawer.drawWithShadow(batch, numberOfItemInHand.toString(),
+                    TextDrawer.drawWithShadow(numberOfItemInHand.toString(),
                             mousePosition.x + 15 - (numberOfItemInHand.toString().length()-1) * 17,
                             mousePosition.y -10, 0.5f);
                 }

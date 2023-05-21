@@ -1,7 +1,8 @@
-package com.shrubyway.game;
+package com.shrubyway.game.myinterface;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.shapes.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -18,11 +19,11 @@ public class Button {
                 textureNotSellected.getWidth(), textureNotSellected.getHeight());
     }
 
-    public void render(Batch batch) {
-        batch.draw(textureNotSellected, position.x, position.y);
+    public void render() {
+        GlobalBatch.render(textureNotSellected, position.x, position.y);
     }
 
-    public void renderSellected(Batch batch) {
-        batch.draw(textureSellected, position.x, position.y);
+    public void renderSellected() {
+        GlobalBatch.render(textureSellected, position.x, position.y);
     }
 }

@@ -3,11 +3,11 @@ package com.shrubyway.game.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.shrubyway.game.*;
 import com.shrubyway.game.animation.AnimationGlobalTime;
@@ -15,6 +15,11 @@ import com.shrubyway.game.item.Food;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.Map;
+import com.shrubyway.game.map.MapSettings;
+import com.shrubyway.game.myinterface.HealthBar;
+import com.shrubyway.game.myinterface.Inventory;
+import com.shrubyway.game.myinterface.MiniMap;
+import com.shrubyway.game.myinterface.TextDrawer;
 import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
@@ -27,15 +32,12 @@ import com.shrubyway.game.visibleobject.entity.mob.Mob;
 import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
-import java.io.Serializable;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Game extends Screen {
     Shruby player;
     Map map;
-    SpriteBatch batch;
-    OrthographicCamera camera;
-    Vector2 cameraPosition;
+    OrthographicCamera localCamera;
     Vector2 mousePosition;
 
     public boolean gameOver = false, menu = false;
@@ -51,20 +53,18 @@ public class Game extends Screen {
 
     private void init() {
         ObjectsList.getList().clear();
-        batch = new SpriteBatch();
-        batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
+        GlobalBatch.batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        GlobalBatch.batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
         DecorationsManager.init();
         ItemManager.init();
         MobsManager.init();
         map = new Map(1);
         player = new Shruby(50, 50);
-        cameraPosition = new Vector2(player.positionCenter());
-        camera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.position.set(cameraPosition.x, cameraPosition.y, 0);
-        camera.update();
+        localCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        localCamera.position.set(player.positionCenter().x, player.positionCenter().y, 0);
+        localCamera.update();
+
         ObjectsList.add(player);
         AnimationGlobalTime.clear();
     }
@@ -72,20 +72,20 @@ public class Game extends Screen {
     public void correctPosition() {
         Vector2 temp = new Vector2(player.position());
         if (temp.x < 0) {
-            temp.add(new Vector2(38400, 0));
-            cameraPosition.add(new Vector2(38400, 0));
+            temp.add(new Vector2(MapSettings.MAPSIZE, 0));
+            localCamera.position.add(new Vector3(MapSettings.MAPSIZE, 0, 0));
         }
         if (temp.y < 0) {
-            temp.add(new Vector2(0, 38400));
-            cameraPosition.add(new Vector2(0, 38400));
+            temp.add(new Vector2(0, MapSettings.MAPSIZE));
+            localCamera.position.add(new Vector3(0, MapSettings.MAPSIZE, 0));
         }
-        if (temp.x >= 38400) {
-            temp.add(new Vector2(-38400, 0));
-            cameraPosition.add(new Vector2(-38400, 0));
+        if (temp.x >= MapSettings.MAPSIZE) {
+            temp.add(new Vector2(-MapSettings.MAPSIZE, 0));
+            localCamera.position.add(new Vector3(-MapSettings.MAPSIZE, 0, 0));
         }
-        if (temp.y >= 38400) {
-            temp.add(new Vector2(0, -38400));
-            cameraPosition.add(new Vector2(0, -38400));
+        if (temp.y >= MapSettings.MAPSIZE) {
+            temp.add(new Vector2(0, -MapSettings.MAPSIZE));
+            localCamera.position.add(new Vector3(0, -MapSettings.MAPSIZE, 0));
         }
         player.changePosition(temp);
     }
@@ -95,8 +95,8 @@ public class Game extends Screen {
     public void playerInputWorking() {
         player.running(ShrubyWay.inputProcessor.isRuning());
         Vector2 movingVector = ShrubyWay.inputProcessor.getMovementDirection();
-        mousePosition = new Vector2(ShrubyWay.inputProcessor.mousePosition().x + cameraPosition.x - Gdx.graphics.getWidth() / 2,
-                ShrubyWay.inputProcessor.mousePosition().y + cameraPosition.y - Gdx.graphics.getHeight() / 2);
+        mousePosition = new Vector2(ShrubyWay.inputProcessor.mousePosition().x + localCamera.position.x - Gdx.graphics.getWidth() / 2,
+                ShrubyWay.inputProcessor.mousePosition().y + localCamera.position.y - Gdx.graphics.getHeight() / 2);
         leftClick = ShrubyWay.inputProcessor.isMouseLeft();
         rightClick = ShrubyWay.inputProcessor.isMouseRight();
         player.tryMoveTo(movingVector);
@@ -274,11 +274,8 @@ public class Game extends Screen {
     }
 
     public void cameraUpdate() {
-        cameraPosition.lerp(player.positionCenter(),
-                0.1f);
-        camera.setToOrtho(false, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        camera.position.set(Math.round(cameraPosition.x), Math.round(cameraPosition.y), 0);
-        camera.update();
+        localCamera.position.lerp(new Vector3(player.positionCenter(),0), 0.1f);
+        localCamera.update();
     }
 
     public void gameTick() {
@@ -290,23 +287,20 @@ public class Game extends Screen {
 
     public void renderObjects() {
         for (VisibleObject obj : ObjectsList.getList()) {
-            obj.render(batch);
+            obj.render();
         }
     }
 
     public void renderInterface() {
-        batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
+        GlobalBatch.batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-        HealthBar.render(batch, player.health);
-        Inventory.render(batch, ShrubyWay.inputProcessor.mousePosition());
-        TextDrawer.drawWithShadow(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 100, 100, 1);
+
+        HealthBar.render(player.health);
+        Inventory.render(ShrubyWay.inputProcessor.mousePosition());
+       // TextDrawer.drawWithShadow("" + localCamera.position, 100, 100, 1);
+        MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
         if (gamePaused) {
-            shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-            shapeRenderer.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
-                    Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-            shapeRenderer.setColor(0, 0, 0, 0.2f);
-            shapeRenderer.rect(0, 0, 1920, 1080);
-            shapeRenderer.end();
+
         }
     }
 
@@ -323,17 +317,15 @@ public class Game extends Screen {
         map.resumeSounds();
     }
 
-    ShapeRenderer shapeRenderer;
 
     public void renderFrame() {
-        shapeRenderer = new ShapeRenderer();
-        batch.setProjectionMatrix(camera.combined);
+        GlobalBatch.setProjectionMatrix(localCamera);
         ScreenUtils.clear(1, 1, 1, 1);
-        batch.begin();
-        map.render(batch, player.position());
+        //batch.begin();
+        map.render(player.position());
         renderObjects();
         renderInterface();
-        batch.end();
+       // batch.end();
     }
 
     Boolean gamePaused = false;

@@ -5,8 +5,10 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.ItemManager;
+import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
@@ -35,7 +37,7 @@ public class Pine extends Decoration {
     }
     @Override public void change(float x, float y, int i, int j) {
         texture.setPlayMode(Animation.PlayMode.NORMAL);
-        position.set(x - halfTextureWidth + 150/2, y + 30);
+        position.set(x - halfTextureWidth + MapSettings.TYLESIZE/2, y + 30);
         decorationI = i;
         decorationI = j;
         decorationType = '2';
@@ -50,11 +52,11 @@ public class Pine extends Decoration {
         }
     }
 
-    @Override public void render(Batch batch){
-        batch.draw(texture.getKeyFrame(AnimationGlobalTime.time() - lastInteraction), Math.round(position.x),
+    @Override public void render(){
+        GlobalBatch.render(texture.getKeyFrame(AnimationGlobalTime.time() - lastInteraction), Math.round(position.x),
                 Math.round(position.y));
-        collisionBox().render(batch);
-        hitBox().render(batch);
+        collisionBox().render();
+        hitBox().render();
     };
 
 }

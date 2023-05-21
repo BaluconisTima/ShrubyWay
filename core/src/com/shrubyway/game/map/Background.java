@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.sound.SoundSettings;
@@ -52,7 +53,7 @@ public class Background {
             while (scanner.hasNextLine()) {
                 String temp = scanner.nextLine();
                 for (int q = 0; q < MapSettings.TILENUMBER; q++) {
-                    backgroundMap[j][q] = temp.charAt(q);
+                    backgroundMap[q][MapSettings.TILENUMBER - 1 -j] = temp.charAt(q);
                 }
                 j++;
             }
@@ -124,7 +125,7 @@ public class Background {
             sound.setVolume(tileSound[i], Math.max(0, 0.7f * (1 - nearestTile[i]) * SoundSettings.soundVolume));
         }
     }
-    public void render(Batch batch, Vector2 playerPosition) {
+    public void render(Vector2 playerPosition) {
         int x = 0;
         x += playerPosition.x;
         x /= MapSettings.TYLESIZE;
@@ -140,7 +141,7 @@ public class Background {
                     j2 = (j + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
                     int tile = backgroundMap[i2][j2] - '0';
                     TextureRegion tempTexture = this.tile[tile][d].getKeyFrame(AnimationGlobalTime.time(), true);
-                    batch.draw(tempTexture, (i * MapSettings.TYLESIZE) - 25,
+                    GlobalBatch.render(tempTexture, (i * MapSettings.TYLESIZE) - 25,
                             (j * MapSettings.TYLESIZE) - 25,
                             200,
                             200);

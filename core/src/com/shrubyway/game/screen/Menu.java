@@ -8,7 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.shrubyway.game.Button;
+import com.shrubyway.game.GlobalBatch;
+import com.shrubyway.game.myinterface.Button;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.sound.SoundSettings;
 
@@ -19,7 +20,6 @@ public class Menu extends Screen {
     static public Boolean goToGame = false;
     Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/Click.ogg"));
 
-    static Batch batch = new SpriteBatch();
     static Button playButton = new Button(new Texture("interface/SWplayButton.png"),
             new Texture("interface/SWplayButtonSellected.png"), 135, 90 + 159 * 2) {
     },
@@ -32,14 +32,7 @@ public class Menu extends Screen {
 
 
     public Menu() {
-        logo.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        logo.setWrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
 
-        batch = new SpriteBatch();
-        batch.enableBlending();
-        batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-        batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
-                Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
     }
 
 
@@ -64,22 +57,19 @@ public class Menu extends Screen {
 
     @Override public void renderScreen() {
         ScreenUtils.clear(1, 1, 1, 1);
-        batch.begin();
-        batch.draw(Background, 0, 0);
-        batch.draw(logo, 10, 500);
+        GlobalBatch.render(Background, 0, 0);
+        GlobalBatch.render(logo, 10, 500);
 
         if(playButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()))
-            playButton.renderSellected(batch);
-        else playButton.render(batch);
+            playButton.renderSellected();
+        else playButton.render();
 
         if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()))
-            settingsButton.renderSellected(batch);
-        else settingsButton.render(batch);
+            settingsButton.renderSellected();
+        else settingsButton.render();
 
         if(exitButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()))
-            exitButton.renderSellected(batch);
-        else exitButton.render(batch);
-
-        batch.end();
+            exitButton.renderSellected();
+        else exitButton.render();
     }
 }
