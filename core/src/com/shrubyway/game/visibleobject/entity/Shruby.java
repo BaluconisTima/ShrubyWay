@@ -28,7 +28,7 @@ public class Shruby extends Entity {
 
     static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH", "PORTAL", "HARMONICA", "EAT"};
     static protected boolean looping[] =
-            new boolean[]{true, true, false, false, false, false, false};
+            new boolean[]{true, true, false, false, false, true, true};
     static protected CopyOnWriteArrayList<CopyOnWriteArrayList<Animation<TextureRegion>[]>> animations;
 
     static protected CopyOnWriteArrayList<String>[] actionTypes = new CopyOnWriteArrayList[]{
@@ -116,6 +116,10 @@ public class Shruby extends Entity {
         super.getDamage(damage, hitPosition);
     }
 
+    public boolean canAct() {
+        return (allowedMotion);
+    }
+
     @Override public void die() {
         if(action == 3) return;
         Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/ShrabyDeath1.wav"));
@@ -143,6 +147,14 @@ public class Shruby extends Entity {
                 action = 0;
                 animationTime = AnimationGlobalTime.time();
             }
+        }
+    }
+
+    public void updateAnimation(int action) {
+        if(!allowedMotion) return;
+        if(this.action != action) {
+            this.action = action;
+            animationTime = AnimationGlobalTime.time();
         }
     }
     @Override public void render() {

@@ -38,9 +38,9 @@ public class ItemManager {
 
         itemName[4] = "Harmonica";
         itemDescription[4] = "That old harmonica makes \n" +
-                "you feel strangely sad.";
+                "you feel strangely sad. [MUSIC]";
         throwingDamage[4] = 0;
-        itemActing[4] = null;
+        itemActing[4] = new Harmonica();
     }
 
 

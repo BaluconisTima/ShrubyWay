@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.shrubyway.game.*;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Food;
+import com.shrubyway.game.item.Harmonica;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.Map;
@@ -93,17 +94,12 @@ public class Game extends Screen {
     boolean leftClick = false, rightClick = false;
 
     public void playerInputWorking() {
-        player.running(ShrubyWay.inputProcessor.isRuning());
-        Vector2 movingVector = ShrubyWay.inputProcessor.getMovementDirection();
-        mousePosition = new Vector2(ShrubyWay.inputProcessor.mousePosition().x + localCamera.position.x - Gdx.graphics.getWidth() / 2,
-                ShrubyWay.inputProcessor.mousePosition().y + localCamera.position.y - Gdx.graphics.getHeight() / 2);
-        leftClick = ShrubyWay.inputProcessor.isMouseLeft();
-        rightClick = ShrubyWay.inputProcessor.isMouseRight();
-        player.tryMoveTo(movingVector);
-        correctPosition();
-
-
-        if (ShrubyWay.inputProcessor.isSpacePressed()) {
+        mousePosition = new Vector2(ShrubyWay.inputProcessor.mousePosition().x
+                + localCamera.position.x - Gdx.graphics.getWidth() / 2,
+                ShrubyWay.inputProcessor.mousePosition().y
+                        + localCamera.position.y - Gdx.graphics.getHeight() / 2);
+        boolean spacePressed = ShrubyWay.inputProcessor.isSpacePressed();
+        if (spacePressed && player.canAct()) {
             int temp = Inventory.selectedItem();
             if(temp != -1) {
                 Boolean f = true;
@@ -120,10 +116,43 @@ public class Game extends Screen {
                             player.health.heal(
                                     ((Food) ItemManager.itemActing[temp2.id]).heling);
                         }
+                        if (ItemManager.itemActing[temp] instanceof Harmonica) {
+                            ShrubyWay.inputProcessor.setSpacePressed(false);
+                        }
                     }
+                    player.updateAnimation(ItemManager.itemActing[temp].actingAnimation);
+                } else {
+                    ItemManager.itemActing[temp].stopActing();
+                }
+            }
+
+        } else {
+            int temp = Inventory.selectedItem();
+            if(temp != -1) {
+                if(ItemManager.itemActing[temp] != null) {
+                    ItemManager.itemActing[temp].stopActing();
                 }
             }
         }
+        leftClick = ShrubyWay.inputProcessor.isMouseLeft();
+        rightClick = ShrubyWay.inputProcessor.isMouseRight();
+
+        if(Inventory.selectedItem() == -1 || ItemManager.itemActing[Inventory.selectedItem()] == null
+        || !ItemManager.itemActing[Inventory.selectedItem()].stillActing) {
+            player.running(ShrubyWay.inputProcessor.isRuning());
+            Vector2 movingVector = ShrubyWay.inputProcessor.getMovementDirection();
+            if (movingVector.len() != 0) {
+                if (Inventory.selectedItem() != -1) {
+                    if (ItemManager.itemActing[Inventory.selectedItem()] != null) {
+                        ItemManager.itemActing[Inventory.selectedItem()].stopActing();
+                    }
+                }
+            }
+            player.tryMoveTo(movingVector);
+            correctPosition();
+        }
+
+
 
         if ((leftClick || rightClick) &&
                 !Inventory.checkClick(ShrubyWay.inputProcessor.mousePosition())) {

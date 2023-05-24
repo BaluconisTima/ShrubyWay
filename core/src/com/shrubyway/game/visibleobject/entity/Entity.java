@@ -115,25 +115,28 @@ abstract public class Entity extends InteractiveObject {
 
     public boolean tryMoveTo(Vector2 direction){
         if(!allowedMotion) return false;
-        direction.nor();
-
-        float tempSpeed = getSpeed();
-        tempDirection.set(direction);
-        tempDirection.scl(tempSpeed);
-        tempDirection.scl(1f/collisionsEps);
         boolean moved = false;
+        if(direction.len() != 0) {
+            direction.nor();
 
-        for(int i = 0; i < collisionsEps; i++) {
-            position.add(tempDirection);
-            if (checkCollisions()) {
-                position.sub(tempDirection);
-            } else moved = true;
+            float tempSpeed = getSpeed();
+            tempDirection.set(direction);
+            tempDirection.scl(tempSpeed);
+            tempDirection.scl(1f / collisionsEps);
 
-            if (checkCollisions()) {
+
+            for (int i = 0; i < collisionsEps; i++) {
                 position.add(tempDirection);
+                if (checkCollisions()) {
+                    position.sub(tempDirection);
+                } else moved = true;
+
+                if (checkCollisions()) {
+                    position.add(tempDirection);
+                }
             }
         }
-        changeAnimationsFor(direction, direction.len() < 0.1f ? 0 : 1);
+        changeAnimationsFor(direction, direction.len() == 0 ? 0 : 1);
         return moved;
     };
 

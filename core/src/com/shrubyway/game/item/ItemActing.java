@@ -4,17 +4,16 @@ import com.shrubyway.game.animation.AnimationGlobalTime;
 
 public class ItemActing {
     float actingTime = 0.5f;
-    float lastActingTime;
     float startActingTime = 1000000000;
     boolean acted = false;
 
+    public int actingAnimation;
+    public boolean stillActing = false;
+
 
     public void Acting() {
-        if(AnimationGlobalTime.time() - lastActingTime > 0.5f) {
-            startActingTime = 1000000000;
-        }
+        stillActing = true;
         startActingTime = Math.min(startActingTime, AnimationGlobalTime.time());
-        lastActingTime = AnimationGlobalTime.time();
         if(AnimationGlobalTime.time() - startActingTime > actingTime) {
            acted = true;
         }
@@ -30,6 +29,7 @@ public class ItemActing {
     }
 
     public void stopActing() {
+        stillActing = false;
         startActingTime = 1000000000;
     }
 

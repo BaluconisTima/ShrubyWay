@@ -134,11 +134,17 @@ public class Inventory {
             for(int j = 0; j < 9; j++) {
                 if(buttons[i][j].checkPoint(point)) {
                     if(items[i][j] != null && itemInHand != null && items[i][j].id == itemInHand.id) {
+                        Item temp = items[i][j];
+                        if(temp != null && ItemManager.itemActing[temp.id] != null) {
+                            ItemManager.itemActing[temp.id].stopActing();
+                        }
                         numberOfItem[i][j] += numberOfItemInHand;
                         if(numberOfItem[i][j] >= 100) {
                             numberOfItemInHand = numberOfItem[i][j] - 99;
                             numberOfItem[i][j] = 99;
-                        } else { numberOfItemInHand = 0; itemInHand = null; }
+                        } else {
+                            numberOfItemInHand = 0; itemInHand = null;
+                        }
                     }
                     Item temp = items[i][j]; Integer temp2 = numberOfItem[i][j];
                     items[i][j] = itemInHand; numberOfItem[i][j] = numberOfItemInHand;
@@ -176,6 +182,10 @@ public class Inventory {
                         numberOfItemInHand++;
                         numberOfItem[i][j]--;
                         if(numberOfItem[i][j] == 0) {
+                            Item temp = items[i][j];
+                            if(temp != null && ItemManager.itemActing[temp.id] != null) {
+                                ItemManager.itemActing[temp.id].stopActing();
+                            }
                             items[i][j] = null;
                         }
                         continue;
@@ -216,8 +226,7 @@ public class Inventory {
     static public void dropItem(int faceDirection, Vector2 playerPosition) {
         if(items[0][selected] != null) {
             drop(items[0][selected],faceDirection,playerPosition);
-                numberOfItem[0][selected]--;
-                if(numberOfItem[0][selected] == 0) items[0][selected] = null;
+            take();
             }
     }
 
@@ -230,11 +239,15 @@ public class Inventory {
     }
 
     static public Item take() {
-
         if(items[0][selected] != null) {
             Item temp = items[0][selected];
             numberOfItem[0][selected]--;
-            if(numberOfItem[0][selected] == 0) items[0][selected] = null;
+            if(numberOfItem[0][selected] == 0) {
+                if(ItemManager.itemActing[temp.id] != null) {
+                    ItemManager.itemActing[temp.id].stopActing();
+                }
+                items[0][selected] = null;
+            }
 
             return temp;
         }
@@ -246,9 +259,19 @@ public class Inventory {
         return items[0][selected].id;
     }
     static public void changeSelected(int i) {
+        if(i - 1 == selected) return;
+        Item temp = items[0][selected];
+        if(temp != null && ItemManager.itemActing[temp.id] != null) {
+            ItemManager.itemActing[temp.id].stopActing();
+        }
         selected = i - 1;
     }
     static public void addSelected(int i) {
+        if(i == 0) return;
+        Item temp = items[0][selected];
+        if(temp != null && ItemManager.itemActing[temp.id] != null) {
+            ItemManager.itemActing[temp.id].stopActing();
+        }
         selected += i + 999999;
         selected %= 9;
     }

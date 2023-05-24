@@ -101,6 +101,9 @@ public class MyInputAdapter extends InputAdapter {
     public boolean isSpacePressed() {
         return spacePressed;
     }
+    public void setSpacePressed(boolean spacePressed) {
+        this.spacePressed = spacePressed;
+    }
     public boolean isMouseLeft() {
         if(mouseLeft) {mouseLeft = false; return true;}
         return false;
