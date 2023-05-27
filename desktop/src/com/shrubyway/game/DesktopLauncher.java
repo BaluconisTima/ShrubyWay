@@ -17,7 +17,6 @@ public class DesktopLauncher {
 		System.out.println("DesktopLauncher.main: ");
 		config.setForegroundFPS(60);
 		config.setTitle("Shruby Way - beta");
-
 		config.setWindowIcon("SWicon.png");
 		config.setWindowedMode(1920, 1080);
 		config.setFullscreenMode(config.getDisplayMode());

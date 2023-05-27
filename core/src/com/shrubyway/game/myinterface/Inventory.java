@@ -1,35 +1,31 @@
 package com.shrubyway.game.myinterface;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
-import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.shapes.Rectangle;
+import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class Inventory {
-    static Texture base = new Texture("interface/mainInv.png"),
-            full = new Texture("interface/fullInv.png"),
-            select = new Texture("interface/selectInv.png");
-    static public Boolean opened = false;
-    static Sound click = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/Click.ogg"));
-    static Rectangle buttons[][] = new Rectangle[5][9];
-    static Item items[][] = new Item[5][9];
-    static Integer numberOfItem[][] = new Integer[5][9];
+    Texture base = GlobalAssetManager.get("interface/mainInv.png", Texture.class),
+            full = GlobalAssetManager.get("interface/fullInv.png", Texture.class),
+            select = GlobalAssetManager.get("interface/selectInv.png", Texture.class);
+    public Boolean opened = false;
+    Sound click = GlobalAssetManager.get(("sounds/EFFECTS/Click.ogg"), Sound.class);
+    Rectangle buttons[][] = new Rectangle[5][9];
+    Item items[][] = new Item[5][9];
+    Integer numberOfItem[][] = new Integer[5][9];
+    Integer selected = 0;
+    Item itemInHand = null;
+    Integer numberOfItemInHand = 0;
 
-    static Integer selected = 0;
-
-
-    static Item itemInHand = null;
-    static Integer numberOfItemInHand = 0;
-
-    static public void clear() {
+    public void clear() {
         for(int i = 0; i < 9; i++) {
             buttons[0][i] = new Rectangle(27 + 79.1f * i,1080 - 70 - 28,70,70);
         }
@@ -44,11 +40,11 @@ public class Inventory {
                 numberOfItem[i][j] = 0;
             }
     }
-    static {
+    {
         clear();
     }
 
-    static private void nameAndDesc(Vector2 mousePosition, int i, int j) {
+    private void nameAndDesc(Vector2 mousePosition, int i, int j) {
         if(buttons[i][j].checkPoint(mousePosition)) {
             if(items[i][j] != null) {
                 TextDrawer.drawWithShadow(ItemManager.itemName[items[i][j].id],
@@ -62,7 +58,7 @@ public class Inventory {
     }
 
 
-    static public void render(Vector2 mousePosition) {
+    public void render(Vector2 mousePosition) {
         GlobalBatch.render(base,0,0);
        if(opened) GlobalBatch.render(full,0,0);
 
@@ -116,7 +112,7 @@ public class Inventory {
 
     }
 
-    static public boolean checkClick(Vector2 point) {
+    public boolean checkClick(Vector2 point) {
         if(!opened) {
             if(point.x <= 750 && point.y >= 970) {
                 changeOpenned();
@@ -129,7 +125,7 @@ public class Inventory {
         return false;
     }
 
-    static public void leftClick(Vector2 point) {
+    public void leftClick(Vector2 point) {
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 9; j++) {
                 if(buttons[i][j].checkPoint(point)) {
@@ -155,7 +151,7 @@ public class Inventory {
         }
 
     }
-    static public void rightClick(Vector2 point) {
+    public void rightClick(Vector2 point) {
         for(int i = 0; i < 5; i++) {
             for(int j = 0; j < 9; j++) {
                 if(buttons[i][j].checkPoint(point)) {
@@ -198,12 +194,12 @@ public class Inventory {
         }
 
     }
-    static public void changeOpenned() {
+    public void changeOpenned() {
         click.play(SoundSettings.soundVolume);
         opened = !opened;
     }
 
-    static public void drop(Item temp, int faceDirection, Vector2 playerPosition) {
+    public void drop(Item temp, int faceDirection, Vector2 playerPosition) {
         switch (faceDirection) {
             case 0:
                 ObjectsList.add(new VisibleItem(temp, playerPosition.x,
@@ -223,14 +219,14 @@ public class Inventory {
                 break;
         }
     }
-    static public void dropItem(int faceDirection, Vector2 playerPosition) {
+    public void dropItem(int faceDirection, Vector2 playerPosition) {
         if(items[0][selected] != null) {
             drop(items[0][selected],faceDirection,playerPosition);
             take();
             }
     }
 
-    static public void dropItemHand(int faceDirection, Vector2 playerPosition) {
+    public void dropItemHand(int faceDirection, Vector2 playerPosition) {
         while(itemInHand != null) {
             drop(itemInHand,faceDirection,playerPosition);
             numberOfItemInHand--;
@@ -238,7 +234,7 @@ public class Inventory {
         }
     }
 
-    static public Item take() {
+    public Item take() {
         if(items[0][selected] != null) {
             Item temp = items[0][selected];
             numberOfItem[0][selected]--;
@@ -254,11 +250,11 @@ public class Inventory {
         return null;
     }
 
-    static public int selectedItem() {
+    public int selectedItem() {
         if(items[0][selected] == null) return -1;
         return items[0][selected].id;
     }
-    static public void changeSelected(int i) {
+    public void changeSelected(int i) {
         if(i - 1 == selected) return;
         Item temp = items[0][selected];
         if(temp != null && ItemManager.itemActing[temp.id] != null) {
@@ -266,7 +262,7 @@ public class Inventory {
         }
         selected = i - 1;
     }
-    static public void addSelected(int i) {
+    public void addSelected(int i) {
         if(i == 0) return;
         Item temp = items[0][selected];
         if(temp != null && ItemManager.itemActing[temp.id] != null) {
@@ -276,7 +272,7 @@ public class Inventory {
         selected %= 9;
     }
 
-    static public boolean addItem(Item item) {
+    public boolean addItem(Item item) {
         for(int i = 0; i < 5; i++)
             for(int j = 0; j < 9; j++) {
                 if(items[i][j] != null &&

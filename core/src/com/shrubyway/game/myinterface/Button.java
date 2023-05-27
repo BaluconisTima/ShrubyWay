@@ -10,6 +10,7 @@ public class Button {
     Texture textureNotSellected, textureSellected;
     Vector2 position;
     public Rectangle rectangle;
+    float lastScale = 1;
 
     public Button(Texture textureNotSellected, Texture textureSellected, float x, float y) {
         this.textureNotSellected = textureNotSellected;
@@ -19,11 +20,22 @@ public class Button {
                 textureNotSellected.getWidth(), textureNotSellected.getHeight());
     }
 
+    public void update() {
+        if(lastScale != GlobalBatch.scale) {
+            lastScale = GlobalBatch.scale;
+            rectangle = new Rectangle(position.x * lastScale, position.y * lastScale,
+                    textureNotSellected.getWidth() * lastScale, textureNotSellected.getHeight() * lastScale);
+
+        }
+    }
+
     public void render() {
+        update();
         GlobalBatch.render(textureNotSellected, position.x, position.y);
     }
 
     public void renderSellected() {
+        update();
         GlobalBatch.render(textureSellected, position.x, position.y);
     }
 }

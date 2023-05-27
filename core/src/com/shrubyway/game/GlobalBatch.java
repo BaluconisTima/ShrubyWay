@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GlobalBatch {
     public static SpriteBatch batch;
@@ -15,15 +16,16 @@ public class GlobalBatch {
         scale = Math.min(scale, (float) height / 1080);
     }
     public static void create() {
-
         batch = new SpriteBatch();
         batch.enableBlending();
         batch.setBlendFunction(Gdx.gl20.GL_SRC_ALPHA, Gdx.gl20.GL_ONE_MINUS_SRC_ALPHA);
     }
     public static void begin() {
+        ScreenUtils.clear(0, 0, 0, 1);
         batch.begin();
     }
     public static void end() {
+
         batch.end();
     }
 

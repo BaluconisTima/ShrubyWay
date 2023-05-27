@@ -2,13 +2,12 @@ package com.shrubyway.game.visibleobject.visibleitem;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
-import com.shrubyway.game.myinterface.Inventory;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
+import com.shrubyway.game.myinterface.Inventory;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
@@ -52,7 +51,7 @@ public class VisibleItem extends VisibleObject {
         ObjectsList.del(this);
     }
     Vector2 dir = new Vector2(0,0);
-    public void moveToPlayer(Vector2 playerPosition) {
+    public void moveToPlayer(Vector2 playerPosition, Inventory inventory) {
         if(AnimationGlobalTime.time() - dropTime < 0.7f)  {
             globalDir.scl(0.82f);
             position.add(globalDir);
@@ -62,7 +61,7 @@ public class VisibleItem extends VisibleObject {
 
         dir.set(playerPosition.x - positionCenter().x, playerPosition.y - positionCenter().y);
         if(dir.len() <= 20) {
-            if(Inventory.addItem(item)) this.delete();
+            if(inventory.addItem(item)) this.delete();
         } else
             if(dir.len() < 150) {
             dir.nor();

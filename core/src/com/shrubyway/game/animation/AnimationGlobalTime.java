@@ -1,26 +1,27 @@
 package com.shrubyway.game.animation;
 
-import com.badlogic.gdx.utils.TimeUtils;
-import java.io.Serializable;
+import com.badlogic.gdx.Gdx;
 
-public class AnimationGlobalTime implements Serializable {
+public class AnimationGlobalTime {
     public static float lastTime = 0;
-    public static float stopedTime = -1;
+    public static boolean stop = false;
 
 
     static public void clear() {
-        lastTime = TimeUtils.nanoTime() / 1000000000.0f;
+        lastTime = 0;
     }
     static public float time(){
-        if(stopedTime == -1) return  TimeUtils.nanoTime() / 1000000000.0f - lastTime;
-        else return stopedTime - lastTime;
+        return lastTime;
+    }
+
+    static public void update() {
+        if(!stop) lastTime += Gdx.graphics.getDeltaTime();
     }
 
     static public void pause() {
-        stopedTime = TimeUtils.nanoTime() / 1000000000.0f;
+        stop = true;
     }
     static public void resume() {
-        lastTime += TimeUtils.nanoTime() / 1000000000.0f - stopedTime;
-        stopedTime = -1;
+        stop = false;
     }
 }

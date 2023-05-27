@@ -24,7 +24,11 @@ public class ShrubyWay extends ApplicationAdapter {
     static Screen loadScreen;
     static public MyInputAdapter inputProcessor = new MyInputAdapter();
 
+    @Override public void resize(int width, int height) {
+        GlobalBatch.changeScale(width, height);
+    }
     @Override public void create() {
+        GlobalBatch.changeScale(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_LINEAR);
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -53,6 +57,7 @@ public class ShrubyWay extends ApplicationAdapter {
 
     @Override public void render() {
         SoundSettings.update();
+        AnimationGlobalTime.update();
 
 
             screen.updateScreen();
