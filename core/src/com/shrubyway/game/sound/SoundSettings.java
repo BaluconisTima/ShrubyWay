@@ -22,7 +22,7 @@ public class SoundSettings {
                 musicLocalVolume = 1;
                 if(music != null) music.stop();
                 music = Gdx.audio.newSound(Gdx.files.internal(newMusic));
-                musicID = music.play(musicVolume);
+                musicID = music.play(musicVolume * musicLocalVolume);
                 music.setLooping(musicID, true);
                 newMusic = null;
             }

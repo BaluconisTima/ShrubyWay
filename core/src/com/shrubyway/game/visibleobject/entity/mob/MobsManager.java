@@ -1,18 +1,18 @@
 package com.shrubyway.game.visibleobject.entity.mob;
+
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
-import java.lang.reflect.Constructor;
 
 public class MobsManager {
-    public static int mobsNumber = 1;
+    public static int mobsNumber = 2;
     public static Constructor<? extends Mob> mobs[] = new Constructor[mobsNumber];
     private static float mobSpawnCost[] = new float[mobsNumber];
     public static ArrayList<Integer> dropTableItem[] = new ArrayList[mobsNumber];
@@ -26,6 +26,11 @@ public class MobsManager {
         dropTableChance[0] = new ArrayList<>(Arrays.asList(0.5f, 0.1f));
         mobSpawnCost[0] = 10;
 
+        mobs[1] = (Coney.class).getDeclaredConstructor(float.class, float.class);
+        mobs[1].newInstance(0, 0);
+        dropTableItem[1] = new ArrayList<>(Arrays.asList(2));
+        dropTableChance[1] = new ArrayList<>(Arrays.asList(0.7f));
+        mobSpawnCost[1] = 10;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -80,7 +85,7 @@ public class MobsManager {
         ObjectsList.add(mob);
     }
     static public void tryGenerateMob(Vector2 playerPosition) {
-        for(int i = 0; i < 60; i++) {
+        for(int i = 0; i < mobsNumber; i++) {
             int j = random.nextInt(mobsNumber);
             if(AccountSpawner >= mobSpawnCost[j]) {
                 AccountSpawner -= mobSpawnCost[j];

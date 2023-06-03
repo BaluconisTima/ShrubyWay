@@ -1,16 +1,16 @@
 package com.shrubyway.game.myinterface;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.shapes.Rectangle;
-import com.badlogic.gdx.math.Vector2;
 
 public class Button {
     Texture textureNotSellected, textureSellected;
     Vector2 position;
     public Rectangle rectangle;
     float lastScale = 1;
+
 
     public Button(Texture textureNotSellected, Texture textureSellected, float x, float y) {
         this.textureNotSellected = textureNotSellected;

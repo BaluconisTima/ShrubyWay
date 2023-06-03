@@ -1,14 +1,10 @@
 package com.shrubyway.game.visibleobject;
 
-import com.shrubyway.game.animation.AnimationGlobalTime;
-
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ObjectsList implements Serializable {
+public class ObjectsList {
     static private CopyOnWriteArrayList<VisibleObject> list = new CopyOnWriteArrayList<>();
 
     public static void add(VisibleObject object) {
@@ -27,9 +23,27 @@ public class ObjectsList implements Serializable {
         return list;
     }
 
+
     public static void sort() {
         Collections.sort(list);
     }
+    /*@Override
+    public void write(Json json) {
+        json.writeArrayStart("list");
+        for (VisibleObject item : list) {
+            json.writeValue(ClassReflection.getSimpleName(VisibleObject.class), item);
+        }
+        json.writeArrayEnd();
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+        list.clear();
+        for (JsonValue item : jsonData.get("list")) {
+            VisibleObject value = json.readValue(VisibleObject.class, item);
+            list.add(value);
+        }
+    } */
 
 
 }

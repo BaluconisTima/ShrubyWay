@@ -1,11 +1,12 @@
 package com.shrubyway.game;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 
+import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -44,41 +45,36 @@ public class GlobalAssetManager {
             }
         }
     }
-    static private void loadFromJar() {
-        JarFile jarFile;
-        try {
-            String jarPath = GlobalAssetManager.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-            jarPath = java.net.URLDecoder.decode(jarPath, "UTF-8");
-            jarFile = new JarFile(jarPath);
-        } catch (IOException e) {
-            return;
-        }
-
-        Enumeration<JarEntry> entries = jarFile.entries();
-        while (entries.hasMoreElements()) {
-            JarEntry entry = entries.nextElement();
-            String entryPath = entry.getName();
-            if (!entry.isDirectory()) {
-                FileHandle fileHandle = Gdx.files.internal(entryPath);
-                String extension = fileHandle.extension();
-                if (extension.equals("png")) {
-                    addAsset(fileHandle.path(), com.badlogic.gdx.graphics.Texture.class);
-                } else if (extension.equals("wav") || extension.equals("mp3") || extension.equals("ogg")) {
-                    addAsset(fileHandle.path(), com.badlogic.gdx.audio.Sound.class);
+    private static void loadFromJar() {
+        String jarPath = ShrubyWay.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        try (JarFile jarFile = new JarFile(URLDecoder.decode(jarPath, "UTF-8"))) {
+            Enumeration<JarEntry> entries = jarFile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                String entryPath = entry.getName();
+                System.out.println(entryPath);
+                if (!entry.isDirectory()) {
+                    FileHandle fileHandle = Gdx.files.internal(entryPath);
+                    String extension = fileHandle.extension();
+                    if (extension.equals("png")) {
+                        addAsset(fileHandle.path(), com.badlogic.gdx.graphics.Texture.class);
+                    } else if (extension.equals("wav") || extension.equals("ogg")) {
+                        addAsset(fileHandle.path(), com.badlogic.gdx.audio.Sound.class);
+                    }
                 }
             }
-        }
-
-        try {
-            jarFile.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     static public void loadAll() {
-            FileHandle assetsFolder = Gdx.files.local("");
-            loadFromJar();
-            loadRec(assetsFolder);
+        String jarPath = ShrubyWay.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        File jarFile = new File(jarPath);
+        loadFromJar();
+        //ONLY FOR LOCAL TEST! DELETE THIS LINE IF YOU WANT TO BUILD JAR FILE!
+         FileHandle assetsFolder = Gdx.files.local("");
+        loadRec(assetsFolder);
+
     }
 }

@@ -291,5 +291,12 @@ public class Inventory {
             }
         return false;
     }
+  /*  @Override public void write(Json json) {
+       json.writeValue(this);
+    }
+
+    @Override public void read(Json json, JsonValue jsonData) {
+        json.readFields(this, jsonData);
+    } */
 
 }

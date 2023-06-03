@@ -1,27 +1,30 @@
 package com.shrubyway.game.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Json;
-import com.badlogic.gdx.utils.JsonValue;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.Food;
 import com.shrubyway.game.item.Harmonica;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.map.MapSettings;
+import com.shrubyway.game.myinterface.Button;
 import com.shrubyway.game.myinterface.HealthBar;
 import com.shrubyway.game.myinterface.Inventory;
 import com.shrubyway.game.myinterface.MiniMap;
+import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
@@ -36,7 +39,7 @@ import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Game extends Screen implements Json.Serializable {
+public class Game extends Screen {
     Shruby player;
     Map map;
     Inventory inventory;
@@ -44,17 +47,11 @@ public class Game extends Screen implements Json.Serializable {
     Vector2 mousePosition;
 
     public boolean gameOver = false, menu = false;
-    static LoadingScreen loadingScreen;
+    LoadingScreen loadingScreen;
+    Event event;
+    ObjectsList objectsList;
 
-    @Override
-    public void write(Json json) {
-
-    }
-
-    @Override
-    public void read(Json json, JsonValue jsonData) {
-
-    }
+    Button continueButton, settingsButton, menuButton;
 
 
     public Game() {
@@ -69,10 +66,26 @@ public class Game extends Screen implements Json.Serializable {
         GlobalBatch.batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         GlobalBatch.batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+        soundClick = GlobalAssetManager.get("sounds/EFFECTS/Click.ogg", Sound.class);
+
+        float bWidht = GlobalAssetManager.get("interface/c1.png", Texture.class).getWidth(),
+                bHeight = GlobalAssetManager.get("interface/c1.png", Texture.class).getHeight();
+
+        continueButton= new Button(GlobalAssetManager.get("interface/c1.png", Texture.class),
+                GlobalAssetManager.get("interface/c2.png", Texture.class), 1920 / 2 -
+                bWidht / 2, 1080 / 2 - bHeight / 2 + bHeight + 50);
+        settingsButton = new Button(GlobalAssetManager.get("interface/s1.png", Texture.class),
+                        GlobalAssetManager.get("interface/s2.png", Texture.class), 1920 / 2 -
+                bWidht / 2, 1080 / 2 - bHeight / 2);
+        menuButton = new Button(GlobalAssetManager.get("interface/m1.png", Texture.class),
+                        GlobalAssetManager.get("interface/m2.png", Texture.class), 1920 / 2 -
+                bWidht / 2, 1080 / 2 - bHeight / 2 - bHeight - 50);
         inventory = new Inventory();
         DecorationsManager.init();
         ItemManager.init();
         MobsManager.init();
+        objectsList = new ObjectsList();
+        event = new Event();
         map = new Map(1);
         player = new Shruby(50, 50);
         localCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
@@ -188,6 +201,8 @@ public class Game extends Screen implements Json.Serializable {
     }
 
     public float lastDrop = -1000000000f;
+    Sound soundClick;
+
 
     public void menuInputWorking() {
         if (ShrubyWay.inputProcessor.isEscPressed()) {
@@ -195,6 +210,25 @@ public class Game extends Screen implements Json.Serializable {
                 resume();
             } else {
                 pause();
+            }
+        }
+        if(gamePaused) {
+            continueButton.update();
+            menuButton.update();
+            settingsButton.update();
+            if(!ShrubyWay.inputProcessor.isMouseLeft()) return;
+            if(continueButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
+                soundClick.play(SoundSettings.soundVolume);
+                resume();
+            }
+            if(menuButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
+                soundClick.play(SoundSettings.soundVolume);
+                resume();
+                menu = true;
+            }
+            if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
+                soundClick.play(SoundSettings.soundVolume);
+                // settings = true;
             }
         }
     }
@@ -340,7 +374,17 @@ public class Game extends Screen implements Json.Serializable {
        // TextDrawer.drawWithShadow("" + localCamera.position, 100, 100, 1);
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
         if (gamePaused) {
-
+             GlobalBatch.render(GlobalAssetManager.get("interface/shadow.png", Texture.class),
+                    0, 0);
+            if(menuButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
+                menuButton.renderSellected();
+            } else menuButton.render();
+            if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
+                settingsButton.renderSellected();
+            } else settingsButton.render();
+            if(continueButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
+                continueButton.renderSellected();
+            } else continueButton.render();
         }
     }
 
@@ -373,15 +417,11 @@ public class Game extends Screen implements Json.Serializable {
     @Override
     public void updateScreen() {
         if(!gameInitialized) {
-            for(int i = 0; i < 5; i++) {
                 if (GlobalAssetManager.update()) {
                     gameInitialized = true;
                     init();
                     updateScreen();
-                    break;
                 }
-
-            }
             loadingScreen.updateStatus((int)(GlobalAssetManager.getProgress() * 100));
             loadingScreen.updateScreen();
         } else {

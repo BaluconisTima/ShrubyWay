@@ -1,24 +1,18 @@
 package com.shrubyway.game.visibleobject.entity;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.Health;
-
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ThrowableItem;
 import com.shrubyway.game.shapes.Rectangle;
+import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
-import com.shrubyway.game.sound.SoundSettings;
-
-import java.util.TreeSet;
 
 abstract public class Entity extends InteractiveObject {
 
@@ -169,17 +163,17 @@ abstract public class Entity extends InteractiveObject {
         }
     }
     protected float throwCooldown = 0.5f;
-    private float lastThrowTime;
+    protected float lastThrowTime;
     protected boolean attacking = false;
 
     public boolean canThrow() {
         if(!allowedMotion) return false;
         return (AnimationGlobalTime.time() - lastThrowTime >= throwCooldown);
     }
-    public void throwItem(Vector2 mousePosition, Item item, boolean rotating) {
+    public void throwItem(Vector2 shootPosition, Item item, boolean rotating) {
         if(!canThrow()) return;
         lastThrowTime = AnimationGlobalTime.time();
-        Bullet bullet = new ThrowableItem(positionCenter(), mousePosition, item, this, rotating);
+        Bullet bullet = new ThrowableItem(positionCenter(), shootPosition, item, this, rotating);
         changeAnimationsFor(bullet.direction, 2);
         ObjectsList.add(bullet);
     }

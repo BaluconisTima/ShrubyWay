@@ -2,6 +2,7 @@ package com.shrubyway.game.item;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.shrubyway.game.GlobalAssetManager;
 
 public class ItemManager {
     public static int itemNumber = 5;
@@ -13,7 +14,7 @@ public class ItemManager {
 
     public static void init() {
         for (int i = 0; i < itemNumber; i++) {
-            itemTexture[i] = new TextureRegion(new Texture("ITEMS/" + i + ".png"));
+            itemTexture[i] = new TextureRegion(GlobalAssetManager.get("ITEMS/" + i + ".png", Texture.class));
         }
         itemName[0] = "Stone";
         itemDescription[0] = "A small stone.";

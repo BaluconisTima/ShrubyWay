@@ -3,31 +3,23 @@ package com.shrubyway.game.event;
 import java.util.HashMap;
 
 public class Event {
-    static private HashMap eventHashMap = new HashMap<String, Event>();
-    private int eventID = 0;
-    static private int eventCounter = 0;
-
-    public Event() {
-        eventID = eventCounter++;
-    }
-    public static Event getEvent(String eventName) {
+    static public HashMap eventHashMap = new HashMap<String, Integer>();
+    public static Integer getEvent(String eventName) {
         if(eventHashMap.containsKey(eventName)) {
-            return (Event) eventHashMap.get(eventName);
+            return (Integer) eventHashMap.get(eventName);
         }
         else {
-            Event newEvent = new Event();
-            eventHashMap.put(eventName, newEvent);
-            return newEvent;
+            Integer x = eventHashMap.size();
+            eventHashMap.put(eventName, x);
+            return x;
         }
     }
-
-    static private HashMap eventsHappened = new HashMap<Event, Boolean>();
-
-    public static void cast(Event event) {
+    static private HashMap eventsHappened = new HashMap<Integer, Boolean>();
+    public static void cast(Integer event) {
         eventsHappened.put(event, true);
     }
 
-    public static boolean happened(Event event) {
+    public static boolean happened(Integer event) {
         if(eventsHappened.containsKey(event)) {
             return (boolean) eventsHappened.get(event);
         }
@@ -35,5 +27,6 @@ public class Event {
             return false;
         }
     }
+
 
 }

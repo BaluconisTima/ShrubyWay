@@ -1,27 +1,15 @@
 package com.shrubyway.game;
+
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
 import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.screen.*;
 import com.shrubyway.game.sound.SoundSettings;
 
-import java.time.LocalDate;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class ShrubyWay extends ApplicationAdapter {
     static Screen screen;
-    static Screen menu;
-    static Screen gameOver;
-
-    static Screen errorInformationScreen;
-    static Screen loadScreen;
     static public MyInputAdapter inputProcessor = new MyInputAdapter();
 
     @Override public void resize(int width, int height) {
@@ -34,10 +22,6 @@ public class ShrubyWay extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         GlobalBatch.create();
         Gdx.graphics.setVSync(true);
-        menu = new Menu();
-        gameOver = new GameOver();
-        loadScreen = new LoadingScreen();
-
         //errorInformationScreen = new ErrorInformationScreen("!");
 
       /*  LocalDate today = LocalDate.now();
@@ -51,38 +35,36 @@ public class ShrubyWay extends ApplicationAdapter {
             Gdx.input.setInputProcessor(inputProcessor);
             return;
         } */
-        screen = menu;
+        screen = new Menu();
         Gdx.input.setInputProcessor(inputProcessor);
     }
 
     @Override public void render() {
         SoundSettings.update();
         AnimationGlobalTime.update();
-
-
             screen.updateScreen();
-            if(screen instanceof Menu && ((Menu)screen).goToGame) {
+            if(screen instanceof Menu men && men.goToGame) {
                 Menu.goToGame = false;
                 screen = new Game();
                 render();
-            } else if(screen instanceof Game) {
-                if(((Game)screen).gameOver) {
-                    ((Game)screen).gameOver = false;
-                    screen = gameOver;
+            } else if(screen instanceof Game game) {
+                if(game.gameOver) {
+                    game.gameOver = false;
+                    screen = new GameOver();
                     render();
-                } else if(((Game)screen).menu) {
-                    ((Game)screen).menu = false;
-                    screen = menu;
+                } else if(game.menu) {
+                    game.menu = false;
+                    screen = new Menu();
                     render();
                 }
-            } else if(screen instanceof GameOver) {
-                   if(((GameOver)screen).tryingAgain) {
-                       ((GameOver)screen).tryingAgain = false;
+            } else if(screen instanceof GameOver gameover) {
+                   if(gameover.tryingAgain) {
+                       gameover.tryingAgain = false;
                        screen = new Game();
                        render();
-                   } else if(((GameOver)screen).exit) {
-                       ((GameOver)screen).exit = false;
-                       screen = menu;
+                   } else if(gameover.exit) {
+                       gameover.exit = false;
+                       screen = new Menu();
                        render();
                    }
             }

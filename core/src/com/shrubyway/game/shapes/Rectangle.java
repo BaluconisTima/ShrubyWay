@@ -1,13 +1,6 @@
 package com.shrubyway.game.shapes;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.GlobalAssetManager;
-import com.shrubyway.game.GlobalBatch;
-
-import java.io.Serializable;
 
 public class Rectangle  {
     public final Vector2 topLeftCorner = new Vector2();
@@ -48,7 +41,7 @@ public class Rectangle  {
     }
 
     public void render() {
-     //  GlobalBatch.render(GlobalAssetManager.get("TEST.png", Texture.class), topLeftCorner.x, topLeftCorner.y, bottomRightCorner.x - topLeftCorner.x, bottomRightCorner.y - topLeftCorner.y);
+     // GlobalBatch.render(GlobalAssetManager.get("TEST.png", Texture.class), topLeftCorner.x, topLeftCorner.y, bottomRightCorner.x - topLeftCorner.x, bottomRightCorner.y - topLeftCorner.y);
     }
 
 }

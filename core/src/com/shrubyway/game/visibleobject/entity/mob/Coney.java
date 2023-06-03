@@ -9,6 +9,7 @@ import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.Health;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.AnimationLoader;
+import com.shrubyway.game.item.Item;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.ObjectsList;
@@ -16,7 +17,7 @@ import com.shrubyway.game.visibleobject.ObjectsList;
 import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Agaric extends Mob{
+public class Coney extends Mob{
 
     static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH"};
     static protected boolean looping[] =
@@ -31,20 +32,20 @@ public class Agaric extends Mob{
             new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
             new CopyOnWriteArrayList<>(Arrays.asList("1"))};
 
-    static int frameCount[] = {30, 30, 14, 22};
+    static int frameCount[] = {25, 26, 11, 24};
 
     static {
         soundDeath =
-                GlobalAssetManager.get("sounds/EFFECTS/AgaricDeath.ogg", Sound.class);
+                GlobalAssetManager.get("sounds/EFFECTS/ConeyDeath.ogg", Sound.class);
         soundDamage =
-                GlobalAssetManager.get("sounds/EFFECTS/AgaricDamage.ogg", Sound.class);
+                GlobalAssetManager.get("sounds/EFFECTS/ConeyDamage.ogg", Sound.class);
         if(animations == null) animations =
-                AnimationLoader.load("ENTITIES/AGARIC", actions, actionTypes, frameCount);
+                AnimationLoader.load("ENTITIES/CONEY", actions, actionTypes, frameCount);
     }
 
 
     @Override public void ai(Vector2 playerPosition) {
-        closeAi(100, playerPosition);
+        longRangeAi(700, 400, playerPosition, new Item(2));
     }
 
     @Override public void getDamage(float damage) {
@@ -52,14 +53,15 @@ public class Agaric extends Mob{
         soundDamage.play(SoundSettings.soundVolume);
     }
 
-    public Agaric(float x, float y) {
-        id = 0;
-        health = new Health(10);
-        speed = 8f;
+    public Coney(float x, float y) {
+        id = 1;
+        health = new Health(7);
+        speed = 7f;
         allowedMotion = true;
-        attackCooldown = 1f;
+        attackCooldown = 0f;
+        throwCooldown = 1.5f;
         action = 0;
-        damage = 2f;
+        damage = 0f;
         regionWidth = animations.get(0).get(0)[0].getKeyFrame(0).getRegionWidth();
         regionHeight = animations.get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
         position.set(x - regionWidth / 2, y);
@@ -82,42 +84,13 @@ public class Agaric extends Mob{
         return hitBox;
     }
     @Override public Rectangle attackBox() {
-        if(attackBox == null) attackBox = new Rectangle(0,0,0,0);
-        if(action == 2 && attacking) {
-            switch (faceDirection) {
-                case 0:
-                    attackBox.change(position.x + 75,
-                            position.y - 50,
-                            210, 100);
-                    break;
-                case 1:
-                    attackBox.change(position.x + 75,
-                            position.y + 120,
-                            210, 100);
-                    break;
-                case 2:
-                    attackBox.change(position.x,
-                            position.y + 55,
-                            130, 70);
-                    break;
-                case 3:
-                    attackBox.change(position.x + 240,
-                            position.y + 55,
-                            130, 70);
-                    break;
-            }
-        } else {
-            attackBox.change(0,
-                    0,
-                    -1, -1);
-        }
-        return attackBox;
+        return null;
     }
     @Override public Rectangle collisionBox() {
         if(collisionBox == null) collisionBox = new Rectangle(0,0,0,0);
-        collisionBox.change(position.x + 138,
+        collisionBox.change(position.x + 128,
                 position.y + 5,
-                95, 15);
+                105, 30);
         return collisionBox;
     }
 
@@ -128,7 +101,7 @@ public class Agaric extends Mob{
         if(health.timeAfterHit() < 0.2f) {
             GlobalBatch.batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
         }
-        animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(24f / speed * getSpeed()));
+        animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(24f / 8 * getSpeed()));
         GlobalBatch.render(animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
                         getKeyFrame(AnimationGlobalTime.time() - animationTime, looping[action]),
                 Math.round(position.x), Math.round(position.y + 10) - (inLiquid ? -5 : 83));

@@ -1,7 +1,6 @@
 package com.shrubyway.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,7 +11,7 @@ public class GlobalBatch {
     public static SpriteBatch batch;
     static public float scale = 1f;
     static void changeScale(int width, int height) {
-        scale = (float) width / 1920;
+       scale = (float) width / 1920;
         scale = Math.min(scale, (float) height / 1080);
     }
     public static void create() {
