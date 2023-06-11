@@ -74,8 +74,8 @@ public class GlobalAssetManager {
     static public void loadAll() {
         loadFromJar();
         //ONLY FOR LOCAL TEST! DELETE THIS LINE IF YOU WANT TO BUILD JAR FILE!
-         FileHandle assetsFolder = Gdx.files.local("");
-        loadRec(assetsFolder);
+       //  FileHandle assetsFolder = Gdx.files.local("");
+       // loadRec(assetsFolder);
 
     }
 }
