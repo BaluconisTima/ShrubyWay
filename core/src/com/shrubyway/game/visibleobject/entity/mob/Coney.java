@@ -45,7 +45,7 @@ public class Coney extends Mob{
 
 
     @Override public void ai(Vector2 playerPosition) {
-        longRangeAi(700, 400, playerPosition, new Item(2));
+        longRangeAi(600, 400, playerPosition, new Item(2));
     }
 
     @Override public void getDamage(float damage) {
@@ -97,7 +97,6 @@ public class Coney extends Mob{
 
 
     @Override public void render() {
-
         if(health.timeAfterHit() < 0.2f) {
             GlobalBatch.batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
         }

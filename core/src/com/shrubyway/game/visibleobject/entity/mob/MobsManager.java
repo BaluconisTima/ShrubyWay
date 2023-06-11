@@ -31,6 +31,7 @@ public class MobsManager {
         dropTableItem[1] = new ArrayList<>(Arrays.asList(2));
         dropTableChance[1] = new ArrayList<>(Arrays.asList(0.7f));
         mobSpawnCost[1] = 10;
+
         } catch (Exception e) {
             e.printStackTrace();
         }

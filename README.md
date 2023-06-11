@@ -4,6 +4,9 @@ A 2.5D game with elements of survival and RPG, made in a nice animated style.
 
 ![](JumpOut.gif)
 
+## Running the application
+After cloning the repository, go to the \builds folder. A Java 17+ version will be required to run the application. Double-click on the JAR file to launch it.
+
 ## Gameplay
 An ordinary shrub named Shruby finds himself caught up in adventures in other worlds in search of a way home. In the process, he will be forced to fight various opponents, collect items, evolve, meet characters and learn the reasons for everything that is going on.
 
@@ -19,5 +22,3 @@ The world map is a forest, infinitely looped to each side. Different background 
 ## Development
 #It's also possible to add more, in case the main gameplay is completed before the anticipated deadline.
 
-## Download
-The download of the beta will be available as soon as the main functionality is implemented

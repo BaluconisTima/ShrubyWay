@@ -5,7 +5,7 @@ import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.visibleobject.entity.Entity;
 
-public class Mob extends Entity {
+public abstract class Mob extends Entity {
     int id;
     protected Vector2 target = new Vector2(0,0);
     protected float lastTargetUpdate = 0;
@@ -94,27 +94,29 @@ public class Mob extends Entity {
                animationTime = AnimationGlobalTime.time();
                allowedMotion = false;
                action = 2;
-                return;
+               return;
            }
-        tempDirection.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
 
-        if(lastTargetUpdate < AnimationGlobalTime.time() - targetUpdateInterval) {
-            tempDirection.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
-            if(tempDirection.len() < scareDistance) {
-                float alpha = (float) (Math.random() * 0.5 * Math.PI - Math.PI / 0.25f);
+            tempDirection.set(playerPosition.x - target.x, playerPosition.y - target.y);
+           tempDirection2.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
+            if(tempDirection.len() < scareDistance && tempDirection2.len() < scareDistance) {
+                float alpha = (float) (Math.random() * 0.5 * Math.PI - Math.PI * 0.25f);
                 tempDirection.set(playerPosition.x - positionCenter().x, playerPosition.y - positionCenter().y);
+                tempDirection.scl(1/tempDirection.len());
                 tempDirection.rotateRad(alpha);
-                tempDirection.nor();
-                tempDirection.scl(scareDistance * 2f);
-                target.set(playerPosition.x - tempDirection.x, playerPosition.y - tempDirection.y);
-
-
+                tempDirection.scl(scareDistance);
+                target.set(positionCenter().x - tempDirection.x, positionCenter().y - tempDirection.y);
             } else {
-                target.set(playerPosition.x, playerPosition.y);
-                lastTargetUpdate = AnimationGlobalTime.time();
+                if(lastTargetUpdate < AnimationGlobalTime.time() - targetUpdateInterval) {
+                    tempDirection.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
+                    tempDirection2.set(playerPosition.x - target.x, playerPosition.y - target.y);
+                    if (tempDirection.len() > shootDistance) {
+                        target.set(playerPosition.x, playerPosition.y);
+                        lastTargetUpdate = AnimationGlobalTime.time();
+                    }
+                }
             }
 
-        }
         tempDirection.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
         if(tempDirection.len() >= shootDistance || tempDirection.len() <= scareDistance) tryMoveAi();
         else {

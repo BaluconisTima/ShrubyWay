@@ -1,17 +1,18 @@
 package com.shrubyway.game.sound;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.shrubyway.game.GlobalAssetManager;
 
 public class SoundSettings {
     public static float soundVolume = 1;
     public static float musicVolume = 1;
 
     static Sound music;
-    static String newMusic = null;
+    static String oldMusic = null, newMusic = null;
     static long musicID = -1;
     static float musicLocalVolume = 1;
     public static void changeMusic(String way) {
+        if(way == oldMusic) return;
         newMusic = way;
     }
 
@@ -21,9 +22,10 @@ public class SoundSettings {
             if(musicLocalVolume < 0.01) {
                 musicLocalVolume = 1;
                 if(music != null) music.stop();
-                music = Gdx.audio.newSound(Gdx.files.internal(newMusic));
+                music = GlobalAssetManager.get(newMusic, Sound.class);
                 musicID = music.play(musicVolume * musicLocalVolume);
                 music.setLooping(musicID, true);
+                oldMusic = newMusic;
                 newMusic = null;
             }
         } else {

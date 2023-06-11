@@ -3,15 +3,11 @@ package com.shrubyway.game.screen;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.shrubyway.game.GlobalBatch;
-import com.shrubyway.game.myinterface.Button;
 import com.shrubyway.game.ShrubyWay;
+import com.shrubyway.game.myinterface.Button;
 import com.shrubyway.game.sound.SoundSettings;
 
 public class GameOver extends Screen {
@@ -28,7 +24,7 @@ public class GameOver extends Screen {
     public Boolean tryingAgain = false, exit = false;
 
     public GameOver() {
-
+        SoundSettings.changeMusic("music/Menu.mp3");
     }
 
     @Override public void updateScreen() {

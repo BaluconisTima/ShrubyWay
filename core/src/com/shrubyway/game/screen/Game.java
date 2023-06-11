@@ -20,10 +20,7 @@ import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.map.MapSettings;
-import com.shrubyway.game.myinterface.Button;
-import com.shrubyway.game.myinterface.HealthBar;
-import com.shrubyway.game.myinterface.Inventory;
-import com.shrubyway.game.myinterface.MiniMap;
+import com.shrubyway.game.myinterface.*;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.ObjectsList;
@@ -87,7 +84,7 @@ public class Game extends Screen {
         objectsList = new ObjectsList();
         event = new Event();
         map = new Map(1);
-        player = new Shruby(50, 50);
+        player = new Shruby(5555, 34200);
         localCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         localCamera.position.set(player.positionCenter().x, player.positionCenter().y, 0);
         localCamera.update();
@@ -235,7 +232,7 @@ public class Game extends Screen {
 
     public void interfaceInputWorking() {
         if (ShrubyWay.inputProcessor.isEPressed()) {
-            inventory.changeOpenned();
+            inventory.changeOpened();
         }
         int x = ShrubyWay.inputProcessor.numberPressed();
         if (x > 0) {
@@ -371,7 +368,7 @@ public class Game extends Screen {
 
         HealthBar.render(player.health);
         inventory.render(ShrubyWay.inputProcessor.mousePosition());
-       // TextDrawer.drawWithShadow("" + localCamera.position, 100, 100, 1);
+        //TextDrawer.drawWithShadow("" + player.position, 100, 500, 1);
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
         if (gamePaused) {
              GlobalBatch.render(GlobalAssetManager.get("interface/shadow.png", Texture.class),
@@ -425,6 +422,7 @@ public class Game extends Screen {
             loadingScreen.updateStatus((int)(GlobalAssetManager.getProgress() * 100));
             loadingScreen.updateScreen();
         } else {
+            SoundSettings.changeMusic("music/Forest.mp3");
             menuInputWorking();
             if (!gamePaused) gameTick();
         }

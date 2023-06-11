@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Enumeration;
@@ -27,6 +26,10 @@ public class GlobalAssetManager {
     }
 
     static public <T> T get(String fileName, Class<T> type) {
+        if(!assetManager.isLoaded(fileName)) {
+            assetManager.load(fileName, type);
+            assetManager.finishLoadingAsset(fileName);
+        }
         return assetManager.get(fileName, type);
     }
 
@@ -58,7 +61,7 @@ public class GlobalAssetManager {
                     String extension = fileHandle.extension();
                     if (extension.equals("png")) {
                         addAsset(fileHandle.path(), com.badlogic.gdx.graphics.Texture.class);
-                    } else if (extension.equals("wav") || extension.equals("ogg")) {
+                    } else if (extension.equals("wav") || extension.equals("ogg") || extension.equals("mp3")) {
                         addAsset(fileHandle.path(), com.badlogic.gdx.audio.Sound.class);
                     }
                 }
@@ -69,8 +72,6 @@ public class GlobalAssetManager {
     }
 
     static public void loadAll() {
-        String jarPath = ShrubyWay.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        File jarFile = new File(jarPath);
         loadFromJar();
         //ONLY FOR LOCAL TEST! DELETE THIS LINE IF YOU WANT TO BUILD JAR FILE!
          FileHandle assetsFolder = Gdx.files.local("");

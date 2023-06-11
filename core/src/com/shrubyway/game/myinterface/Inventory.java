@@ -115,13 +115,13 @@ public class Inventory {
     public boolean checkClick(Vector2 point) {
         if(!opened) {
             if(point.x <= 750 && point.y >= 970) {
-                changeOpenned();
+                changeOpened();
                 return true;
             }
             return false;
         }
         if(point.x <= 750 && point.y >= 620) return true;
-        changeOpenned();
+        changeOpened();
         return false;
     }
 
@@ -194,7 +194,7 @@ public class Inventory {
         }
 
     }
-    public void changeOpenned() {
+    public void changeOpened() {
         click.play(SoundSettings.soundVolume);
         opened = !opened;
     }

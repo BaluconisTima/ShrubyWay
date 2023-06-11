@@ -13,6 +13,7 @@ public class ShrubyWay extends ApplicationAdapter {
     static public MyInputAdapter inputProcessor = new MyInputAdapter();
 
     @Override public void resize(int width, int height) {
+        if(width == 0 || height == 0) return;
         GlobalBatch.changeScale(width, height);
     }
     @Override public void create() {
@@ -22,19 +23,6 @@ public class ShrubyWay extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         GlobalBatch.create();
         Gdx.graphics.setVSync(true);
-        //errorInformationScreen = new ErrorInformationScreen("!");
-
-      /*  LocalDate today = LocalDate.now();
-        LocalDate targetDate = LocalDate.of(2023, 5, 10);
-        if(today.isBefore(targetDate)) {
-            screen = new ErrorInformationScreen("It's too soon! The game will be open on 10.05.2023");
-            Gdx.input.setInputProcessor(inputProcessor);
-            return;
-        } else if(today.isAfter(targetDate)) {
-            screen = new ErrorInformationScreen("It's too late! The game was open on 10.05.2023");
-            Gdx.input.setInputProcessor(inputProcessor);
-            return;
-        } */
         screen = new Menu();
         Gdx.input.setInputProcessor(inputProcessor);
     }
@@ -71,5 +59,12 @@ public class ShrubyWay extends ApplicationAdapter {
             GlobalBatch.begin();
             screen.renderScreen();
             GlobalBatch.end();
+    }
+
+    @Override public void pause() {
+        screen.resumeScreen();
+    }
+    @Override public void resume() {
+        screen.resumeScreen();
     }
 }
