@@ -29,6 +29,7 @@ import com.shrubyway.game.visibleobject.bullet.Bullet;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
 import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
 import com.shrubyway.game.visibleobject.entity.Entity;
+import com.shrubyway.game.visibleobject.entity.EntityManager;
 import com.shrubyway.game.visibleobject.entity.Shruby;
 import com.shrubyway.game.visibleobject.entity.mob.Mob;
 import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
@@ -81,6 +82,7 @@ public class Game extends Screen {
         DecorationsManager.init();
         ItemManager.init();
         MobsManager.init();
+        EntityManager.init();
         objectsList = new ObjectsList();
         event = new Event();
         map = new Map(1);
@@ -422,7 +424,7 @@ public class Game extends Screen {
             loadingScreen.updateStatus((int)(GlobalAssetManager.getProgress() * 100));
             loadingScreen.updateScreen();
         } else {
-            SoundSettings.changeMusic("music/Forest.mp3");
+           // SoundSettings.changeMusic("music/Forest.mp3");
             menuInputWorking();
             if (!gamePaused) gameTick();
         }

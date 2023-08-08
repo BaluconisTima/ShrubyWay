@@ -1,12 +1,6 @@
 package com.shrubyway.game.visibleobject.decoration;
-import com.badlogic.gdx.graphics.Texture;
+
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.GlobalAssetManager;
-import com.shrubyway.game.GlobalBatch;
-import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.MapSettings;
@@ -15,13 +9,7 @@ import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class Willow extends Decoration {
-    static Animation<TextureRegion> texture;
-    static String way = "Decorations/WILLOW.png";
-
-    static {
-        texture = animator.toAnimation((Texture)GlobalAssetManager.get(way, Texture.class), 8, 0, 0);
-    }
-    static float halfTextureWidth = texture.getKeyFrame(0f).getRegionWidth() / 2f;
+    float halfTextureWidth;
 
     @Override public void setHitbox() {
         if(hitBox == null) hitBox = new Rectangle(0,0,0,0);
@@ -37,11 +25,13 @@ public class Willow extends Decoration {
                 position.y + 10, 90, 10);
     }
     @Override public void change(float x, float y, int i, int j) {
-        texture.setPlayMode(Animation.PlayMode.NORMAL);
+        id = 3;
+        halfTextureWidth = DecorationsManager.texture[id].getKeyFrame(0f).getRegionWidth() / 2f;
+        DecorationsManager.texture[id].setPlayMode(Animation.PlayMode.NORMAL);
         position.set(x - halfTextureWidth + MapSettings.TYLESIZE/2, y + 30);
         decorationI = i;
         decorationI = j;
-        decorationType = '4';
+
     }
 
     @Override public void interact() {
@@ -55,11 +45,5 @@ public class Willow extends Decoration {
         }
     }
 
-    @Override public void render(){
-        GlobalBatch.render(texture.getKeyFrame(AnimationGlobalTime.time() - lastInteraction), Math.round(position.x),
-                Math.round(position.y));
-        collisionBox().render();
-        hitBox().render();
-    };
 
 }

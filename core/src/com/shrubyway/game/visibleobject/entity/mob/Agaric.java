@@ -18,28 +18,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Agaric extends Mob{
 
-    static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH"};
-    static protected boolean looping[] =
-            new boolean[]{true, true, false, false};
-    static protected CopyOnWriteArrayList<CopyOnWriteArrayList<Animation<TextureRegion>[]>> animations;
-
+    int id = 1;
     static Sound soundDeath, soundDamage;
-
-    static protected CopyOnWriteArrayList<String>[] actionTypes = new CopyOnWriteArrayList[]{
-            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new CopyOnWriteArrayList<>(Arrays.asList("1"))};
-
-    static int frameCount[] = {30, 30, 14, 22};
 
     static {
         soundDeath =
                 GlobalAssetManager.get("sounds/EFFECTS/AgaricDeath.ogg", Sound.class);
         soundDamage =
                 GlobalAssetManager.get("sounds/EFFECTS/AgaricDamage.ogg", Sound.class);
-        if(animations == null) animations =
-                AnimationLoader.load("ENTITIES/AGARIC", actions, actionTypes, frameCount);
     }
 
 
@@ -124,16 +110,16 @@ public class Agaric extends Mob{
 
 
     @Override public void render() {
-
         if(health.timeAfterHit() < 0.2f) {
             GlobalBatch.batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
         }
         animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(24f / speed * getSpeed()));
         GlobalBatch.render(animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
                         getKeyFrame(AnimationGlobalTime.time() - animationTime, looping[action]),
-                Math.round(position.x), Math.round(position.y + 10) - (inLiquid ? -5 : 83));
+                Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
         collisionBox().render();
         GlobalBatch.batch.setColor(1, 1, 1, 1);
+        super.render();
     }
 
 

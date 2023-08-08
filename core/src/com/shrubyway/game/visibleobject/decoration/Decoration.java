@@ -1,15 +1,13 @@
 package com.shrubyway.game.visibleobject.decoration;
 
+import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
-import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.visibleobject.InteractiveObject;
-import com.shrubyway.game.visibleobject.VisibleObject;
 
 abstract public class Decoration extends InteractiveObject {
     public int decorationI = 0, decorationJ = 0;
-    public char decorationType;
-    static Animator animator = new Animator();
+    int id;
     protected float lastInteraction = -100f;
 
     public void change(float x, float y, int i, int j) {
@@ -35,6 +33,14 @@ abstract public class Decoration extends InteractiveObject {
         setHitbox();
         return hitBox;
     }
+
+    @Override public void render(){
+        GlobalBatch.render(DecorationsManager.texture[id].getKeyFrame(AnimationGlobalTime.time()
+                        - lastInteraction), Math.round(position.x),
+                Math.round(position.y));
+        collisionBox().render();
+        hitBox().render();
+    };
 
     public void interact() {
         lastInteraction = AnimationGlobalTime.time();

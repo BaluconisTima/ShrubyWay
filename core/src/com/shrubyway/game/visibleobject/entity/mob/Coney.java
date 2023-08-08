@@ -18,21 +18,8 @@ import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Coney extends Mob{
-
-    static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH"};
-    static protected boolean looping[] =
-            new boolean[]{true, true, false, false};
-    static protected CopyOnWriteArrayList<CopyOnWriteArrayList<Animation<TextureRegion>[]>> animations;
-
+    int id = 2;
     static Sound soundDeath, soundDamage;
-
-    static protected CopyOnWriteArrayList<String>[] actionTypes = new CopyOnWriteArrayList[]{
-            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new CopyOnWriteArrayList<>(Arrays.asList("1"))};
-
-    static int frameCount[] = {25, 26, 11, 24};
 
     static {
         soundDeath =
@@ -103,9 +90,10 @@ public class Coney extends Mob{
         animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(24f / 8 * getSpeed()));
         GlobalBatch.render(animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
                         getKeyFrame(AnimationGlobalTime.time() - animationTime, looping[action]),
-                Math.round(position.x), Math.round(position.y + 10) - (inLiquid ? -5 : 83));
+                Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
         collisionBox().render();
         GlobalBatch.batch.setColor(1, 1, 1, 1);
+        super.render();
     }
 
 

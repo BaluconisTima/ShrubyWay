@@ -3,44 +3,18 @@ package com.shrubyway.game.visibleobject.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.Health;
 import com.shrubyway.game.animation.AnimationGlobalTime;
-import com.shrubyway.game.animation.AnimationLoader;
-import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.ObjectsList;
 
-import java.io.IOException;
-import java.lang.Math;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 
 public class Shruby extends Entity {
-
-    static String actions[] = {"AFK", "WALK", "ATTACK", "DEATH", "PORTAL", "HARMONICA", "EAT"};
-    static protected boolean looping[] =
-            new boolean[]{true, true, false, false, false, true, true};
-    static protected CopyOnWriteArrayList<CopyOnWriteArrayList<Animation<TextureRegion>[]>> animations;
-
-    static protected CopyOnWriteArrayList<String>[] actionTypes = new CopyOnWriteArrayList[]{
-            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
-            new CopyOnWriteArrayList<>(Arrays.asList("1")),
-            new CopyOnWriteArrayList<>(Arrays.asList("OUT")),
-            new CopyOnWriteArrayList<>(Arrays.asList("1")),
-            new CopyOnWriteArrayList<>(Arrays.asList("1")) };
-    static int frameCount[] = {30, 30, 14, 34, 34, 26, 16};
-
+    int id = 0;
     public Shruby(float x, float y) {
         damage = 2f;
         health = new Health(20, 0.3f);
@@ -48,11 +22,9 @@ public class Shruby extends Entity {
         allowedMotion = false;
         action = 4;
         throwCooldown = 0.7f;
-        if(animations == null) animations =
-                AnimationLoader.load("ENTITIES/SHRUBY", actions, actionTypes, frameCount);
         position.set(x, y);
-        regionWidth = (animations.get(0).get(0)[0].getKeyFrame(0)).getRegionWidth();
-        regionHeight = animations.get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
+        regionWidth = (EntityManager.animations[id].get(0).get(0)[0].getKeyFrame(0)).getRegionWidth();
+        regionHeight = EntityManager.animations[id].get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
         Sound sound = GlobalAssetManager.get("sounds/EFFECTS/PortalOut.ogg", Sound.class);
         sound.play(SoundSettings.soundVolume);
         animationTime = 0;
@@ -132,16 +104,16 @@ public class Shruby extends Entity {
     @Override public void update() {
         super.update();
         faceDirection = (byte)Math.min(faceDirection,
-                (animations.get(action).size() - 1));
+                (EntityManager.animations[id].get(action).size() - 1));
 
-        if(action == 3 && animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
+        if(action == 3 && EntityManager.animations[id].get(action).get(faceDirection)[inLiquid ? 1: 0].
                 isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
             ObjectsList.del(this);
         }
 
         if(!allowedMotion) {
             if(action != 3 &&
-                    animations.get(action).get(faceDirection)[inLiquid ? 1: 0].
+                    EntityManager.animations[id].get(action).get(faceDirection)[inLiquid ? 1: 0].
                             isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
                 allowedMotion = true;
                 action = 0;
@@ -161,11 +133,12 @@ public class Shruby extends Entity {
         if(health.timeAfterHit() < 0.2f) {
             GlobalBatch.batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
         }
-        animations.get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(2.4f * getSpeed()));
-        GlobalBatch.render(animations.get(action).get(faceDirection)[inLiquid ? 1: 0]
-                           .getKeyFrame(AnimationGlobalTime.time() - animationTime, looping[action]),
+        EntityManager.animations[id].get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(2.4f * getSpeed()));
+        GlobalBatch.render(EntityManager.animations[id].get(action).get(faceDirection)[inLiquid ? 1: 0]
+                           .getKeyFrame(AnimationGlobalTime.time() - animationTime, EntityManager.looping[id][action]),
                    Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
         GlobalBatch.batch.setColor(1, 1, 1, 1);
+        super.render();
     }
 
 

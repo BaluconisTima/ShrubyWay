@@ -28,7 +28,7 @@ public class Menu extends Screen {
 
 
     public Menu() {
-        SoundSettings.changeMusic("music/Menu.mp3");
+     //   SoundSettings.changeMusic("music/Menu.mp3");
     }
 
 

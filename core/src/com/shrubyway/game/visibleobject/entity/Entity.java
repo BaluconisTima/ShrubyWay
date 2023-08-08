@@ -1,10 +1,15 @@
 package com.shrubyway.game.visibleobject.entity;
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.Health;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ThrowableItem;
 import com.shrubyway.game.shapes.Rectangle;
@@ -133,6 +138,22 @@ abstract public class Entity extends InteractiveObject {
         changeAnimationsFor(direction, direction.len() == 0 ? 0 : 1);
         return moved;
     };
+    @Override public void render() {
+       if(inLiquid) renderWaterOverlay();
+    }
+
+    protected static Animation<TextureRegion> WaterOverlay;
+    protected void renderWaterOverlay() {
+          if(WaterOverlay == null) {
+              WaterOverlay = Animator.toAnimation(
+                      GlobalAssetManager.get("effects/water_overlay.png", Texture.class),14, 0, 0);
+
+          }
+
+        GlobalBatch.render(WaterOverlay.getKeyFrame(AnimationGlobalTime.time(), true),
+                positionLegs().x - 90, positionLegs().y - 23);
+
+    }
 
     public void addMomentum(Vector2 x) {
         momentum.add(x);
