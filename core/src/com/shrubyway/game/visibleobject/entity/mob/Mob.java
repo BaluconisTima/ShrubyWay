@@ -15,6 +15,13 @@ public abstract class Mob extends Entity {
 
     }
 
+    @Override public void die() {
+        if(action == 3) return;
+        MobsManager.makeDrop(id, positionLegs().x, positionLegs().y);
+        super.die();
+        action = 3;
+    }
+
     private void tryMoveAi() {
         if(target.x - positionLegs().x > 70) tempDirection.x = 1;
         else if(target.x - positionLegs().x < -70) tempDirection.x = -1;

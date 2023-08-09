@@ -13,16 +13,17 @@ import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ThrowableItem;
 import com.shrubyway.game.shapes.Rectangle;
+import com.shrubyway.game.sound.GlobalSoundManager;
+import com.shrubyway.game.sound.SoundAtPosition;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
-
 abstract public class Entity extends InteractiveObject {
 
 
-
+    protected int entityID = -1;
     public Health health;
     public byte faceDirection = 0;
     protected int action = 0;
@@ -55,10 +56,34 @@ abstract public class Entity extends InteractiveObject {
     public void update() {
          tryMoveMomentum();
         attacking = false;
+        faceDirection = (byte)Math.min(faceDirection,
+                (EntityManager.animations[entityID].get(action).size() - 1));
+
+        if(action == 3 && EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
+                isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
+            ObjectsList.del(this);
+        }
+
+        if(!allowedMotion) {
+            if(action != 3 &&
+                    EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
+                            isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
+                allowedMotion = true;
+                action = 0;
+                animationTime = AnimationGlobalTime.time();
+            }
+        }
+    }
+    public boolean canAct() {
+        return (allowedMotion);
     }
 
     public void getDamage(float damage) {
-        health.getDamage(damage);
+        if(health.getHealth() > 0 && damage != 0) {
+            health.getDamage(damage);
+            GlobalSoundManager.addSound(new
+                    SoundAtPosition(EntityManager.soundDamage[entityID], positionCenter()));
+        }
         if(health.getHealth() <= 0) {
             die();
         }
@@ -139,6 +164,16 @@ abstract public class Entity extends InteractiveObject {
         return moved;
     };
     @Override public void render() {
+        if(health.timeAfterHit() < 0.2f) {
+            GlobalBatch.batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
+        }
+        EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
+                setFrameDuration(1f/(24f / speed * getSpeed()));
+        GlobalBatch.render(EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
+                        getKeyFrame(AnimationGlobalTime.time() - animationTime, EntityManager.looping[entityID][action]),
+                Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
+        collisionBox().render();
+        GlobalBatch.batch.setColor(1, 1, 1, 1);
        if(inLiquid) renderWaterOverlay();
     }
 
@@ -158,19 +193,24 @@ abstract public class Entity extends InteractiveObject {
     public void addMomentum(Vector2 x) {
         momentum.add(x);
     }
-
-    public void die() {
+    public Vector2 position() {
+        return position;
     }
 
+    public void die() {
+     if(action == 3) return;
+     GlobalSoundManager.addSound(new SoundAtPosition(EntityManager.soundDeath[entityID], positionCenter()));
+     animationTime = AnimationGlobalTime.time();
+     allowedMotion = false;
+     action = 3;
+    }
 
     protected float attackCooldown = 0.3f;
     protected float animationTime = 0f;
     protected float lastAttackTime;
 
     public void attack(Vector2 direction) {
-
         if(!allowedMotion && action != 2) return;
-
         if((AnimationGlobalTime.time() - lastAttackTime) > attackCooldown) {
             Vector2 directionTemp =
                     new Vector2(direction.x - positionCenter().x, direction.y - positionCenter().y);

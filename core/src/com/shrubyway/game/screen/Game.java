@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.shrubyway.game.CameraEffects;
 import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
@@ -21,6 +22,7 @@ import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.myinterface.*;
+import com.shrubyway.game.sound.GlobalSoundManager;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.ObjectsList;
@@ -28,6 +30,8 @@ import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
 import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
+import com.shrubyway.game.visibleobject.effect.BerryExplosion;
+import com.shrubyway.game.visibleobject.effect.Explosion;
 import com.shrubyway.game.visibleobject.entity.Entity;
 import com.shrubyway.game.visibleobject.entity.EntityManager;
 import com.shrubyway.game.visibleobject.entity.Shruby;
@@ -79,10 +83,11 @@ public class Game extends Screen {
                         GlobalAssetManager.get("interface/m2.png", Texture.class), 1920 / 2 -
                 bWidht / 2, 1080 / 2 - bHeight / 2 - bHeight - 50);
         inventory = new Inventory();
+        EntityManager.init();
         DecorationsManager.init();
         ItemManager.init();
         MobsManager.init();
-        EntityManager.init();
+
         objectsList = new ObjectsList();
         event = new Event();
         map = new Map(1);
@@ -123,6 +128,9 @@ public class Game extends Screen {
                 + localCamera.position.x - Gdx.graphics.getWidth() / 2,
                 ShrubyWay.inputProcessor.mousePosition().y
                         + localCamera.position.y - Gdx.graphics.getHeight() / 2);
+        if(ShrubyWay.inputProcessor.isLPressed()) {
+            objectsList.add(new BerryExplosion(mousePosition.x, mousePosition.y, player.positionCenter()));
+        }
         boolean spacePressed = ShrubyWay.inputProcessor.isSpacePressed();
         if (spacePressed && player.canAct()) {
             int temp = inventory.selectedItem();
@@ -286,6 +294,23 @@ public class Game extends Screen {
 
         for (VisibleObject obj : temp) {
             if (!ObjectsList.getList().contains(obj)) continue;
+            if(obj instanceof Explosion exp) {
+
+                for(VisibleObject obj2 : temp) {
+                    if(obj2 instanceof Entity ent2) {
+                        ((Entity) obj2).addMomentum(exp.getMomentum(ent2.positionCenter()));
+                        if(!exp.damaged) {
+                            ent2.getDamage(exp.getDamage(ent2.positionCenter()));
+                        }
+                    }
+                    if(obj2 instanceof Decoration dec) {
+                        if(!exp.damaged) {
+                            if(exp.getDamage(dec.positionCenter()) != 0) dec.interact();
+                        }
+                    }
+                }
+                exp.damaged = true;
+            } else
             if (obj instanceof Bullet bul) {
                 bul.processBullet(player.positionCenter());
 
@@ -344,10 +369,15 @@ public class Game extends Screen {
             gameOver = true;
             map.pauseSounds();
         }
+        GlobalSoundManager.update(player.positionCenter());
     }
 
     public void cameraUpdate() {
+        localCamera.position.add(new Vector3(-CameraEffects.getAddPositionExplosion().x,
+                -CameraEffects.getAddPositionExplosion().y, 0));
         localCamera.position.lerp(new Vector3(player.positionCenter(),0), 0.1f);
+        CameraEffects.update();
+        localCamera.position.add(new Vector3(CameraEffects.getAddPositionExplosion(), 0));
         localCamera.update();
     }
 

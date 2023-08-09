@@ -27,7 +27,7 @@ public class Inventory {
 
     public void clear() {
         for(int i = 0; i < 9; i++) {
-            buttons[0][i] = new Rectangle(27 + 79.1f * i,1080 - 70 - 28,70,70);
+            buttons[0][i] = new Rectangle(27 + 79.1f * i,1080 - 70 - 28 + 7,70,70);
         }
         for(int j = 1; j < 5; j++) {
             for(int i = 0; i < 9; i++) {
@@ -61,16 +61,17 @@ public class Inventory {
     public void render(Vector2 mousePosition) {
         GlobalBatch.render(base,0,0);
        if(opened) GlobalBatch.render(full,0,0);
+        GlobalBatch.render(select, 12 + 79.1f * selected, 1080 - 111.55f + 9);
 
         for(int i = 0; i < 9; i++) {
             buttons[0][i].render();
             if(items[0][i] != null) {
                 GlobalBatch.render(ItemManager.itemTexture[items[0][i].id],
-                        27 + 79.1f * i, 1080 - 70 - 28, 70, 70);
+                        27 + 79.1f * i, 1080 - 70 - 28 + 7, 70, 70);
                 if(numberOfItem[0][i] > 1)
                     TextDrawer.drawWithShadow(numberOfItem[0][i].toString(),
                         27 + 79.1f * i + 50 - (numberOfItem[0][i].toString().length()-1) * 17,
-                        1080 - 70, 0.5f);
+                        1080 - 70 + 7, 0.5f);
             }
         }
         if(opened)
@@ -89,7 +90,7 @@ public class Inventory {
                     }
                 }
 
-        GlobalBatch.render(select, 12 + 79.1f * selected, 1080 - 111.55f);
+
         for(int j = 0; j < 9; j++) {
             nameAndDesc(mousePosition, 0, j);
         }

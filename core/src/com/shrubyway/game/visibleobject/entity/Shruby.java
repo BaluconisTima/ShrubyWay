@@ -1,21 +1,19 @@
 package com.shrubyway.game.visibleobject.entity;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalAssetManager;
-import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.Health;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
-import com.shrubyway.game.visibleobject.ObjectsList;
 
 
 public class Shruby extends Entity {
-    int id = 0;
+
     public Shruby(float x, float y) {
+        entityID = 0;
         damage = 2f;
         health = new Health(20, 0.3f);
         speed = 10f;
@@ -23,8 +21,8 @@ public class Shruby extends Entity {
         action = 4;
         throwCooldown = 0.7f;
         position.set(x, y);
-        regionWidth = (EntityManager.animations[id].get(0).get(0)[0].getKeyFrame(0)).getRegionWidth();
-        regionHeight = EntityManager.animations[id].get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
+        regionWidth = (EntityManager.animations[entityID].get(0).get(0)[0].getKeyFrame(0)).getRegionWidth();
+        regionHeight = EntityManager.animations[entityID].get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
         Sound sound = GlobalAssetManager.get("sounds/EFFECTS/PortalOut.ogg", Sound.class);
         sound.play(SoundSettings.soundVolume);
         animationTime = 0;
@@ -79,49 +77,6 @@ public class Shruby extends Entity {
         return collisionBox;
     }
 
-    @Override
-    public void getDamage(float damage, Vector2 hitPosition) {
-        if(health.getHealth() > 0 && damage != 0) {
-            Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/ShrabyDamage.ogg"));
-            sound.play(SoundSettings.soundVolume);
-        }
-        super.getDamage(damage, hitPosition);
-    }
-
-    public boolean canAct() {
-        return (allowedMotion);
-    }
-
-    @Override public void die() {
-        if(action == 3) return;
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/ShrabyDeath1.wav"));
-        sound.play(SoundSettings.soundVolume);
-        animationTime = AnimationGlobalTime.time();
-        allowedMotion = false;
-        action = 3;
-    }
-
-    @Override public void update() {
-        super.update();
-        faceDirection = (byte)Math.min(faceDirection,
-                (EntityManager.animations[id].get(action).size() - 1));
-
-        if(action == 3 && EntityManager.animations[id].get(action).get(faceDirection)[inLiquid ? 1: 0].
-                isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
-            ObjectsList.del(this);
-        }
-
-        if(!allowedMotion) {
-            if(action != 3 &&
-                    EntityManager.animations[id].get(action).get(faceDirection)[inLiquid ? 1: 0].
-                            isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
-                allowedMotion = true;
-                action = 0;
-                animationTime = AnimationGlobalTime.time();
-            }
-        }
-    }
-
     public void updateAnimation(int action) {
         if(!allowedMotion) return;
         if(this.action != action) {
@@ -129,22 +84,7 @@ public class Shruby extends Entity {
             animationTime = AnimationGlobalTime.time();
         }
     }
-    @Override public void render() {
-        if(health.timeAfterHit() < 0.2f) {
-            GlobalBatch.batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
-        }
-        EntityManager.animations[id].get(action).get(faceDirection)[inLiquid ? 1: 0].setFrameDuration(1f/(2.4f * getSpeed()));
-        GlobalBatch.render(EntityManager.animations[id].get(action).get(faceDirection)[inLiquid ? 1: 0]
-                           .getKeyFrame(AnimationGlobalTime.time() - animationTime, EntityManager.looping[id][action]),
-                   Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
-        GlobalBatch.batch.setColor(1, 1, 1, 1);
-        super.render();
-    }
 
-
-    @Override public Vector2 position() {
-        return position;
-    }
     @Override public Vector2 positionCenter() {
         tempPosition.set(position.x + regionWidth / 2, position.y + 118);
         return tempPosition;

@@ -18,7 +18,7 @@ public class Bush extends Decoration  {
                     position().y + 50, new Vector2(0, -0.2f)));
         }
     }
-    float halfTextureWidth;
+
     @Override
     public void setHitbox() {
         if(hitBox == null) hitBox = new Rectangle(0,0,0,0);

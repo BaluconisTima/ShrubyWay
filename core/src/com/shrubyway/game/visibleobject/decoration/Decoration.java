@@ -1,5 +1,6 @@
 package com.shrubyway.game.visibleobject.decoration;
 
+import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.shapes.Rectangle;
@@ -41,6 +42,10 @@ abstract public class Decoration extends InteractiveObject {
         collisionBox().render();
         hitBox().render();
     };
+    float halfTextureWidth;
+    @Override public Vector2 positionCenter() {
+        return new Vector2(position.x + halfTextureWidth, position.y);
+    }
 
     public void interact() {
         lastInteraction = AnimationGlobalTime.time();
