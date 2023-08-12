@@ -7,6 +7,7 @@ import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.visibleobject.ObjectsList;
+import com.shrubyway.game.screen.Game;
 
 public abstract class Explosion extends Effect{
     float power, radius, creationTime;
@@ -43,7 +44,7 @@ public abstract class Explosion extends Effect{
     }
 
     void destroy() {
-        ObjectsList.del(this);
+        Game.objectsList.del(this);
     }
 
     @Override public void render() {

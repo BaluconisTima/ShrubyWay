@@ -1,11 +1,8 @@
 package com.shrubyway.game.map;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalAssetManager;
@@ -14,25 +11,35 @@ import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.sound.SoundSettings;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.io.Serializable;
+import java.util.Scanner;
 
-public class Background {
+public class Background implements Serializable {
 
     char backgroundMap[][] = new char[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
     private int level;
 
 
     Animation<TextureRegion> tile[][];
+    String stepSoundWay[] = new String[MapSettings.TILETYPES];
     long tileSound[] = new long[MapSettings.TILETYPES];
     Sound stepSound[][] = new Sound[MapSettings.TILETYPES][2];
     int tileWithSound[] = {0};
 
     float nearestTile[] = new float[MapSettings.TILETYPES];
     Sound sound;
+    {
+        stepSoundWay[0] = "sounds/STEPS/0";
+        stepSoundWay[1] = "sounds/STEPS/1";
+        stepSoundWay[2] = "sounds/STEPS/2";
+        stepSoundWay[3] = "sounds/STEPS/3";
+        stepSoundWay[4] = "sounds/STEPS/3";
+        stepSoundWay[5] = "sounds/STEPS/3";
+        stepSoundWay[6] = "sounds/STEPS/3";
+        stepSoundWay[7] = "sounds/STEPS/3";
+    }
 
 
     private void animationsLoader() {
@@ -66,8 +73,8 @@ public class Background {
     private void soundLoader() {
         for (int i = 0; i < MapSettings.TILETYPES; i++) {
             tileSound[i] = -1;
-            stepSound[i][0] = GlobalAssetManager.get("sounds/STEPS/" + i + "_0.ogg", Sound.class);
-            stepSound[i][1] = GlobalAssetManager.get("sounds/STEPS/" + i + "_1.ogg", Sound.class);
+            stepSound[i][0] = GlobalAssetManager.get( stepSoundWay[i] + "_0.ogg", Sound.class);
+            stepSound[i][1] = GlobalAssetManager.get(stepSoundWay[i] + "_1.ogg", Sound.class);
         }
 
         for (int to : tileWithSound) {

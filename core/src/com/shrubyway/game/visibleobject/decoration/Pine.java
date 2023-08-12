@@ -4,6 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.MapSettings;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
@@ -38,12 +39,12 @@ public class Pine extends Decoration {
     @Override public void interact() {
         super.interact();
         if(Math.random() < 0.2) {
-            ObjectsList.add(new VisibleItem(ItemManager.newItem(2),
+            Game.objectsList.add(new VisibleItem(ItemManager.newItem(2),
                     position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),
                     position().y + 50, new Vector2(0, -0.2f)));
         }
         if(Math.random() < 0.02) {
-            ObjectsList.add(MobsManager.newOf(1, position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),
+            Game.objectsList.add(MobsManager.newOf(1, position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),
                     position().y + 50));
         }
     }

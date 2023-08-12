@@ -4,8 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.MapSettings;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
-import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class Willow extends Decoration {
@@ -40,7 +40,7 @@ public class Willow extends Decoration {
         if(Math.random() * 100 < 10) {
             VisibleItem item = new VisibleItem(ItemManager.newItem(4), position.x + halfTextureWidth - 60,
                     position.y + 50);
-            ObjectsList.add(item);
+            Game.objectsList.add(item);
             Event.cast(Event.getEvent("harmonicaDroped"));
         }
     }

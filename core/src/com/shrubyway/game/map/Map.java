@@ -1,15 +1,15 @@
 package com.shrubyway.game.map;
 
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.visibleobject.ObjectsList;
+import com.shrubyway.game.saver.VisualObjectListSaver;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
 import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Map {
@@ -20,6 +20,25 @@ public class Map {
 
     char decorations[][] = new char[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
     public List<VisibleObject> tempList;
+
+
+
+    public VisualObjectListSaver[][] getChunks() {
+        VisualObjectListSaver[][] chunks = new VisualObjectListSaver[16][16];
+        for (int i = 0; i < 16; i++)
+            for (int j = 0; j < 16; j++) {
+                chunks[i][j] = new VisualObjectListSaver(this.chunks[i][j]);
+            }
+        return chunks;
+    }
+
+    public void setChunks(VisualObjectListSaver[][] chunks) {
+        for (int i = 0; i < 16; i++)
+            for (int j = 0; j < 16; j++) {
+                this.chunks[i][j] = chunks[i][j].getList();
+            }
+    }
+
     public int lvl;
 
     private void decorationsLoad(int level) {
@@ -116,7 +135,7 @@ public class Map {
                             && check.position.x < playerPosition.x + MapSettings.TYLESIZE * MapSettings.calculationDistanceY &&
                             check.position.y > playerPosition.y - MapSettings.TYLESIZE * MapSettings.calculationDistanceY
                             && check.position.y < playerPosition.y + MapSettings.TYLESIZE * MapSettings.calculationDistanceY) {
-                        ObjectsList.add(check);
+                        Game.objectsList.add(check);
                         tempList.add(check);
                     }
             }
@@ -128,7 +147,7 @@ public class Map {
     public void updateRenderingObjects(Vector2 playerPosition) {
         timeChecking++;
         int x, y;
-        CopyOnWriteArrayList<VisibleObject> temp = new CopyOnWriteArrayList<>(ObjectsList.getList());
+        CopyOnWriteArrayList<VisibleObject> temp = new CopyOnWriteArrayList<>(Game.objectsList.getList());
         tempList.clear();
         for (VisibleObject check : temp) {
             if (Math.abs(check.position.x - playerPosition.x) >
@@ -149,7 +168,7 @@ public class Map {
                 tempList.add(check);
             }
         }
-        ObjectsList.getList().removeAll(tempList);
+        Game.objectsList.getList().removeAll(tempList);
         tempList.clear();
         x = (int) playerPosition.x;
         y = (int) playerPosition.y;

@@ -8,8 +8,8 @@ import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.myinterface.Inventory;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.sound.SoundSettings;
-import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 
 public class VisibleItem extends VisibleObject {
@@ -48,7 +48,7 @@ public class VisibleItem extends VisibleObject {
 
     public void delete() {
         pop.play(SoundSettings.soundVolume);
-        ObjectsList.del(this);
+        Game.objectsList.del(this);
     }
     Vector2 dir = new Vector2(0,0);
     public void moveToPlayer(Vector2 playerPosition, Inventory inventory) {

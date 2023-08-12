@@ -1,8 +1,7 @@
 package com.shrubyway.game.shapes;
 
 import com.badlogic.gdx.math.Vector2;
-
-public class Rectangle  {
+public class Rectangle implements java.io.Serializable {
     public final Vector2 topLeftCorner = new Vector2();
     public final Vector2 bottomRightCorner = new Vector2();
 
@@ -41,7 +40,7 @@ public class Rectangle  {
     }
 
     public void render() {
-      //GlobalBatch.render(GlobalAssetManager.get("TEST.png", Texture.class), topLeftCorner.x, topLeftCorner.y, bottomRightCorner.x - topLeftCorner.x, bottomRightCorner.y - topLeftCorner.y);
+     // GlobalBatch.render(GlobalAssetManager.get("TEST.png", Texture.class), topLeftCorner.x, topLeftCorner.y, bottomRightCorner.x - topLeftCorner.x, bottomRightCorner.y - topLeftCorner.y);
     }
 
 }

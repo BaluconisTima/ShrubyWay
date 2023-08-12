@@ -8,7 +8,7 @@ import com.shrubyway.game.visibleobject.InteractiveObject;
 
 abstract public class Decoration extends InteractiveObject {
     public int decorationI = 0, decorationJ = 0;
-    int id;
+    public int id;
     protected float lastInteraction = -100f;
 
     public void change(float x, float y, int i, int j) {

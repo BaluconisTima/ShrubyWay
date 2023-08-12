@@ -1,19 +1,26 @@
 package com.shrubyway.game.visibleobject.decoration;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.MapSettings;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
-import com.shrubyway.game.visibleobject.ObjectsList;
+import com.shrubyway.game.sound.GlobalSoundManager;
+import com.shrubyway.game.sound.SoundAtPosition;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class Bush extends Decoration  {
 
     @Override public void interact() {
         super.interact();
+        GlobalSoundManager.addSound(new SoundAtPosition(
+                GlobalAssetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
         if(Math.random() < 0.2) {
-            ObjectsList.add(new VisibleItem(ItemManager.newItem(3),
+
+            Game.objectsList.add(new VisibleItem(ItemManager.newItem(3),
                     position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),
                     position().y + 50, new Vector2(0, -0.2f)));
         }

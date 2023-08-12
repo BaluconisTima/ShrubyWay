@@ -2,20 +2,22 @@ package com.shrubyway.game.visibleobject.entity.mob;
 
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.Health;
+import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
+import com.shrubyway.game.visibleobject.effect.BerryExplosion;
 import com.shrubyway.game.visibleobject.entity.EntityManager;
 
-public class Agaric extends Mob{
-
+public class Explerry extends Mob{
     @Override public void ai(Vector2 playerPosition) {
         closeAi(100, playerPosition);
     }
 
-    public Agaric(float x, float y) {
-        entityID = 1;
-        id = 0;
-        health = new Health(10);
-        speed = 8f;
+    public Explerry(float x, float y) {
+        entityID = 3;
+        id = 2;
+        health = new Health(1);
+        speed = 10f;
         allowedMotion = true;
         attackCooldown = 1f;
         action = 0;
@@ -27,55 +29,38 @@ public class Agaric extends Mob{
         target.set(x - regionWidth / 2, y);
     }
 
+    @Override public void attack(Vector2 direction) {
+        die();
+    }
+
+    @Override public void update() {
+        super.update();
+        if(action == 3 && EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
+                isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
+            Game.objectsList.add(new BerryExplosion(positionCenter().x, positionCenter().y));
+        }
+    }
+
     @Override public Rectangle hitBox() {
         if(hitBox == null) hitBox = new Rectangle(0,0,0,0);
         hitBox.change(position.x + 150,
                 position.y + 20,
-                70, 140);
+                70, 70);
         return hitBox;
     }
     @Override public Rectangle attackBox() {
         if(attackBox == null) attackBox = new Rectangle(0,0,0,0);
-        if(action == 2 && attacking) {
-            switch (faceDirection) {
-                case 0:
-                    attackBox.change(position.x + 75,
-                            position.y - 50,
-                            210, 100);
-                    break;
-                case 1:
-                    attackBox.change(position.x + 75,
-                            position.y + 120,
-                            210, 100);
-                    break;
-                case 2:
-                    attackBox.change(position.x,
-                            position.y + 55,
-                            130, 70);
-                    break;
-                case 3:
-                    attackBox.change(position.x + 240,
-                            position.y + 55,
-                            130, 70);
-                    break;
-            }
-        } else {
-            attackBox.change(0,
-                    0,
-                    -1, -1);
-        }
         return attackBox;
     }
     @Override public Rectangle collisionBox() {
         if(collisionBox == null) collisionBox = new Rectangle(0,0,0,0);
-        collisionBox.change(position.x + 138,
+        collisionBox.change(position.x + 148,
                 position.y + 5,
-                95, 15);
+                70, 10);
         return collisionBox;
     }
     @Override public Vector2 positionCenter() {
         tempPosition.set(position.x + regionWidth / 2, position.y + 118);
         return tempPosition;
     }
-
 }

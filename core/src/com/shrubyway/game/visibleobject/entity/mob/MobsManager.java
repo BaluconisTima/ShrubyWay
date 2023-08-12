@@ -3,7 +3,7 @@ package com.shrubyway.game.visibleobject.entity.mob;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.map.MapSettings;
-import com.shrubyway.game.visibleobject.ObjectsList;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 import java.lang.reflect.Constructor;
@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class MobsManager {
-    public static int mobsNumber = 2;
+    public static int mobsNumber = 3;
     public static Constructor<? extends Mob> mobs[] = new Constructor[mobsNumber];
     private static float mobSpawnCost[] = new float[mobsNumber];
     public static ArrayList<Integer> dropTableItem[] = new ArrayList[mobsNumber];
@@ -31,6 +31,12 @@ public class MobsManager {
         dropTableItem[1] = new ArrayList<>(Arrays.asList(2));
         dropTableChance[1] = new ArrayList<>(Arrays.asList(0.7f));
         mobSpawnCost[1] = 10;
+
+        mobs[2] = (Explerry.class).getDeclaredConstructor(float.class, float.class);
+        mobs[2].newInstance(0, 0);
+        dropTableItem[2] = new ArrayList<>();
+        dropTableChance[2] = new ArrayList<>();
+        mobSpawnCost[2] = 10;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -51,7 +57,7 @@ public class MobsManager {
             float prob = 1;
             while(Math.random() < prob * dropTableChance[i].get(j)) {
                 prob *= dropTableChance[i].get(j);
-                ObjectsList.add(new VisibleItem(new Item(dropTableItem[i].get(j)), x, y + 5));
+                Game.objectsList.add(new VisibleItem(new Item(dropTableItem[i].get(j)), x, y + 5));
             }
         }
     }
@@ -83,7 +89,7 @@ public class MobsManager {
         }
 
         Mob mob = newOf(j, x, y);
-        ObjectsList.add(mob);
+        Game.objectsList.add(mob);
     }
     static public void tryGenerateMob(Vector2 playerPosition) {
         for(int i = 0; i < mobsNumber; i++) {

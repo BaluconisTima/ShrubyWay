@@ -1,10 +1,8 @@
 package com.shrubyway.game;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.utils.TimeUtils;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 
-public class Health {
+public class Health implements java.io.Serializable {
     private float health;
     private float maxHealth;
     private float cooldown;

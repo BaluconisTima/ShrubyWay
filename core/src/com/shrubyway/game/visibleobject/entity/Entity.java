@@ -12,12 +12,12 @@ import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ThrowableItem;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.GlobalSoundManager;
 import com.shrubyway.game.sound.SoundAtPosition;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.InteractiveObject;
-import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 abstract public class Entity extends InteractiveObject {
@@ -61,7 +61,7 @@ abstract public class Entity extends InteractiveObject {
 
         if(action == 3 && EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
                 isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
-            ObjectsList.del(this);
+            Game.objectsList.del(this);
         }
 
         if(!allowedMotion) {
@@ -136,7 +136,9 @@ abstract public class Entity extends InteractiveObject {
         }
     }
 
-
+   public boolean liquid() {
+        return inLiquid;
+   }
     public boolean tryMoveTo(Vector2 direction){
         if(!allowedMotion) return false;
         boolean moved = false;
@@ -163,6 +165,9 @@ abstract public class Entity extends InteractiveObject {
         changeAnimationsFor(direction, direction.len() == 0 ? 0 : 1);
         return moved;
     };
+    public void renderShadow() {
+       // GlobalBatch.render(GlobalAssetManager.get("effects/shadow.png", Texture.class), Math.round(positionLegs().x) - 80, Math.round(positionLegs().y) - 20);
+    }
     @Override public void render() {
         if(health.timeAfterHit() < 0.2f) {
             GlobalBatch.batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
@@ -173,6 +178,8 @@ abstract public class Entity extends InteractiveObject {
                         getKeyFrame(AnimationGlobalTime.time() - animationTime, EntityManager.looping[entityID][action]),
                 Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
         collisionBox().render();
+        hitBox().render();
+
         GlobalBatch.batch.setColor(1, 1, 1, 1);
        if(inLiquid) renderWaterOverlay();
     }
@@ -236,7 +243,7 @@ abstract public class Entity extends InteractiveObject {
         lastThrowTime = AnimationGlobalTime.time();
         Bullet bullet = new ThrowableItem(positionCenter(), shootPosition, item, this, rotating);
         changeAnimationsFor(bullet.direction, 2);
-        ObjectsList.add(bullet);
+        Game.objectsList.add(bullet);
     }
 
     @Override public Rectangle collisionBox(){return collisionBox;}
@@ -244,7 +251,7 @@ abstract public class Entity extends InteractiveObject {
 
     protected boolean checkCollisions(){
         Rectangle temp = collisionBox();
-        for(VisibleObject object : ObjectsList.getList()) {
+        for(VisibleObject object : Game.objectsList.getList()) {
             if(!(object instanceof InteractiveObject)) continue;
             if(object == this) continue;
             if(((InteractiveObject)object).collisionBox() == null) continue;

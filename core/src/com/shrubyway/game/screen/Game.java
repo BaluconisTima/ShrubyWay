@@ -9,10 +9,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.shrubyway.game.CameraEffects;
-import com.shrubyway.game.GlobalAssetManager;
-import com.shrubyway.game.GlobalBatch;
-import com.shrubyway.game.ShrubyWay;
+import com.shrubyway.game.*;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.Food;
@@ -21,7 +18,11 @@ import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.map.MapSettings;
-import com.shrubyway.game.myinterface.*;
+import com.shrubyway.game.myinterface.Button;
+import com.shrubyway.game.myinterface.HealthBar;
+import com.shrubyway.game.myinterface.Inventory;
+import com.shrubyway.game.myinterface.MiniMap;
+import com.shrubyway.game.saver.GameSaver;
 import com.shrubyway.game.sound.GlobalSoundManager;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.InteractiveObject;
@@ -30,7 +31,6 @@ import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
 import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
-import com.shrubyway.game.visibleobject.effect.BerryExplosion;
 import com.shrubyway.game.visibleobject.effect.Explosion;
 import com.shrubyway.game.visibleobject.entity.Entity;
 import com.shrubyway.game.visibleobject.entity.EntityManager;
@@ -39,19 +39,22 @@ import com.shrubyway.game.visibleobject.entity.mob.Mob;
 import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
+import java.io.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Game extends Screen {
-    Shruby player;
-    Map map;
-    Inventory inventory;
-    OrthographicCamera localCamera;
+public class Game extends Screen implements java.io.Serializable {
+    static public OrthographicCamera localCamera;
     Vector2 mousePosition;
 
     public boolean gameOver = false, menu = false;
     LoadingScreen loadingScreen;
     Event event;
-    ObjectsList objectsList;
+
+    public static ObjectsList objectsList = new ObjectsList();
+    public static Inventory inventory = new Inventory();
+    GameSaver gameSaver = new GameSaver();
+    public static Map map;
+    static public Shruby player;
 
     Button continueButton, settingsButton, menuButton;
 
@@ -64,7 +67,7 @@ public class Game extends Screen {
     }
 
     private void init() {
-        ObjectsList.getList().clear();
+        objectsList.getList().clear();
         GlobalBatch.batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         GlobalBatch.batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
@@ -96,7 +99,7 @@ public class Game extends Screen {
         localCamera.position.set(player.positionCenter().x, player.positionCenter().y, 0);
         localCamera.update();
 
-        ObjectsList.add(player);
+        objectsList.add(player);
         AnimationGlobalTime.clear();
     }
 
@@ -128,8 +131,11 @@ public class Game extends Screen {
                 + localCamera.position.x - Gdx.graphics.getWidth() / 2,
                 ShrubyWay.inputProcessor.mousePosition().y
                         + localCamera.position.y - Gdx.graphics.getHeight() / 2);
+        if(ShrubyWay.inputProcessor.isCPressed()) {
+            saveGame();
+        }
         if(ShrubyWay.inputProcessor.isLPressed()) {
-            objectsList.add(new BerryExplosion(mousePosition.x, mousePosition.y, player.positionCenter()));
+            loadGame();
         }
         boolean spacePressed = ShrubyWay.inputProcessor.isSpacePressed();
         if (spacePressed && player.canAct()) {
@@ -287,13 +293,13 @@ public class Game extends Screen {
         }
         temp.clear();
         temp2.clear();
-        for (VisibleObject obj : ObjectsList.getList()) {
+        for (VisibleObject obj : objectsList.getList()) {
             temp.add(obj);
         }
         map.update(player.positionLegs());
 
         for (VisibleObject obj : temp) {
-            if (!ObjectsList.getList().contains(obj)) continue;
+            if (!objectsList.getList().contains(obj)) continue;
             if(obj instanceof Explosion exp) {
 
                 for(VisibleObject obj2 : temp) {
@@ -302,6 +308,9 @@ public class Game extends Screen {
                         if(!exp.damaged) {
                             ent2.getDamage(exp.getDamage(ent2.positionCenter()));
                         }
+                    }
+                    if(obj2 instanceof Bullet bul) {
+
                     }
                     if(obj2 instanceof Decoration dec) {
                         if(!exp.damaged) {
@@ -327,16 +336,16 @@ public class Game extends Screen {
             }
         }
 
-        for (VisibleObject obj : ObjectsList.getList()) {
+        for (VisibleObject obj : objectsList.getList()) {
             if (obj instanceof InteractiveObject io) temp2.add(io);
         }
 
         for (InteractiveObject obj : temp2) {
-            if (!ObjectsList.getList().contains(obj)) continue;
+            if (!objectsList.getList().contains(obj)) continue;
 
             if (obj.attackBox() != null && obj.attackBox().topLeftCorner.x < obj.attackBox().bottomRightCorner.x) {
                 for (InteractiveObject obj2 : temp2) {
-                    if (!ObjectsList.getList().contains(obj2)) continue;
+                    if (!objectsList.getList().contains(obj2)) continue;
                     if (obj == obj2) continue;
 
                     if (obj2.hitBox() != null) {
@@ -359,13 +368,13 @@ public class Game extends Screen {
             }
         }
 
-        for (VisibleObject obj : ObjectsList.getList()) {
+        for (VisibleObject obj : objectsList.getList()) {
             if (obj instanceof Entity ent) {
                 ent.update();
             }
         }
-        ObjectsList.sort();
-        if(!ObjectsList.contains(player)) {
+        objectsList.sort();
+        if(!objectsList.contains(player)) {
             gameOver = true;
             map.pauseSounds();
         }
@@ -388,8 +397,19 @@ public class Game extends Screen {
         cameraUpdate();
     }
 
+
+    public void renderShadows() {
+        for(VisibleObject obj : objectsList.getList()) {
+            if(obj instanceof Entity ent) {
+                if(!ent.liquid()) {
+                    ent.renderShadow();
+                }
+            }
+        }
+    }
+
     public void renderObjects() {
-        for (VisibleObject obj : ObjectsList.getList()) {
+        for (VisibleObject obj : objectsList.getList()) {
             obj.render();
         }
     }
@@ -436,6 +456,7 @@ public class Game extends Screen {
         ScreenUtils.clear(1, 1, 1, 1);
         //batch.begin();
         map.render(player.position());
+        renderShadows();
         renderObjects();
         renderInterface();
        // batch.end();
@@ -469,5 +490,37 @@ public class Game extends Screen {
             renderFrame();
         }
     }
+
+    public void saveGame() {
+         gameSaver.saveGameFiles();
+        String userHome = System.getProperty("user.home");
+        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "000.txt";
+
+        File shrubyDirectory = new File(userHome, "ShrubyWay");
+        if (!shrubyDirectory.exists()) {
+            shrubyDirectory.mkdirs();
+        }
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(filePath);
+             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+            objectOutputStream.writeObject(gameSaver);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    void loadGame() {
+        String userHome = System.getProperty("user.home");
+        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "000.txt";
+
+        try (FileInputStream fileInputStream = new FileInputStream(filePath);
+             ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
+            gameSaver = (GameSaver) objectInputStream.readObject();
+            gameSaver.loadGameFiles();
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 }

@@ -1,16 +1,10 @@
 package com.shrubyway.game.visibleobject.bullet;
 
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.visibleobject.InteractiveObject;
-import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.VisibleObject;
-
-import java.io.Serializable;
 
 
 public abstract class Bullet extends InteractiveObject {
@@ -23,9 +17,8 @@ public abstract class Bullet extends InteractiveObject {
         position.add(direction);
     }
 
-
     public void die() {
-        ObjectsList.del(this);
+        Game.objectsList.del(this);
     }
 
     public void processBullet(Vector2 playerPossition) {

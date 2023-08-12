@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EntityManager {
-    static int entityCount = 3;
+    static int entityCount = 4;
     static String actions[][] = new String[entityCount][];
     static boolean looping[][] = new boolean[entityCount][];
     static CopyOnWriteArrayList<String>[] actionTypes[] = new CopyOnWriteArrayList[entityCount][];
@@ -67,6 +67,19 @@ public class EntityManager {
                 GlobalAssetManager.get("sounds/EFFECTS/ConeyDeath.ogg", Sound.class);
         soundDamage[2] =
                 GlobalAssetManager.get("sounds/EFFECTS/ConeyDamage.ogg", Sound.class);
+
+        actions[3] = new String[]{"AFK", "WALK", "DEATH", "DEATH"};
+        looping[3] = new boolean[]{true, true, false, false};
+        actionTypes[3] = new CopyOnWriteArrayList[]{
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("1")),
+                new CopyOnWriteArrayList<>(Arrays.asList("1")) };
+        frameCount[3] = new int[]{30, 25, 23, 23};
+        animations[3] = AnimationLoader.load("ENTITIES/EXPLERRY", actions[3], actionTypes[3], frameCount[3]);
+        soundDeath[3] =
+                GlobalAssetManager.get("sounds/EFFECTS/ExplerryDeath.wav", Sound.class);
+        soundDamage[3] = GlobalAssetManager.get("sounds/EFFECTS/ExplerryDamage.ogg", Sound.class);
     }
 
 

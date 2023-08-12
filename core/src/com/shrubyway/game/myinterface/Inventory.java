@@ -7,9 +7,9 @@ import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
-import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class Inventory {
@@ -19,8 +19,8 @@ public class Inventory {
     public Boolean opened = false;
     Sound click = GlobalAssetManager.get(("sounds/EFFECTS/Click.ogg"), Sound.class);
     Rectangle buttons[][] = new Rectangle[5][9];
-    Item items[][] = new Item[5][9];
-    Integer numberOfItem[][] = new Integer[5][9];
+    public Item items[][] = new Item[5][9];
+    public Integer numberOfItem[][] = new Integer[5][9];
     Integer selected = 0;
     Item itemInHand = null;
     Integer numberOfItemInHand = 0;
@@ -203,19 +203,19 @@ public class Inventory {
     public void drop(Item temp, int faceDirection, Vector2 playerPosition) {
         switch (faceDirection) {
             case 0:
-                ObjectsList.add(new VisibleItem(temp, playerPosition.x,
+                Game.objectsList.add(new VisibleItem(temp, playerPosition.x,
                         playerPosition.y, new Vector2(0,-1)));
                 break;
             case 1:
-                ObjectsList.add(new VisibleItem(temp, playerPosition.x,
+                Game.objectsList.add(new VisibleItem(temp, playerPosition.x,
                         playerPosition.y, new Vector2(0,1)));
                 break;
             case 2:
-                ObjectsList.add(new VisibleItem(temp, playerPosition.x,
+                Game.objectsList.add(new VisibleItem(temp, playerPosition.x,
                         playerPosition.y, new Vector2(-1,0)));
                 break;
             case 3:
-                ObjectsList.add(new VisibleItem(temp, playerPosition.x,
+                Game.objectsList.add(new VisibleItem(temp, playerPosition.x,
                         playerPosition.y, new Vector2(1,0)));
                 break;
         }
