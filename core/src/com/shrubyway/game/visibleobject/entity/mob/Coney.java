@@ -9,7 +9,7 @@ import com.shrubyway.game.visibleobject.entity.EntityManager;
 public class Coney extends Mob{
 
     @Override public void ai(Vector2 playerPosition) {
-        longRangeAi(600, 400, playerPosition, new Item(2));
+        longRangeAi(600, 400, playerPosition, new Item(9));
     }
 
     public Coney(float x, float y) {
@@ -19,7 +19,7 @@ public class Coney extends Mob{
         speed = 7f;
         allowedMotion = true;
         attackCooldown = 0f;
-        throwCooldown = 1.5f;
+        throwCooldown = 3.5f;
         action = 0;
         damage = 0f;
         regionWidth =  EntityManager.animations[entityID].get(0).get(0)[0].getKeyFrame(0).getRegionWidth();

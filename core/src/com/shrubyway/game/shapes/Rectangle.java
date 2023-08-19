@@ -1,6 +1,7 @@
 package com.shrubyway.game.shapes;
 
 import com.badlogic.gdx.math.Vector2;
+
 public class Rectangle implements java.io.Serializable {
     public final Vector2 topLeftCorner = new Vector2();
     public final Vector2 bottomRightCorner = new Vector2();

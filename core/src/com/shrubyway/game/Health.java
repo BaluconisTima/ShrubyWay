@@ -37,6 +37,11 @@ public class Health implements java.io.Serializable {
         lastHealTime = AnimationGlobalTime.time();
         if(health > maxHealth) health = maxHealth;
     }
+    public void setHealth(Health health) {
+        this.health = health.getHealth();
+        this.maxHealth = health.getMaxHealth();
+        this.cooldown = health.cooldown;
+    }
     public float getHealth() {
         return health;
     }

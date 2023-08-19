@@ -1,56 +1,41 @@
 package com.shrubyway.game.visibleobject.decoration;
 
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.item.ItemManager;
-import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.GlobalSoundManager;
 import com.shrubyway.game.sound.SoundAtPosition;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
-public class Bush extends Decoration  {
+public class Birch extends Decoration{
 
+    {
+        id = 8;
+    }
     @Override public void interact() {
         super.interact();
         GlobalSoundManager.addSound(new SoundAtPosition(
                 GlobalAssetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
         if(Math.random() < 0.2) {
-
             Game.objectsList.add(new VisibleItem(ItemManager.newItem(3),
                     position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),
                     position().y + 50, new Vector2(0, -0.2f)));
         }
     }
-
-    @Override
-    public void setHitbox() {
-        if(hitBox == null) hitBox = new Rectangle(0,0,0,0);
-        hitBox.change(position.x + halfTextureWidth - 60,
-                position.y + 30, 120, 75);
-    }
-    @Override
-    public void setCollisionBox() {
+    @Override public void setCollisionBox() {
         if(collisionBox == null)
-            collisionBox = new Rectangle(position.x + halfTextureWidth - 10,
-                    position.y, 20, 10);
-        else collisionBox.change(position.x + halfTextureWidth - 10,
-                position.y, 20, 10);
+            collisionBox = new Rectangle(position.x + halfTextureWidth - 28,
+                    position.y + 15, 70, 15);
+
+        collisionBox.change(position.x + halfTextureWidth - 24,
+                position.y + 15, 50, 15);
     }
-
-    @Override
-    public void change(float x, float y, int i, int j) {
-        id = 0;
-        halfTextureWidth = DecorationsManager.texture[id].getKeyFrame(0f).getRegionWidth() / 2f;
-        DecorationsManager.texture[id].setPlayMode(Animation.PlayMode.NORMAL);
-        position.set(x - halfTextureWidth + MapSettings.TYLESIZE/2, y + 30);
-        decorationI = i;
-        decorationJ = j;
-
+    @Override public void setHitbox() {
+        if(hitBox == null) hitBox = new Rectangle(0,0,0,0);
+        hitBox.change(position.x + halfTextureWidth - 15,
+                position.y + 50, 40, 100);
     }
-
-
 }

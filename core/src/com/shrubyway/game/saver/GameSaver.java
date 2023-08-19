@@ -12,6 +12,7 @@ import java.util.HashMap;
 
 public class GameSaver implements Serializable {
     HashMap<String, Integer> eventHashMap;
+    HashMap<Integer, Boolean> eventsHappened;
     Item items[][];
     Integer numberOfItem[][];
     Vector2 playerPosition;
@@ -22,6 +23,7 @@ public class GameSaver implements Serializable {
 
     public void saveGameFiles() {
        eventHashMap = Event.eventHashMap;
+       eventsHappened = Event.eventsHappened;
        items = Game.inventory.items;
        numberOfItem = Game.inventory.numberOfItem;
        playerPosition = Game.player.position;
@@ -32,11 +34,12 @@ public class GameSaver implements Serializable {
 
     public void loadGameFiles() {
         Event.eventHashMap = eventHashMap;
+        Event.eventsHappened = eventsHappened;
         Game.inventory.items = items;
         Game.inventory.numberOfItem = numberOfItem;
         Game.player.position.set(playerPosition);
         Game.localCamera.position.set(Game.player.positionCenter().x, Game.player.positionCenter().y, 0);
-        Game.player.health = playerHealth;
+        Game.player.health.setHealth(playerHealth);
 
         ObjectsList objectsList = new ObjectsList();
         objectsList.getList().addAll(visualObjectListSaver.getList());

@@ -1,21 +1,11 @@
 package com.shrubyway.game.visibleobject.decoration;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
-import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.shapes.Rectangle;
 
 
 public class Rock extends Decoration {
-    float halfTextureWidth;
-
-    @Override public void change(float x, float y, int i, int j) {
-        id = 2;
-        halfTextureWidth = DecorationsManager.texture[id].getKeyFrame(0f).getRegionWidth() / 2f;
-        DecorationsManager.texture[id].setPlayMode(Animation.PlayMode.NORMAL);
-        position.set(x - halfTextureWidth + MapSettings.TYLESIZE/2, y + 10);
-        decorationI = i;
-        decorationJ = j;
-
+    {
+        id = 1;
     }
     @Override public void setCollisionBox() {
         if(collisionBox == null)

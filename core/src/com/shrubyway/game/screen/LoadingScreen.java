@@ -1,8 +1,6 @@
 package com.shrubyway.game.screen;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.myinterface.TextDrawer;
@@ -48,17 +46,8 @@ public class LoadingScreen extends Screen{
         loadingStatus = 0;
         phraseOfday = (int) (Math.random() * phrases.size());
     }
-     float last = 1;
      @Override public void updateScreen() {
-        if(loadingStatus < maxStatus) {
-            last *= 1.01;
-            last = Math.min(last, 100);
-            loadingStatus += Math.min(last, Math.floor((maxStatus - loadingStatus) / 100f) + 1);
-            loadingStatus = Math.min(loadingStatus, maxStatus);
-        } else {
-            last = 1;
-
-        }
+        loadingStatus = maxStatus;
     }
     @Override public void renderScreen() {
         GlobalBatch.render(background, 0, 0);
@@ -67,7 +56,7 @@ public class LoadingScreen extends Screen{
         GlobalBatch.render(new TextureRegion(loadStatus, 0, 0, loadingStatus * loadStatus.getWidth() / 100,
                 loadStatus.getHeight()), 378, 80);
         GlobalBatch.render(phrase, 454, 230);
-        TextDrawer.drawCenterWhite(phrases.get(phraseOfday), 0, 325, 0.7f);
+        TextDrawer.drawCenterWhite(phrases.get(phraseOfday), 1920 / 2, 310, 0.7f);
     }
 
 

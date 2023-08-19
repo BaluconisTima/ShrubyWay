@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.animation.Animator;
 public class DecorationsManager {
-    public static int decorationNumber = 4;
+    public static int decorationNumber = 15;
     public static Class<? extends Decoration> decorations[] = new Class[decorationNumber];
     static Animation<TextureRegion> texture[] = new Animation[decorationNumber];
     static String way[] = new String[decorationNumber];
@@ -18,21 +18,67 @@ public class DecorationsManager {
         for(int i = 0; i < decorationNumber; i++) {
             way[i] = "Decorations/";
         }
-        decorations[0] = Bush.class;
-        way[0] += "BUSH.png";
-        texture[0] = animator.toAnimation(GlobalAssetManager.get(way[0], Texture.class), 8, 0, 0);
+        decorations[0] = Save.class;
+        way[0] += "SAVE.png";
+        texture[0] = animator.toAnimation( GlobalAssetManager.get(way[0], Texture.class), 16, 0, 0);
 
-        decorations[1] = Pine.class;
-        way[1] += "PINE.png";
+
+        decorations[1] = Rock.class;
+        way[1] += "ROCK.png";
         texture[1] = animator.toAnimation( GlobalAssetManager.get(way[1], Texture.class), 8, 0, 0);
 
-        decorations[2] = Rock.class;
-        way[2] += "ROCK.png";
+        decorations[2] = Oak.class;
+        way[2] += "OAK.png";
         texture[2] = animator.toAnimation( GlobalAssetManager.get(way[2], Texture.class), 8, 0, 0);
 
-        decorations[3] = Willow.class;
-        way[3] += "WILLOW.png";
-        texture[3] = animator.toAnimation( GlobalAssetManager.get(way[3], Texture.class), 8, 0, 0);
+        decorations[3] = OakBush.class;
+        way[3] += "OAK_BUSH.png";
+        texture[3] = animator.toAnimation(GlobalAssetManager.get(way[3], Texture.class), 8, 0, 0);
+
+        decorations[4] = Pine.class;
+        way[4] += "PINE.png";
+        texture[4] = animator.toAnimation( GlobalAssetManager.get(way[4], Texture.class), 8, 0, 0);
+
+        decorations[5] = PineBush.class;
+        way[5] += "PINE_BUSH.png";
+        texture[5] = animator.toAnimation( GlobalAssetManager.get(way[5], Texture.class), 8, 0, 0);
+
+        decorations[6] = Maple.class;
+        way[6] += "MAPLE.png";
+        texture[6] = animator.toAnimation( GlobalAssetManager.get(way[6], Texture.class), 8, 0, 0);
+
+        decorations[7] = MapleBush.class;
+        way[7] += "MAPLE_BUSH.png";
+        texture[7] = animator.toAnimation( GlobalAssetManager.get(way[7], Texture.class), 8, 0, 0);
+
+        decorations[8] = Birch.class;
+        way[8] += "BIRCH.png";
+        texture[8] = animator.toAnimation( GlobalAssetManager.get(way[8], Texture.class), 8, 0, 0);
+
+        decorations[9] = BirchBush.class;
+        way[9] += "BIRCH_BUSH.png";
+        texture[9] = animator.toAnimation( GlobalAssetManager.get(way[9], Texture.class), 8, 0, 0);
+
+        decorations[10] = Willow.class;
+        way[10] += "WILLOW.png";
+        texture[10] = animator.toAnimation( GlobalAssetManager.get(way[10], Texture.class), 8, 0, 0);
+
+        decorations[11] = OakStump.class;
+        way[11] += "BIRCH_STUMP.png";
+        texture[11] = animator.toAnimation( GlobalAssetManager.get(way[11], Texture.class), 1, 0, 0);
+
+        decorations[12] = PineStump.class;
+        way[12] += "PINE_STUMP.png";
+        texture[12] = animator.toAnimation( GlobalAssetManager.get(way[12], Texture.class), 1, 0, 0);
+
+        decorations[13] = MapleStump.class;
+        way[13] += "MAPLE_STUMP.png";
+        texture[13] = animator.toAnimation( GlobalAssetManager.get(way[13], Texture.class), 1, 0, 0);
+
+        decorations[14] = BirchStump.class;
+        way[14] += "BIRCH_STUMP.png";
+        texture[14] = animator.toAnimation( GlobalAssetManager.get(way[14], Texture.class), 1, 0, 0);
+
     }
 
     public static Decoration newOf(int i){

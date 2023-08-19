@@ -2,7 +2,6 @@ package com.shrubyway.game.myinterface;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.shrubyway.game.GlobalBatch;
@@ -10,6 +9,14 @@ import com.shrubyway.game.GlobalBatch;
 public class TextDrawer {
     static public BitmapFont fontBlack = new BitmapFont(Gdx.files.internal("fonts/black.fnt"));
     static public BitmapFont fontWhite = new BitmapFont(Gdx.files.internal("fonts/white.fnt"));
+
+    static public BitmapFont fontBlue = new BitmapFont(Gdx.files.internal("fonts/blue.fnt"));
+    static public BitmapFont fontOrange = new BitmapFont(Gdx.files.internal("fonts/orange.fnt"));
+
+    static public BitmapFont fontGray = new BitmapFont(Gdx.files.internal("fonts/gray.fnt"));
+
+    static public BitmapFont fontLightBlue = new BitmapFont(Gdx.files.internal("fonts/light_blue.fnt"));
+
     static  {
         fontBlack.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear,
                 Texture.TextureFilter.Linear);
@@ -32,14 +39,53 @@ public class TextDrawer {
     static public void drawCenterWhite(String text, float x, float y, float scale) {
         fontWhite.getData().setScale(scale * GlobalBatch.scale);
         GlyphLayout layout = new GlyphLayout(fontWhite, text);
-        fontWhite.draw(GlobalBatch.batch, text, ((1920 - layout.width) / 2) * GlobalBatch.scale, y * GlobalBatch.scale);
+        fontWhite.draw(GlobalBatch.batch, text, x * GlobalBatch.scale - layout.width / 2,
+                y * GlobalBatch.scale + layout.height / 2);
+
         fontWhite.getData().setScale(0.5f);
+    }
+
+    static public void drawCenterOrange(String text, float x, float y, float scale) {
+        fontOrange.getData().setScale(scale * GlobalBatch.scale);
+        GlyphLayout layout = new GlyphLayout(fontOrange, text);
+        fontOrange.draw(GlobalBatch.batch, text, x * GlobalBatch.scale - layout.width / 2,
+                y * GlobalBatch.scale + layout.height / 2);
+
+        fontOrange.getData().setScale(0.5f);
+    }
+
+    static public void drawCenterBlue(String text, float x, float y, float scale) {
+        fontBlue.getData().setScale(scale * GlobalBatch.scale);
+        GlyphLayout layout = new GlyphLayout(fontBlue, text);
+        fontBlue.draw(GlobalBatch.batch, text, x * GlobalBatch.scale - layout.width / 2,
+                y * GlobalBatch.scale + layout.height / 2);
+
+        fontBlue.getData().setScale(0.5f);
+    }
+
+    static public void drawCenterGray(String text, float x, float y, float scale) {
+        fontGray.getData().setScale(scale * GlobalBatch.scale);
+        GlyphLayout layout = new GlyphLayout(fontGray, text);
+        fontGray.draw(GlobalBatch.batch, text, x * GlobalBatch.scale - layout.width / 2,
+                y * GlobalBatch.scale + layout.height / 2);
+
+        fontGray.getData().setScale(0.5f);
+    }
+
+    static public void drawCenterLightBlue(String text, float x, float y, float scale) {
+        fontLightBlue.getData().setScale(scale * GlobalBatch.scale);
+        GlyphLayout layout = new GlyphLayout(fontLightBlue, text);
+        fontLightBlue.draw(GlobalBatch.batch, text, x * GlobalBatch.scale - layout.width / 2,
+                y * GlobalBatch.scale + layout.height / 2);
+
+        fontLightBlue.getData().setScale(0.5f);
     }
 
     static public void drawCenterBlack(String text, float x, float y, float scale) {
         fontBlack.getData().setScale(scale * GlobalBatch.scale);
         GlyphLayout layout = new GlyphLayout(fontBlack, text);
-        fontBlack.draw(GlobalBatch.batch, text, (1920 - layout.width) / 2 * GlobalBatch.scale, y * GlobalBatch.scale);
+        fontBlack.draw(GlobalBatch.batch, text, x * GlobalBatch.scale - layout.width / 2,
+                y * GlobalBatch.scale + layout.height / 2);
         fontBlack.getData().setScale(0.5f);
     }
 

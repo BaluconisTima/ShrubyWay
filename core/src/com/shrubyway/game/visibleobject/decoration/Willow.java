@@ -1,16 +1,16 @@
 package com.shrubyway.game.visibleobject.decoration;
 
-import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.audio.Sound;
+import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.ItemManager;
-import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
+import com.shrubyway.game.sound.GlobalSoundManager;
+import com.shrubyway.game.sound.SoundAtPosition;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class Willow extends Decoration {
-    float halfTextureWidth;
-
     @Override public void setHitbox() {
         if(hitBox == null) hitBox = new Rectangle(0,0,0,0);
         hitBox.change(position.x + halfTextureWidth - 60,
@@ -24,21 +24,19 @@ public class Willow extends Decoration {
         collisionBox.change(position.x + halfTextureWidth - 45,
                 position.y + 10, 90, 10);
     }
-    @Override public void change(float x, float y, int i, int j) {
-        id = 3;
-        halfTextureWidth = DecorationsManager.texture[id].getKeyFrame(0f).getRegionWidth() / 2f;
-        DecorationsManager.texture[id].setPlayMode(Animation.PlayMode.NORMAL);
-        position.set(x - halfTextureWidth + MapSettings.TYLESIZE/2, y + 30);
-        decorationI = i;
-        decorationI = j;
 
+    {
+        id = 10;
     }
 
     @Override public void interact() {
         super.interact();
+        GlobalSoundManager.addSound(new SoundAtPosition(
+                GlobalAssetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
+
         if(Event.happened(Event.getEvent("harmonicaDroped"))) return;
         if(Math.random() * 100 < 10) {
-            VisibleItem item = new VisibleItem(ItemManager.newItem(4), position.x + halfTextureWidth - 60,
+            VisibleItem item = new VisibleItem(ItemManager.newItem(7), position.x + halfTextureWidth - 60,
                     position.y + 50);
             Game.objectsList.add(item);
             Event.cast(Event.getEvent("harmonicaDroped"));

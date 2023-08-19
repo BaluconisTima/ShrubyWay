@@ -58,6 +58,16 @@ public class Inventory {
     }
 
 
+    public boolean havePlaceFor(int itemID) {
+
+        for(int i = 0; i < 5; i++)
+            for(int j = 0; j < 9; j++) {
+                if(items[i][j] == null) return true;
+                if(items[i][j].id == itemID && numberOfItem[i][j] < 99) return true;
+            }
+        return false;
+    }
+
     public void render(Vector2 mousePosition) {
         GlobalBatch.render(base,0,0);
        if(opened) GlobalBatch.render(full,0,0);
@@ -67,11 +77,11 @@ public class Inventory {
             buttons[0][i].render();
             if(items[0][i] != null) {
                 GlobalBatch.render(ItemManager.itemTexture[items[0][i].id],
-                        27 + 79.1f * i, 1080 - 70 - 28 + 7, 70, 70);
+                        27 + 79.1f * i, 1080 - 70 - 26 + 7, 70, 70);
                 if(numberOfItem[0][i] > 1)
                     TextDrawer.drawWithShadow(numberOfItem[0][i].toString(),
                         27 + 79.1f * i + 50 - (numberOfItem[0][i].toString().length()-1) * 17,
-                        1080 - 70 + 7, 0.5f);
+                        1080 - 68 + 7, 0.5f);
             }
         }
         if(opened)
@@ -81,11 +91,11 @@ public class Inventory {
                     if (items[i][j] != null) {
                         GlobalBatch.render(ItemManager.itemTexture[items[i][j].id],
                                 27 + 79.1f * j,
-                                1080 - 70 - 55 - 79.1f * i, 70, 70);
+                                1080 - 70 - 53 - 79.1f * i, 70, 70);
                         if (numberOfItem[i][j] > 1)
                             TextDrawer.drawWithShadow(numberOfItem[i][j].toString(),
                                     27 + 79.1f * j + 50 - (numberOfItem[i][j].toString().length() - 1) * 17,
-                                    1080 - 70 - 28
+                                    1080 - 70 - 26
                                             - 79.1f * i, 0.5f);
                     }
                 }

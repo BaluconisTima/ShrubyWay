@@ -52,6 +52,7 @@ public class VisibleItem extends VisibleObject {
     }
     Vector2 dir = new Vector2(0,0);
     public void moveToPlayer(Vector2 playerPosition, Inventory inventory) {
+        if(!inventory.havePlaceFor(item.id)) return;
         if(AnimationGlobalTime.time() - dropTime < 0.7f)  {
             globalDir.scl(0.82f);
             position.add(globalDir);

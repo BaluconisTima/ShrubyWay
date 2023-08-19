@@ -15,28 +15,37 @@ public class MobsManager {
     public static int mobsNumber = 3;
     public static Constructor<? extends Mob> mobs[] = new Constructor[mobsNumber];
     private static float mobSpawnCost[] = new float[mobsNumber];
+    public static Integer mobExp[] = new Integer[mobsNumber];
     public static ArrayList<Integer> dropTableItem[] = new ArrayList[mobsNumber];
     public static ArrayList<Float> dropTableChance[] = new ArrayList[mobsNumber];
+
+
+    static public Integer getExp(Mob mob) {
+        return mobExp[mob.id];
+    }
 
     public static void init() {
         try {
         mobs[0] = (Agaric.class).getDeclaredConstructor(float.class, float.class);
         mobs[0].newInstance(0, 0);
-        dropTableItem[0] = new ArrayList<>(Arrays.asList(1, 0));
-        dropTableChance[0] = new ArrayList<>(Arrays.asList(0.5f, 0.1f));
+        dropTableItem[0] = new ArrayList<>(Arrays.asList(6));
+        dropTableChance[0] = new ArrayList<>(Arrays.asList(0.6f));
         mobSpawnCost[0] = 10;
+        mobExp[0] = 100;
 
         mobs[1] = (Coney.class).getDeclaredConstructor(float.class, float.class);
         mobs[1].newInstance(0, 0);
-        dropTableItem[1] = new ArrayList<>(Arrays.asList(2));
-        dropTableChance[1] = new ArrayList<>(Arrays.asList(0.7f));
+        dropTableItem[1] = new ArrayList<>(Arrays.asList(2, 9));
+        dropTableChance[1] = new ArrayList<>(Arrays.asList(0.6f, 0.3f));
         mobSpawnCost[1] = 10;
+        mobExp[1] = 150;
 
         mobs[2] = (Explerry.class).getDeclaredConstructor(float.class, float.class);
         mobs[2].newInstance(0, 0);
         dropTableItem[2] = new ArrayList<>();
         dropTableChance[2] = new ArrayList<>();
         mobSpawnCost[2] = 10;
+        mobExp[2] = 0;
 
         } catch (Exception e) {
             e.printStackTrace();

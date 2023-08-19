@@ -14,7 +14,7 @@ public class Event {
             return x;
         }
     }
-    static private HashMap eventsHappened = new HashMap<Integer, Boolean>();
+    static public HashMap eventsHappened = new HashMap<Integer, Boolean>();
     public static void cast(Integer event) {
         eventsHappened.put(event, true);
     }

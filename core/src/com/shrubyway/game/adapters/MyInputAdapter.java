@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class MyInputAdapter extends InputAdapter {
     private boolean leftPressed, rightPressed, upPressed, downPressed,
-            spacePressed, ePressed, qPressed, escPressed, lPressed, cPressed;
+            spacePressed, ePressed, qPressed, escPressed, lPressed, cPressed, minusPressed, plusPressed;
     private boolean numberPressed[] = new boolean[10];
     private boolean mouseLeft, mouseRight;
     private boolean runing;
@@ -28,6 +28,8 @@ public class MyInputAdapter extends InputAdapter {
         if(keycode == Input.Keys.ESCAPE) escPressed = true;
         if(keycode == Input.Keys.L) lPressed = true;
         if(keycode == Input.Keys.C) cPressed = true;
+        if(keycode == Input.Keys.MINUS) minusPressed = true;
+        if(keycode == Input.Keys.PLUS) plusPressed = true;
 
         for(int i = 0; i < 10; i++) {
             if(keycode == Input.Keys.NUM_0 + i) numberPressed[i] = true;
@@ -48,6 +50,8 @@ public class MyInputAdapter extends InputAdapter {
         if(keycode == Input.Keys.ESCAPE) escPressed = false;
         if(keycode == Input.Keys.L) lPressed = false;
         if(keycode == Input.Keys.C) cPressed = false;
+        if(keycode == Input.Keys.MINUS) minusPressed = false;
+        if(keycode == Input.Keys.PLUS) plusPressed = false;
         return false;
     }
     @Override
@@ -65,6 +69,8 @@ public class MyInputAdapter extends InputAdapter {
         }
         return false;
     }
+
+
     @Override public boolean touchDragged (int screenX, int screenY, int pointer) {
         mousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
         return true;
@@ -117,6 +123,14 @@ public class MyInputAdapter extends InputAdapter {
     public boolean isEPressed() {
         if(ePressed) {ePressed = false; return true;}
         return ePressed;
+    }
+
+    public boolean isMinusPressed() {
+        return minusPressed;
+    }
+
+    public boolean isPlusPressed() {
+        return plusPressed;
     }
 
 

@@ -1,8 +1,10 @@
 package com.shrubyway.game.visibleobject.decoration;
 
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.visibleobject.InteractiveObject;
 
@@ -12,9 +14,11 @@ abstract public class Decoration extends InteractiveObject {
     protected float lastInteraction = -100f;
 
     public void change(float x, float y, int i, int j) {
-        position.set(x, y);
+        halfTextureWidth = DecorationsManager.texture[id].getKeyFrame(0f).getRegionWidth() / 2f;
+        DecorationsManager.texture[id].setPlayMode(Animation.PlayMode.NORMAL);
+        position.set(x - halfTextureWidth + MapSettings.TYLESIZE/2, y + 30);
         decorationI = i;
-        decorationJ = j;
+        decorationI = j;
     }
 
     public void setCollisionBox() {
