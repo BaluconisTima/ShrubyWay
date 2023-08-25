@@ -249,7 +249,7 @@ abstract public class Entity extends InteractiveObject {
         float throwlevel = throwLevel / 7;
         while(Math.random() < throwlevel) {
             damageScale *= 1.4f;
-            speedScale *= 1.1f;
+            speedScale *= 1.3f;
             throwlevel /= 5;
         }
         Bullet bullet = new ThrowableItem(positionCenter(), shootPosition, item, this,

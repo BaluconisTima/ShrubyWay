@@ -1,2 +1,4 @@
-// TODO Saves
+// TODO map
+// TODO saves
+// TODO shop
 // TODO Settings

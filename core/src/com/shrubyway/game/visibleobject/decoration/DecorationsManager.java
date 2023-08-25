@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.animation.Animator;
 public class DecorationsManager {
-    public static int decorationNumber = 15;
+    public static int decorationNumber = 19;
     public static Class<? extends Decoration> decorations[] = new Class[decorationNumber];
     static Animation<TextureRegion> texture[] = new Animation[decorationNumber];
     static String way[] = new String[decorationNumber];
@@ -64,7 +64,7 @@ public class DecorationsManager {
         texture[10] = animator.toAnimation( GlobalAssetManager.get(way[10], Texture.class), 8, 0, 0);
 
         decorations[11] = OakStump.class;
-        way[11] += "BIRCH_STUMP.png";
+        way[11] += "OAK_STUMP.png";
         texture[11] = animator.toAnimation( GlobalAssetManager.get(way[11], Texture.class), 1, 0, 0);
 
         decorations[12] = PineStump.class;
@@ -78,6 +78,22 @@ public class DecorationsManager {
         decorations[14] = BirchStump.class;
         way[14] += "BIRCH_STUMP.png";
         texture[14] = animator.toAnimation( GlobalAssetManager.get(way[14], Texture.class), 1, 0, 0);
+
+        decorations[15] = Daisy.class;
+        way[15] += "DAISY.png";
+        texture[15] = animator.toAnimation( GlobalAssetManager.get(way[15], Texture.class), 8, 0, 0);
+
+        decorations[16] = Reeds.class;
+        way[16] += "REEDS.png";
+        texture[16] = animator.toAnimation( GlobalAssetManager.get(way[16], Texture.class), 8, 0, 0);
+
+        decorations[17] = Fern.class;
+        way[17] += "FERN.png";
+        texture[17] = animator.toAnimation( GlobalAssetManager.get(way[17], Texture.class), 8, 0, 0);
+
+        decorations[18] = Grass.class;
+        way[18] += "GRASS.png";
+        texture[18] = animator.toAnimation( GlobalAssetManager.get(way[18], Texture.class), 8, 0, 0);
 
     }
 
