@@ -6,6 +6,7 @@ public class Rectangle implements java.io.Serializable {
     public final Vector2 topLeftCorner = new Vector2();
     public final Vector2 bottomRightCorner = new Vector2();
 
+
     public Rectangle(float x, float y, float width, float height) {
         topLeftCorner.set(x, y);
         bottomRightCorner.set(x + width, y + height);

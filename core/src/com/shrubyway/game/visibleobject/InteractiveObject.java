@@ -8,7 +8,21 @@ public class InteractiveObject extends VisibleObject {
     protected Rectangle collisionBox = null;
     protected Rectangle hitBox = null;
     protected Rectangle attackBox = null;
-    public float damage = 0;
+    protected float damage = 0;
+
+    public int damageLevel = 0;
+    public int throwLevel = 0;
+
+    public float damage() {
+        float dam = (int)damage;
+        float damLevel = damageLevel;
+        damLevel /= 7;
+        while(Math.random() < damLevel) {
+            dam *= 1.5;
+            damLevel /= 3;
+        }
+        return dam;
+    }
 
     public Rectangle collisionBox() {
         return collisionBox;

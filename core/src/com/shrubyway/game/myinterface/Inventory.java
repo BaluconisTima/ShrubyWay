@@ -26,12 +26,15 @@ public class Inventory {
     Integer numberOfItemInHand = 0;
 
     public void clear() {
+        float scale = GlobalBatch.scale;
         for(int i = 0; i < 9; i++) {
-            buttons[0][i] = new Rectangle(27 + 79.1f * i,1080 - 70 - 28 + 7,70,70);
+            buttons[0][i] = new Rectangle((27 + 79.1f * i) * scale,(1080 - 70 - 28 + 7) * scale,
+                    (70) * scale,70 * scale);
         }
         for(int j = 1; j < 5; j++) {
             for(int i = 0; i < 9; i++) {
-                buttons[j][i] = new Rectangle(27 + 79.1f * i,1080 - 70 - 55 - 79.1f * j,70,70);
+                buttons[j][i] = new Rectangle((27 + 79.1f * i) * scale,(1080 - 70 - 55 - 79.1f * j) * scale,
+                        70 * scale,70 * scale);
             }
         }
         for(int i = 0; i < 5; i++)

@@ -10,12 +10,15 @@ public class Health implements java.io.Serializable {
 
     private float lastHealTime;
 
+    public Integer defenseLevel = null;
+
     public Health(float maxHealth) {
         this.maxHealth = maxHealth;
         this.health = maxHealth;
         this.cooldown = 0;
         this.lastHitTime = -1000;
     }
+
     public Health(float maxHealth, float cooldown) {
         this.maxHealth = maxHealth;
         this.health = maxHealth;
@@ -26,6 +29,16 @@ public class Health implements java.io.Serializable {
     public void getDamage(float damage) {
         if(AnimationGlobalTime.time() - lastHitTime < cooldown) return;
             if(health <= 0) return;
+
+            if(defenseLevel != null) {
+                float defense = defenseLevel;
+                defense /= 5;
+                while (Math.random() < defense) {
+                    damage *= 0.7;
+                    defense /= 3;
+                }
+                damage = Math.max(0, damage - defense);
+            }
             health -= damage;
             lastHitTime = AnimationGlobalTime.time();
     }

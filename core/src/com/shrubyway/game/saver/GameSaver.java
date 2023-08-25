@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.Health;
 import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.Item;
+import com.shrubyway.game.myinterface.ElementPumping;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.visibleobject.ObjectsList;
 
@@ -20,6 +21,8 @@ public class GameSaver implements Serializable {
     VisualObjectListSaver visualObjectListSaver;
     VisualObjectListSaver [][] chunks;
 
+    int fireLevel, waterLevel, earthLevel, airLevel;
+    float localExp;
 
     public void saveGameFiles() {
        eventHashMap = Event.eventHashMap;
@@ -30,6 +33,11 @@ public class GameSaver implements Serializable {
        playerHealth = Game.player.health;
        visualObjectListSaver = new VisualObjectListSaver(Game.objectsList.getList());
        chunks = Game.map.getChunks();
+       fireLevel = ElementPumping.fireLevel;
+       waterLevel = ElementPumping.waterLevel;
+       earthLevel = ElementPumping.earthLevel;
+       airLevel = ElementPumping.airLevel;
+       localExp = ElementPumping.localExp;
     }
 
     public void loadGameFiles() {
@@ -46,6 +54,11 @@ public class GameSaver implements Serializable {
         objectsList.getList().add(Game.player);
         Game.objectsList = objectsList;
         Game.map.setChunks(chunks);
+        ElementPumping.fireLevel = fireLevel;
+        ElementPumping.waterLevel = waterLevel;
+        ElementPumping.earthLevel = earthLevel;
+        ElementPumping.airLevel = airLevel;
+        ElementPumping.localExp = localExp;
     }
 
 }

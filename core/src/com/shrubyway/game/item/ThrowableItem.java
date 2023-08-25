@@ -2,7 +2,6 @@ package com.shrubyway.game.item;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
@@ -12,14 +11,13 @@ import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 
-import javax.swing.text.Position;
-import java.io.Serializable;
-
 public class ThrowableItem extends Bullet {
     int id;
     Sound sound;
     Boolean rotation;
     long RotationSound;
+
+    float damageScale = 1, speedScale = 1;
 
     public ThrowableItem(Vector2 startPosition, Vector2 finishPosition, Item item,
                          VisibleObject thrower, boolean rotation) {
@@ -36,6 +34,25 @@ public class ThrowableItem extends Bullet {
             direction.scl(speed);
             sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/rotation.ogg"));
             RotationSound = sound.play();
+    }
+    public ThrowableItem(Vector2 startPosition, Vector2 finishPosition, Item item,
+                         VisibleObject thrower, boolean rotation, float damageScale, float speedScale) {
+        this.rotation = rotation;
+        this.damageScale = damageScale;
+        this.speedScale = speedScale;
+
+        whoThrow = thrower;
+        throwingTime = AnimationGlobalTime.time();
+        id = item.id;
+        position.set(startPosition);
+        speed = 20f * speedScale;
+        damage = ItemManager.throwingDamage[id] * damageScale;
+        direction =
+                new Vector2(finishPosition.x - position.x, finishPosition.y - position.y);
+        direction.nor();
+        direction.scl(speed);
+        sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/rotation.ogg"));
+        RotationSound = sound.play();
     }
 
     @Override public Rectangle attackBox() {

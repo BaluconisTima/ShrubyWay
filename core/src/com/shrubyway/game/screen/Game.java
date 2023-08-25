@@ -135,16 +135,10 @@ public class Game extends Screen implements java.io.Serializable {
                         + localCamera.position.y - Gdx.graphics.getHeight() / 2);
 
         if(ShrubyWay.inputProcessor.isCPressed()) {
-            elementPumping.addFireExp();
-            //elementPumping.addWaterExp();
-           // elementPumping.addEarthExp();
-           // elementPumping.addAirExp();
+           saveGame();
         }
         if(ShrubyWay.inputProcessor.isLPressed()) {
-            elementPumping.delFireExp();
-           // elementPumping.delWaterExp();
-           // elementPumping.delEarthExp();
-           // elementPumping.delAirExp();
+           loadGame();
         }
 
 
@@ -161,10 +155,15 @@ public class Game extends Screen implements java.io.Serializable {
                     ItemManager.itemActing[temp].Acting();
                     if (ItemManager.itemActing[temp].checkAct()) {
                         if (ItemManager.itemActing[temp] instanceof Food) {
-
                             Item temp2 = inventory.take();
-                            player.health.heal(
-                                    ((Food) ItemManager.itemActing[temp2.id]).heling);
+                            float heling = ((Food) ItemManager.itemActing[temp2.id]).heling;
+                            float waterLevel = ElementPumping.waterLevel;
+                            waterLevel /= 12;
+                            while(Math.random() < waterLevel) {
+                                heling *= 1.3;
+                                waterLevel /= 4;
+                            }
+                            player.health.heal(heling);
                         }
                         if (ItemManager.itemActing[temp] instanceof Harmonica) {
                             ShrubyWay.inputProcessor.setSpacePressed(false);
@@ -205,7 +204,8 @@ public class Game extends Screen implements java.io.Serializable {
 
 
         if ((leftClick || rightClick) &&
-                !inventory.checkClick(ShrubyWay.inputProcessor.mousePosition())) {
+                !inventory.checkClick(ShrubyWay.inputProcessor.mousePosition())
+        && !elementPumping.leftClick(ShrubyWay.inputProcessor.mousePosition())) {
             if (leftClick) {
                 player.attack(mousePosition);
             }
@@ -372,7 +372,7 @@ public class Game extends Screen implements java.io.Serializable {
 
 
                                 if(ent.health.getHealth() <= 0) continue;
-                                ent.getDamage(from.damage,
+                                ent.getDamage(from.damage(),
                                         from.positionCenter());
 
                               if(ent.health.getHealth() <= 0) {
@@ -453,7 +453,7 @@ public class Game extends Screen implements java.io.Serializable {
         inventory.render(ShrubyWay.inputProcessor.mousePosition());
        // TextDrawer.drawWithShadow("" + Gdx.graphics.getFramesPerSecond(), 100, 500, 1);
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
-        elementPumping.render();
+        elementPumping.render(ShrubyWay.inputProcessor.mousePosition());
         if (gamePaused) {
              GlobalBatch.render(GlobalAssetManager.get("interface/shadow.png", Texture.class),
                     0, 0);

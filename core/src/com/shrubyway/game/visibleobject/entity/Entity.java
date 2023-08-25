@@ -212,12 +212,14 @@ abstract public class Entity extends InteractiveObject {
      action = 3;
     }
 
-    protected float attackCooldown = 0.3f;
+    protected float attackCooldown = 0.5f;
     protected float animationTime = 0f;
     protected float lastAttackTime;
 
     public void attack(Vector2 direction) {
         if(!allowedMotion && action != 2) return;
+        float attackCooldown = 0.5f * (float)Math.pow(0.96f, (double)(damageLevel - 1));
+
         if((AnimationGlobalTime.time() - lastAttackTime) > attackCooldown) {
             Vector2 directionTemp =
                     new Vector2(direction.x - positionCenter().x, direction.y - positionCenter().y);
@@ -236,12 +238,22 @@ abstract public class Entity extends InteractiveObject {
 
     public boolean canThrow() {
         if(!allowedMotion) return false;
-        return (AnimationGlobalTime.time() - lastThrowTime >= throwCooldown);
+        return (AnimationGlobalTime.time() - lastThrowTime >=
+                throwCooldown * Math.pow(0.96f, (double)(throwLevel - 1)));
     }
     public void throwItem(Vector2 shootPosition, Item item, boolean rotating) {
         if(!canThrow()) return;
         lastThrowTime = AnimationGlobalTime.time();
-        Bullet bullet = new ThrowableItem(positionCenter(), shootPosition, item, this, rotating);
+
+        float damageScale = 1f, speedScale = 1f;
+        float throwlevel = throwLevel / 7;
+        while(Math.random() < throwlevel) {
+            damageScale *= 1.4f;
+            speedScale *= 1.1f;
+            throwlevel /= 5;
+        }
+        Bullet bullet = new ThrowableItem(positionCenter(), shootPosition, item, this,
+                rotating, damageScale, speedScale);
         changeAnimationsFor(bullet.direction, 2);
         Game.objectsList.add(bullet);
     }
