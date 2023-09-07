@@ -56,6 +56,9 @@ abstract public class Entity extends InteractiveObject {
     public void update() {
          tryMoveMomentum();
         attacking = false;
+        if(health.getHealth() <= 0) {
+            die();
+        }
         faceDirection = (byte)Math.min(faceDirection,
                 (EntityManager.animations[entityID].get(action).size() - 1));
 

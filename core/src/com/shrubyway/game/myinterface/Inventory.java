@@ -26,14 +26,16 @@ public class Inventory {
     Integer numberOfItemInHand = 0;
 
     public void clear() {
+        Vector2 leftUpCorner = GlobalBatch.topLeftCorner();
+        System.out.println(GlobalBatch.topRightCorner());
         float scale = GlobalBatch.scale;
         for(int i = 0; i < 9; i++) {
-            buttons[0][i] = new Rectangle((27 + 79.1f * i) * scale,(1080 - 70 - 28 + 7) * scale,
+            buttons[0][i] = new Rectangle((27 + 79.1f * i) * scale,(leftUpCorner.y - 70 - 28 + 7) * scale,
                     (70) * scale,70 * scale);
         }
         for(int j = 1; j < 5; j++) {
             for(int i = 0; i < 9; i++) {
-                buttons[j][i] = new Rectangle((27 + 79.1f * i) * scale,(1080 - 70 - 55 - 79.1f * j) * scale,
+                buttons[j][i] = new Rectangle((27 + 79.1f * i) * scale,(leftUpCorner.y - 70 - 55 - 79.1f * j) * scale,
                         70 * scale,70 * scale);
             }
         }
@@ -72,19 +74,21 @@ public class Inventory {
     }
 
     public void render(Vector2 mousePosition) {
-        GlobalBatch.render(base,0,0);
-       if(opened) GlobalBatch.render(full,0,0);
-        GlobalBatch.render(select, 12 + 79.1f * selected, 1080 - 111.55f + 9);
+        Vector2 leftUpCorner = GlobalBatch.topLeftCorner();
+
+        GlobalBatch.render(base,0,leftUpCorner.y - 1080);
+       if(opened) GlobalBatch.render(full,0, leftUpCorner.y - 1080);
+        GlobalBatch.render(select,  12 + 79.1f * selected, leftUpCorner.y - 111.55f + 9);
 
         for(int i = 0; i < 9; i++) {
             buttons[0][i].render();
             if(items[0][i] != null) {
                 GlobalBatch.render(ItemManager.itemTexture[items[0][i].id],
-                        27 + 79.1f * i, 1080 - 70 - 26 + 7, 70, 70);
+                        27 + 79.1f * i, leftUpCorner.y - 70 - 26 + 7, 70, 70);
                 if(numberOfItem[0][i] > 1)
                     TextDrawer.drawWithShadow(numberOfItem[0][i].toString(),
                         27 + 79.1f * i + 50 - (numberOfItem[0][i].toString().length()-1) * 17,
-                        1080 - 68 + 7, 0.5f);
+                            leftUpCorner.y - 68 + 7, 0.5f);
             }
         }
         if(opened)
@@ -94,11 +98,11 @@ public class Inventory {
                     if (items[i][j] != null) {
                         GlobalBatch.render(ItemManager.itemTexture[items[i][j].id],
                                 27 + 79.1f * j,
-                                1080 - 70 - 53 - 79.1f * i, 70, 70);
+                                leftUpCorner.y - 70 - 53 - 79.1f * i, 70, 70);
                         if (numberOfItem[i][j] > 1)
                             TextDrawer.drawWithShadow(numberOfItem[i][j].toString(),
                                     27 + 79.1f * j + 50 - (numberOfItem[i][j].toString().length() - 1) * 17,
-                                    1080 - 70 - 26
+                                    leftUpCorner.y - 70 - 26
                                             - 79.1f * i, 0.5f);
                     }
                 }

@@ -21,7 +21,7 @@ public class BerryExplosion extends Explosion {
 
 
         CameraEffects.newExplosion(explosionPower);
-        GlobalSoundManager.addSound(new SoundAtPosition(GlobalAssetManager.get("sounds/EFFECTS/berryExplosion.wav",
+        GlobalSoundManager.addSound(new SoundAtPosition(GlobalAssetManager.get("sounds/EFFECTS/BerryExplosion.wav",
                 Sound.class),
                 new Vector2(x, y)));
         animation = animator.toAnimation(GlobalAssetManager.get("effects/berryExplosion.png", Texture.class),

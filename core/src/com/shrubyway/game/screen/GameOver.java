@@ -11,7 +11,7 @@ import com.shrubyway.game.myinterface.Button;
 import com.shrubyway.game.sound.SoundSettings;
 
 public class GameOver extends Screen {
-    static Texture Background = new Texture("interface/gameOverScreen.png");
+    static Texture Background = new Texture("interface/SWbackgound.png");
     Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/Click.ogg"));
 
     static Button tryAgain = new Button(new Texture("interface/SwTryAgainButton2.png"),

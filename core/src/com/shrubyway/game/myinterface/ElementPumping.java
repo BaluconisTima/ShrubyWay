@@ -15,7 +15,7 @@ public class ElementPumping {
      static Texture ElementBase, Elements;
      static float progress = 0, displayProgress = 0;
 
-     public static float localExp = 1000000;
+     public static float localExp = 0;
      static Diamond fire, water, earth, air;
 
     static float scale = GlobalBatch.scale;
@@ -25,8 +25,8 @@ public class ElementPumping {
 
     private static Integer[] nextLevelCost = new Integer[200];
      static public void init() {
-            ElementBase = GlobalAssetManager.get("Interface/ElementBase.png", Texture.class);
-            Elements = GlobalAssetManager.get("Interface/Elements.png", Texture.class);
+            ElementBase = GlobalAssetManager.get("interface/ElementBase.png", Texture.class);
+            Elements = GlobalAssetManager.get("interface/Elements.png", Texture.class);
 
             float centerX = 1930 - ElementBase.getWidth() / 2.0f;
             float centerY = -10 + ElementBase.getHeight() / 2.0f;
@@ -36,7 +36,7 @@ public class ElementPumping {
             air = new Diamond((centerX + 100) * scale, centerY * scale, 80 * scale);
 
             for (int i = 0; i < 200; i++) {
-                nextLevelCost[i] = 250 + i * 75;
+                nextLevelCost[i] = 250 + i * 50;
             }
             nextLevelCost[199] = (1 << 31) - 1;
      }
@@ -90,28 +90,28 @@ public class ElementPumping {
 
      static public void addFireExp() {
          if(!newLevel()) return;
-         GlobalAssetManager.get("Sounds/EFFECTS/fire.ogg", Sound.class).play(SoundSettings.soundVolume);
+         GlobalAssetManager.get("sounds/EFFECTS/fire.ogg", Sound.class).play(SoundSettings.soundVolume);
          fireLevel++;
          progressUpdate();
      }
 
         static public void addWaterExp() {
             if(!newLevel()) return;
-            GlobalAssetManager.get("Sounds/EFFECTS/water.ogg", Sound.class).play(SoundSettings.soundVolume);
+            GlobalAssetManager.get("sounds/EFFECTS/water.ogg", Sound.class).play(SoundSettings.soundVolume);
             waterLevel++;
             progressUpdate();
         }
 
         static public void addEarthExp() {
             if(!newLevel()) return;
-            GlobalAssetManager.get("Sounds/EFFECTS/earth.ogg", Sound.class).play(SoundSettings.soundVolume);
+            GlobalAssetManager.get("sounds/EFFECTS/earth.ogg", Sound.class).play(SoundSettings.soundVolume);
             earthLevel++;
             progressUpdate();
         }
 
         static public void addAirExp() {
             if(!newLevel()) return;
-            GlobalAssetManager.get("Sounds/EFFECTS/air.ogg", Sound.class).play(SoundSettings.soundVolume);
+            GlobalAssetManager.get("sounds/EFFECTS/air.ogg", Sound.class).play(SoundSettings.soundVolume);
             airLevel++;
             progressUpdate();
         }
@@ -128,32 +128,32 @@ public class ElementPumping {
          GlobalBatch.render(ElementBase, 1930 - ElementBase.getWidth(), -10);
          if(progress == 100) {
              GlobalBatch.batch.setColor(1, 1, 1, (float) (Math.sin(AnimationGlobalTime.time() * 7) + 1) / 2);
-             GlobalBatch.render(GlobalAssetManager.get("Interface/blink.png", Texture.class),
+             GlobalBatch.render(GlobalAssetManager.get("interface/blink.png", Texture.class),
                      1930 - ElementBase.getWidth(), -10);
              GlobalBatch.batch.setColor(1, 1, 1, 1);
          }
          GlobalBatch.render(Elements, 1930 - ElementBase.getWidth(), -10);
          if(water.contains(mouseOnScreenPosition)) {
-             GlobalBatch.render(GlobalAssetManager.get("Interface/water.png", Texture.class),
+             GlobalBatch.render(GlobalAssetManager.get("interface/water.png", Texture.class),
                      1930 - ElementBase.getWidth(), -10);
          }
          if(fire.contains(mouseOnScreenPosition)) {
-                GlobalBatch.render(GlobalAssetManager.get("Interface/fire.png", Texture.class),
+                GlobalBatch.render(GlobalAssetManager.get("interface/fire.png", Texture.class),
                         1930 - ElementBase.getWidth(), -10);
          }
          if(earth.contains(mouseOnScreenPosition)) {
-                GlobalBatch.render(GlobalAssetManager.get("Interface/earth.png", Texture.class),
+                GlobalBatch.render(GlobalAssetManager.get("interface/earth.png", Texture.class),
                         1930 - ElementBase.getWidth(), -10);
          }
          if(air.contains(mouseOnScreenPosition)) {
-                GlobalBatch.render(GlobalAssetManager.get("Interface/air.png", Texture.class),
+                GlobalBatch.render(GlobalAssetManager.get("interface/air.png", Texture.class),
                         1930 - ElementBase.getWidth(), -10);
          }
 
-         GlobalBatch.render(GlobalAssetManager.get("Interface/darkness.png", Texture.class),
+         GlobalBatch.render(GlobalAssetManager.get("interface/darkness.png", Texture.class),
                  1930 - ElementBase.getWidth(), -10);
 
-         Texture texture =  GlobalAssetManager.get("Interface/Light.png", Texture.class);
+         Texture texture =  GlobalAssetManager.get("interface/Light.png", Texture.class);
 
 
          int x = 160 + (int)((100 - displayProgress) * 1.1);

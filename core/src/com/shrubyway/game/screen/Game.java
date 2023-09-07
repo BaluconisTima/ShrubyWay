@@ -96,7 +96,7 @@ public class Game extends Screen implements java.io.Serializable {
         objectsList = new ObjectsList();
         event = new Event();
         map = new Map(1);
-        player = new Shruby(0, 0);
+        player = new Shruby(-1000, 150);
         localCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         localCamera.position.set(player.positionCenter().x, player.positionCenter().y, 0);
         localCamera.update();
@@ -451,7 +451,7 @@ public class Game extends Screen implements java.io.Serializable {
 
         HealthBar.render(player.health);
         inventory.render(ShrubyWay.inputProcessor.mousePosition());
-       // TextDrawer.drawWithShadow("" + Gdx.graphics.getFramesPerSecond(), 100, 500, 1);
+       // TextDrawer.drawWithShadow("" + player.health.getHealth(), 100, 500, 1);
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
         elementPumping.render(ShrubyWay.inputProcessor.mousePosition());
         if (gamePaused) {
