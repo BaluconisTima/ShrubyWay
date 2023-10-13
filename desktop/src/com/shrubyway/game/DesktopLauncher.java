@@ -11,7 +11,7 @@ public class DesktopLauncher {
 
 	public static void main (String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
-		System.out.println("DesktopLauncher.main: ");
+		//System.out.println("DesktopLauncher.main: ");
 		config.setForegroundFPS(60);
 		config.setTitle("Shruby Way - beta");
 		config.setWindowIcon("SWicon.png");

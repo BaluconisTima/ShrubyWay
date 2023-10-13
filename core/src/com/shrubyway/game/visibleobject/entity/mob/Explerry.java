@@ -9,8 +9,8 @@ import com.shrubyway.game.visibleobject.effect.BerryExplosion;
 import com.shrubyway.game.visibleobject.entity.EntityManager;
 
 public class Explerry extends Mob{
-    @Override public void ai(Vector2 playerPosition) {
-        closeAi(100, playerPosition);
+    @Override public void ai(Vector2 playerPosition, float delta) {
+        closeAi(100, playerPosition, delta);
     }
 
     public Explerry(float x, float y) {
@@ -33,8 +33,8 @@ public class Explerry extends Mob{
         die();
     }
 
-    @Override public void update() {
-        super.update();
+    @Override public void update(float delta) {
+        super.update(delta);
         if(action == 3 && EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
                 isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
             Game.objectsList.add(new BerryExplosion(positionCenter().x, positionCenter().y));

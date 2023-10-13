@@ -16,6 +16,7 @@ public class GlobalBatch {
         scale = Math.min(scale, (float) height / 1080);
     }
     public static void create() {
+
         batch = new SpriteBatch();
         batch.enableBlending();
         batch.setBlendFunction(Gdx.gl20.GL_SRC_ALPHA, Gdx.gl20.GL_ONE_MINUS_SRC_ALPHA);
@@ -103,7 +104,7 @@ public class GlobalBatch {
         return new Vector2(0 , 0);
     }
     static public Vector2 bottomRightCorner() {
-        return new Vector2(Gdx.graphics.getWidth() * scale, 0);
+        return new Vector2(Gdx.graphics.getWidth() / scale, 0);
     }
     static public Vector2 center() {
         return new Vector2(Gdx.graphics.getWidth() / scale / 2, Gdx.graphics.getHeight() / scale / 2);

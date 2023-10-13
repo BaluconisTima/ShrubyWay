@@ -106,7 +106,6 @@ public class MobsManager {
             if(AccountSpawner >= mobSpawnCost[j]) {
                 AccountSpawner -= mobSpawnCost[j];
                 addMobNear(playerPosition, j);
-
             }
         }
     }

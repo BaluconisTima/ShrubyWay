@@ -11,7 +11,7 @@ public abstract class Mob extends Entity {
     protected float lastTargetUpdate = 0;
     protected float targetUpdateInterval = 0.5f;
 
-    public void ai(Vector2 playerPosition) {
+    public void ai(Vector2 playerPosition, float delta) {
 
     }
 
@@ -22,7 +22,7 @@ public abstract class Mob extends Entity {
         action = 3;
     }
 
-    private void tryMoveAi() {
+    private void tryMoveAi(float delta) {
         if(target.x - positionLegs().x > 70) tempDirection.x = 1;
         else if(target.x - positionLegs().x < -70) tempDirection.x = -1;
         else tempDirection.x = 0;
@@ -34,7 +34,7 @@ public abstract class Mob extends Entity {
 
         tempDirection2.set(tempDirection.x, tempDirection.y);
 
-        if(!tryMoveTo(tempDirection)) {
+        if(!tryMoveTo(tempDirection, delta)) {
             if(AnimationGlobalTime.time() - lastTargetUpdate < targetUpdateInterval) {
                 tempDirection.nor();
                 if(Math.abs(tempDirection.x) < 70) {
@@ -42,7 +42,7 @@ public abstract class Mob extends Entity {
                     target.set(target.x + 150, target.y);
                 }
 
-                if (!tryMoveTo(tempDirection)) {
+                if (!tryMoveTo(tempDirection, delta)) {
 
                     if(Math.abs(tempDirection.y) < 70) {
                         tempDirection.set(0, 1);
@@ -50,16 +50,16 @@ public abstract class Mob extends Entity {
                     }
 
 
-                    if (!tryMoveTo(tempDirection)) {
+                    if (!tryMoveTo(tempDirection, delta)) {
                         tempDirection.set(0, 0);
-                        tryMoveTo(tempDirection);
+                        tryMoveTo(tempDirection, delta);
                     }
                 }
             }
         }
     }
 
-    protected void closeAi(float distance, Vector2 playerPosition) {
+    protected void closeAi(float distance, Vector2 playerPosition, float delta) {
         if(momentum.len() > 1) return;
 
         if(lastTargetUpdate < AnimationGlobalTime.time() - targetUpdateInterval) {
@@ -81,7 +81,7 @@ public abstract class Mob extends Entity {
             }
 
         }
-        tryMoveAi();
+        tryMoveAi(delta);
 
         tempDirection.set(playerPosition.x - positionLegs().x,
                 playerPosition.y - positionLegs().y);
@@ -89,7 +89,7 @@ public abstract class Mob extends Entity {
             attack(target);
         }
     }
-    protected void longRangeAi(float shootDistance, float scareDistance, Vector2 playerPosition, Item bullet) {
+    protected void longRangeAi(float shootDistance, float scareDistance, Vector2 playerPosition, Item bullet, float delta) {
            if(!allowedMotion) return;
            if(momentum.len() > 1) return;
            tempDirection.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
@@ -125,10 +125,10 @@ public abstract class Mob extends Entity {
             }
 
         tempDirection.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
-        if(tempDirection.len() >= shootDistance || tempDirection.len() <= scareDistance) tryMoveAi();
+        if(tempDirection.len() >= shootDistance || tempDirection.len() <= scareDistance) tryMoveAi(delta);
         else {
             tempDirection.set(0, 0);
-            tryMoveTo(tempDirection);
+            tryMoveTo(tempDirection, delta);
         }
 
     }

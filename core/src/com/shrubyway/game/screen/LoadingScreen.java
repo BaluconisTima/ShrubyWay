@@ -35,6 +35,7 @@ public class LoadingScreen extends Screen{
         phrases.add("The old willow tree holds treasures.");
         phrases.add("You are not the first hero");
 
+
     }
     static int phraseOfday = 0;
     static public void updateStatus(int status) {
@@ -50,13 +51,15 @@ public class LoadingScreen extends Screen{
         loadingStatus = maxStatus;
     }
     @Override public void renderScreen() {
+        float centerX = GlobalBatch.centerX(), centerY = GlobalBatch.centerY();
+
         GlobalBatch.render(background, 0, 0);
-        GlobalBatch.render(logo, 564, 450);
-        GlobalBatch.render(loadingBar, 342, 50);
+        GlobalBatch.render(logo, centerX - logo.getWidth()/2, centerY + 80);
+        GlobalBatch.render(loadingBar, centerX - loadingBar.getWidth()/2, centerY - loadingBar.getHeight()/2);
         GlobalBatch.render(new TextureRegion(loadStatus, 0, 0, loadingStatus * loadStatus.getWidth() / 100,
-                loadStatus.getHeight()), 378, 80);
-        GlobalBatch.render(phrase, 454, 230);
-        TextDrawer.drawCenterWhite(phrases.get(phraseOfday), 1920 / 2, 310, 0.7f);
+                loadStatus.getHeight()), centerX - loadingBar.getWidth()/2 + 36, centerY + 30 - loadingBar.getHeight()/2);
+        GlobalBatch.render(phrase, 454, centerY - 270);
+        TextDrawer.drawCenterWhite(phrases.get(phraseOfday), 1920 / 2, centerY - 270 + 80, 0.7f);
     }
 
 

@@ -8,8 +8,8 @@ import com.shrubyway.game.visibleobject.entity.EntityManager;
 
 public class Coney extends Mob{
 
-    @Override public void ai(Vector2 playerPosition) {
-        longRangeAi(600, 400, playerPosition, new Item(9));
+    @Override public void ai(Vector2 playerPosition, float delta) {
+        longRangeAi(600, 400, playerPosition, new Item(9), delta);
     }
 
     public Coney(float x, float y) {

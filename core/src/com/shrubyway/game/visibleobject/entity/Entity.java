@@ -53,8 +53,8 @@ abstract public class Entity extends InteractiveObject {
         else tempSpeed *= 1.5;
         return tempSpeed;
     }
-    public void update() {
-         tryMoveMomentum();
+    public void update(float delta) {
+         tryMoveMomentum(delta);
         attacking = false;
         if(health.getHealth() <= 0) {
             die();
@@ -123,11 +123,11 @@ abstract public class Entity extends InteractiveObject {
     protected Vector2 tempDirection2 = new Vector2(0,0);
     protected final int collisionsEps = 10;
 
-    public void tryMoveMomentum() {
+    public void tryMoveMomentum(float delta) {
         if(action == 3) return;
         momentum.scl(0.85f);
         tempDirection.set(momentum);
-        tempDirection.scl(1f/collisionsEps);
+        tempDirection.scl(1f/collisionsEps * delta * 60f);
         for(int i = 0; i < collisionsEps; i++) {
             position.add(tempDirection);
             if (checkCollisions()) {
@@ -142,7 +142,7 @@ abstract public class Entity extends InteractiveObject {
    public boolean liquid() {
         return inLiquid;
    }
-    public boolean tryMoveTo(Vector2 direction){
+    public boolean tryMoveTo(Vector2 direction, float delta){
         if(!allowedMotion) return false;
         boolean moved = false;
         if(direction.len() != 0) {
@@ -152,6 +152,7 @@ abstract public class Entity extends InteractiveObject {
             tempDirection.set(direction);
             tempDirection.scl(tempSpeed);
             tempDirection.scl(1f / collisionsEps);
+            tempDirection.scl(delta / (1f / 60f));
 
 
             for (int i = 0; i < collisionsEps; i++) {
@@ -251,7 +252,7 @@ abstract public class Entity extends InteractiveObject {
         float damageScale = 1f, speedScale = 1f;
         float throwlevel = throwLevel / 7;
         while(Math.random() < throwlevel) {
-            damageScale *= 1.4f;
+            damageScale *= 1.6f;
             speedScale *= 1.3f;
             throwlevel /= 5;
         }

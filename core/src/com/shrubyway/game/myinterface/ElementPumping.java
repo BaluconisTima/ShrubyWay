@@ -15,16 +15,22 @@ public class ElementPumping {
      static Texture ElementBase, Elements;
      static float progress = 0, displayProgress = 0;
 
-     public static float localExp = 0;
+     public static float localExp = 2000;
      static Diamond fire, water, earth, air;
 
     static float scale = GlobalBatch.scale;
+
+    static Sound levelUp = GlobalAssetManager.get("sounds/EFFECTS/levelUp.ogg", Sound.class);
+    static long lastSound = 0;
 
 
 
 
     private static Integer[] nextLevelCost = new Integer[200];
      static public void init() {
+          // lastSound = levelUp.play(SoundSettings.soundVolume);
+           //levelUp.loop();
+          // levelUp.stop();
             ElementBase = GlobalAssetManager.get("interface/ElementBase.png", Texture.class);
             Elements = GlobalAssetManager.get("interface/Elements.png", Texture.class);
 
@@ -127,10 +133,14 @@ public class ElementPumping {
          progressUpdate();
          GlobalBatch.render(ElementBase, 1930 - ElementBase.getWidth(), -10);
          if(progress == 100) {
+            // levelUp.resume();
+           //  levelUp.loop();
              GlobalBatch.batch.setColor(1, 1, 1, (float) (Math.sin(AnimationGlobalTime.time() * 7) + 1) / 2);
              GlobalBatch.render(GlobalAssetManager.get("interface/blink.png", Texture.class),
                      1930 - ElementBase.getWidth(), -10);
              GlobalBatch.batch.setColor(1, 1, 1, 1);
+         } else {
+            // levelUp.stop();
          }
          GlobalBatch.render(Elements, 1930 - ElementBase.getWidth(), -10);
          if(water.contains(mouseOnScreenPosition)) {

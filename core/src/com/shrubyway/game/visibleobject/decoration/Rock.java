@@ -10,8 +10,8 @@ public class Rock extends Decoration {
     @Override public void setCollisionBox() {
         if(collisionBox == null)
             collisionBox = new Rectangle(position.x + halfTextureWidth - 60,
-                    position.y + 20, 120, 40);
-        else collisionBox.change(position.x + halfTextureWidth - 60, position.y + 20, 120, 40);
+                    position.y + 15, 120, 50);
+        else collisionBox.change(position.x + halfTextureWidth - 60, position.y + 15, 120, 50);
     }
 
     @Override public void setHitbox() {

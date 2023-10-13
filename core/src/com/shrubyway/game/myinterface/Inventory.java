@@ -27,7 +27,7 @@ public class Inventory {
 
     public void clear() {
         Vector2 leftUpCorner = GlobalBatch.topLeftCorner();
-        System.out.println(GlobalBatch.topRightCorner());
+       // System.out.println(GlobalBatch.topRightCorner());
         float scale = GlobalBatch.scale;
         for(int i = 0; i < 9; i++) {
             buttons[0][i] = new Rectangle((27 + 79.1f * i) * scale,(leftUpCorner.y - 70 - 28 + 7) * scale,

@@ -8,6 +8,7 @@ import com.shrubyway.game.myinterface.ElementPumping;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.visibleobject.ObjectsList;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -59,6 +60,21 @@ public class GameSaver implements Serializable {
         ElementPumping.earthLevel = earthLevel;
         ElementPumping.airLevel = airLevel;
         ElementPumping.localExp = localExp;
+    }
+
+    static public boolean checkSaveFile() {
+        String userHome = System.getProperty("user.home");
+        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE1.txt";
+        File file = new File(filePath);
+        return file.exists();
+    }
+
+    static public void resetSave() {
+        if(!checkSaveFile()) return;
+        String userHome = System.getProperty("user.home");
+        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE1.txt";
+        File file = new File(filePath);
+        file.delete();
     }
 
 }

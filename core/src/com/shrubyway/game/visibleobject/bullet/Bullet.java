@@ -13,16 +13,18 @@ public abstract class Bullet extends InteractiveObject {
     public VisibleObject whoThrow;
     public float throwingTime;
 
-    public void tryMove() {
-        position.add(direction);
+    public void tryMove(float delta) {
+        Vector2 tempDirection = new Vector2(direction);
+        tempDirection.scl(speed * delta * 3f);
+        position.add(tempDirection);
     }
 
     public void die() {
         Game.objectsList.del(this);
     }
 
-    public void processBullet(Vector2 playerPossition) {
-        this.tryMove();
+    public void processBullet(Vector2 playerPossition, float delta) {
+        this.tryMove(delta);
         if(this.throwingTime + 10f < AnimationGlobalTime.time()) {
             this.die();
         }

@@ -27,6 +27,19 @@ public class Shruby extends Entity {
         sound.play(SoundSettings.soundVolume);
         animationTime = 0;
     }
+    public Shruby(float x, float y, boolean f) {
+        entityID = 0;
+        damage = 2f;
+        health = new Health(20, 0.3f);
+        speed = 10f;
+        allowedMotion = true;
+        action = 0;
+        throwCooldown = 0.7f;
+        position.set(x, y);
+        regionWidth = (EntityManager.animations[entityID].get(0).get(0)[0].getKeyFrame(0)).getRegionWidth();
+        regionHeight = EntityManager.animations[entityID].get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
+        animationTime = 0;
+    }
 
    @Override public Rectangle hitBox() {
         if(hitBox == null) hitBox = new Rectangle(0,0,0,0);

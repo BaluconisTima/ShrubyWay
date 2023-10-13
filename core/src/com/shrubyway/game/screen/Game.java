@@ -78,14 +78,14 @@ public class Game extends Screen implements java.io.Serializable {
                 bHeight = GlobalAssetManager.get("interface/c1.png", Texture.class).getHeight();
 
         continueButton= new Button(GlobalAssetManager.get("interface/c1.png", Texture.class),
-                GlobalAssetManager.get("interface/c2.png", Texture.class), 1920 / 2 -
-                bWidht / 2, 1080 / 2 - bHeight / 2 + bHeight + 50);
+                GlobalAssetManager.get("interface/c2.png", Texture.class), GlobalBatch.centerX() -
+                bWidht / 2, GlobalBatch.centerY() - bHeight / 2 + bHeight + 50);
         settingsButton = new Button(GlobalAssetManager.get("interface/s1.png", Texture.class),
-                        GlobalAssetManager.get("interface/s2.png", Texture.class), 1920 / 2 -
-                bWidht / 2, 1080 / 2 - bHeight / 2);
+                        GlobalAssetManager.get("interface/s2.png", Texture.class), GlobalBatch.centerX() -
+                bWidht / 2, GlobalBatch.centerY() - bHeight / 2);
         menuButton = new Button(GlobalAssetManager.get("interface/m1.png", Texture.class),
-                        GlobalAssetManager.get("interface/m2.png", Texture.class), 1920 / 2 -
-                bWidht / 2, 1080 / 2 - bHeight / 2 - bHeight - 50);
+                        GlobalAssetManager.get("interface/m2.png", Texture.class), GlobalBatch.centerX() -
+                bWidht / 2, GlobalBatch.centerY() - bHeight / 2 - bHeight - 50);
         inventory = new Inventory();
         EntityManager.init();
         DecorationsManager.init();
@@ -96,13 +96,19 @@ public class Game extends Screen implements java.io.Serializable {
         objectsList = new ObjectsList();
         event = new Event();
         map = new Map(1);
-        player = new Shruby(-1000, 150);
+        if(!GameSaver.checkSaveFile()) player = new Shruby(31599,31599);
+        else player = new Shruby(31599, 31599, false);
+
         localCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         localCamera.position.set(player.positionCenter().x, player.positionCenter().y, 0);
         localCamera.update();
 
         objectsList.add(player);
         AnimationGlobalTime.clear();
+        if(!GameSaver.checkSaveFile()) {
+            saveGame();
+        }
+        loadGame();
     }
 
     public void correctPosition() {
@@ -128,7 +134,7 @@ public class Game extends Screen implements java.io.Serializable {
 
     boolean leftClick = false, rightClick = false;
 
-    public void playerInputWorking() {
+    public void playerInputWorking(float delta) {
         mousePosition = new Vector2(ShrubyWay.inputProcessor.mousePosition().x
                 + localCamera.position.x - Gdx.graphics.getWidth() / 2,
                 ShrubyWay.inputProcessor.mousePosition().y
@@ -138,7 +144,9 @@ public class Game extends Screen implements java.io.Serializable {
            saveGame();
         }
         if(ShrubyWay.inputProcessor.isLPressed()) {
-           loadGame();
+           for(int i = 0; i < ItemManager.itemNumber; i++) {
+               objectsList.add(new VisibleItem(new Item(i), player.positionCenter().x, player.positionCenter().y));
+           }
         }
 
 
@@ -197,7 +205,7 @@ public class Game extends Screen implements java.io.Serializable {
                     }
                 }
             }
-            player.tryMoveTo(movingVector);
+            player.tryMoveTo(movingVector, delta);
             correctPosition();
         }
 
@@ -248,6 +256,7 @@ public class Game extends Screen implements java.io.Serializable {
             if(menuButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
                 soundClick.play(SoundSettings.soundVolume);
                 resume();
+                map.pauseSounds();
                 menu = true;
             }
             if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
@@ -257,7 +266,7 @@ public class Game extends Screen implements java.io.Serializable {
         }
     }
 
-    public void interfaceInputWorking() {
+    public void interfaceInputWorking(float delta) {
         if (ShrubyWay.inputProcessor.isEPressed()) {
             inventory.changeOpened();
         }
@@ -295,7 +304,7 @@ public class Game extends Screen implements java.io.Serializable {
 
     float lastMobUpdate = 5f;
 
-    public void globalProcessing() {
+    public void globalProcessing(float delta) {
 
         if (AnimationGlobalTime.time() - lastMobUpdate > 1f) {
             lastMobUpdate = AnimationGlobalTime.time();
@@ -332,7 +341,7 @@ public class Game extends Screen implements java.io.Serializable {
                 exp.damaged = true;
             } else
             if (obj instanceof Bullet bul) {
-                bul.processBullet(player.positionCenter());
+                bul.processBullet(player.positionCenter(), delta);
 
             } else if (obj instanceof Entity ent) {
                 ent.liquidStatus(map.checkLiquid(ent.positionLegs()));
@@ -340,10 +349,10 @@ public class Game extends Screen implements java.io.Serializable {
                     map.makeStep(ent.positionLegs(), player.positionLegs());
                 }
                 if (obj instanceof Mob mob) {
-                    mob.ai(player.positionLegs());
+                    mob.ai(player.positionLegs(), delta);
                 }
             } else if (obj instanceof VisibleItem visobj) {
-                visobj.moveToPlayer(player.positionItemDrop(), inventory);
+                visobj.moveToPlayer(player.positionItemDrop(), inventory, delta);
             }
         }
 
@@ -386,7 +395,6 @@ public class Game extends Screen implements java.io.Serializable {
                                              elementPumping.addExp(MobsManager.getExp(mob));
                                        }
                                     } else {
-                                    System.out.println(ent.getClass().getName() + " died");
                                 }
                                 }
                             }
@@ -401,31 +409,32 @@ public class Game extends Screen implements java.io.Serializable {
 
         for (VisibleObject obj : objectsList.getList()) {
             if (obj instanceof Entity ent) {
-                ent.update();
+                ent.update(delta);
             }
         }
         objectsList.sort();
         if(!objectsList.contains(player)) {
-            gameOver = true;
             map.pauseSounds();
+            gameOver = true;
         }
         GlobalSoundManager.update(player.positionCenter());
     }
 
-    public void cameraUpdate() {
+    public void cameraUpdate(float delta) {
         localCamera.position.add(new Vector3(-CameraEffects.getAddPositionExplosion().x,
                 -CameraEffects.getAddPositionExplosion().y, 0));
-        localCamera.position.lerp(new Vector3(player.positionCenter(),0), 0.1f);
+        localCamera.position.lerp(new Vector3(player.positionCenter(),0), 0.1f * delta * 60f);
         CameraEffects.update();
         localCamera.position.add(new Vector3(CameraEffects.getAddPositionExplosion(), 0));
         localCamera.update();
     }
 
-    public void gameTick() {
-        playerInputWorking();
-        interfaceInputWorking();
-        globalProcessing();
-        cameraUpdate();
+    public void gameTick(float delta) {
+        delta = Math.min(delta, 1f);
+        playerInputWorking(delta);
+        interfaceInputWorking(delta);
+        globalProcessing(delta);
+        cameraUpdate(delta);
     }
 
 
@@ -450,8 +459,10 @@ public class Game extends Screen implements java.io.Serializable {
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 
         HealthBar.render(player.health);
-        inventory.render(ShrubyWay.inputProcessor.mousePosition());
-       // TextDrawer.drawWithShadow("" + player.health.getHealth(), 100, 500, 1);
+        Vector2 mousePos = new Vector2(ShrubyWay.inputProcessor.mousePosition().x, ShrubyWay.inputProcessor.mousePosition().y);
+        mousePos.x /= GlobalBatch.scale; mousePos.y /= GlobalBatch.scale;
+        inventory.render(mousePos);
+       // TextDrawer.drawWithShadow("" +Gdx.graphics.getFramesPerSecond() + Gdx.graphics.getDeltaTime(), 100, 500, 1);
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
         elementPumping.render(ShrubyWay.inputProcessor.mousePosition());
         if (gamePaused) {
@@ -509,7 +520,7 @@ public class Game extends Screen implements java.io.Serializable {
         } else {
            // SoundSettings.changeMusic("music/Forest.mp3");
             menuInputWorking();
-            if (!gamePaused) gameTick();
+            if (!gamePaused) gameTick(Gdx.graphics.getDeltaTime());
         }
 
     }
@@ -526,7 +537,7 @@ public class Game extends Screen implements java.io.Serializable {
     public void saveGame() {
          gameSaver.saveGameFiles();
         String userHome = System.getProperty("user.home");
-        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "000.txt";
+        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE1.txt";
 
         File shrubyDirectory = new File(userHome, "ShrubyWay");
         if (!shrubyDirectory.exists()) {
@@ -540,9 +551,10 @@ public class Game extends Screen implements java.io.Serializable {
             e.printStackTrace();
         }
     }
+
     void loadGame() {
         String userHome = System.getProperty("user.home");
-        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "000.txt";
+        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE1.txt";
 
         try (FileInputStream fileInputStream = new FileInputStream(filePath);
              ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {

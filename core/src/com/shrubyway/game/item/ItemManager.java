@@ -3,6 +3,11 @@ package com.shrubyway.game.item;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.visibleobject.VisibleObject;
+import com.shrubyway.game.visibleobject.effect.BerryExplosion;
+import com.shrubyway.game.visibleobject.effect.FruitExplosion;
+
+import java.lang.reflect.Constructor;
 
 public class ItemManager {
     public static int itemNumber = 13;
@@ -10,9 +15,24 @@ public class ItemManager {
     public static String itemName[] = new String[itemNumber];
     public static String itemDescription[] = new String[itemNumber];
     public static float throwingDamage[] = new float[itemNumber];
+    public static Class ItemDeath[] = new Class[itemNumber];
     public static ItemActing itemActing[] = new ItemActing[itemNumber];
 
     public static int tableN = 10, tableM = 10;
+
+    public static VisibleObject getItemDeath(int id, float x, float y) {
+            if(ItemDeath[id] == null) {
+                return null;
+            }
+            try {
+                Constructor<?> constructor = ItemDeath[id].getDeclaredConstructor(float.class, float.class);
+                return (VisibleObject) (VisibleObject) constructor.newInstance(x, y);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+    }
 
     public static void init() {
         int size = GlobalAssetManager.get("ITEMS/all.png", Texture.class).getWidth() / tableN;
@@ -69,7 +89,9 @@ public class ItemManager {
         itemName[8] = "Explerry";
         itemDescription[8] = "Few people know that you can eat \n" +
                 "an explerry in your lifetime, but only once.";
-        throwingDamage[8] = 0;
+        ItemDeath[8] = BerryExplosion.class;
+        throwingDamage[8] = 0.1f;
+
         itemActing[8] = new Food(10, -100f);
 
         itemName[9] = "Pine seed";
@@ -81,6 +103,7 @@ public class ItemManager {
         itemDescription[10] = "The hard rind of this fruit \n" +
                 "should not give you too strong a sense of security.";
         throwingDamage[10] = 1;
+        ItemDeath[10] = FruitExplosion.class;
         itemActing[10] = new Food(10, -100f);
 
         itemName[11] = "Shard of the Artifact of Light";

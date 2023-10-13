@@ -55,7 +55,7 @@ public class GlobalAssetManager {
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
                 String entryPath = entry.getName();
-                System.out.println(entryPath);
+               // System.out.println(entryPath);
                 if (!entry.isDirectory()) {
                     FileHandle fileHandle = Gdx.files.internal(entryPath);
                     String extension = fileHandle.extension();
@@ -72,10 +72,10 @@ public class GlobalAssetManager {
     }
 
     static public void loadAll() {
-        loadFromJar();
-       // ONLY FOR LOCAL TEST! DELETE THIS LINE IF YOU WANT TO BUILD JAR FILE!
-        FileHandle assetsFolder = Gdx.files.local("");
-        loadRec(assetsFolder);
+       // loadFromJar();
+        //ONLY FOR LOCAL TEST! DELETE THIS LINE IF YOU WANT TO BUILD JAR FILE!
+       FileHandle assetsFolder = Gdx.files.local("");
+       loadRec(assetsFolder);
     }
 
 }

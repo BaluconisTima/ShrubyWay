@@ -7,8 +7,8 @@ import com.shrubyway.game.visibleobject.entity.EntityManager;
 
 public class Agaric extends Mob{
 
-    @Override public void ai(Vector2 playerPosition) {
-        closeAi(100, playerPosition);
+    @Override public void ai(Vector2 playerPosition, float delta) {
+        closeAi(100, playerPosition, delta);
     }
 
     public Agaric(float x, float y) {

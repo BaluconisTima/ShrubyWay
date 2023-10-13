@@ -51,7 +51,7 @@ public class VisibleItem extends VisibleObject {
         Game.objectsList.del(this);
     }
     Vector2 dir = new Vector2(0,0);
-    public void moveToPlayer(Vector2 playerPosition, Inventory inventory) {
+    public void moveToPlayer(Vector2 playerPosition, Inventory inventory, float delta) {
         if(!inventory.havePlaceFor(item.id)) return;
         if(AnimationGlobalTime.time() - dropTime < 0.7f)  {
             globalDir.scl(0.82f);
@@ -66,7 +66,7 @@ public class VisibleItem extends VisibleObject {
         } else
             if(dir.len() < 150) {
             dir.nor();
-            position.add(dir.scl(20));
+            position.add(dir.scl(20 * delta / (1.f / 60.f)));
         }
 
 

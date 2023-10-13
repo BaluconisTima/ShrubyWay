@@ -1,18 +1,20 @@
 package com.shrubyway.game.screen;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.myinterface.Button;
 import com.shrubyway.game.sound.SoundSettings;
 
 public class GameOver extends Screen {
-    static Texture Background = new Texture("interface/SWbackgound.png");
-    Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/Click.ogg"));
+    static Texture Background =  GlobalAssetManager.get("interface/SWbackgound.png", Texture.class);
+
+    static Texture sign = GlobalAssetManager.get("interface/gameOver.png", Texture.class);
+    Sound sound = GlobalAssetManager.get("sounds/EFFECTS/Click.ogg", Sound.class);
 
     static Button tryAgain = new Button(new Texture("interface/SwTryAgainButton2.png"),
             new Texture("interface/SwTryAgainButton.png"), 250, 300) {
@@ -43,6 +45,7 @@ public class GameOver extends Screen {
     @Override public void renderScreen() {
         ScreenUtils.clear(1, 1, 1, 1);
         GlobalBatch.render(Background, 0, 0);
+        GlobalBatch.render(sign, GlobalBatch.centerX() - sign.getWidth() / 2, GlobalBatch.centerY());
 
         if(tryAgain.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()))
             tryAgain.renderSellected();

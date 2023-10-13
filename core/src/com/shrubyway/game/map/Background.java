@@ -35,10 +35,10 @@ public class Background implements Serializable {
         stepSoundWay[1] = "sounds/STEPS/1";
         stepSoundWay[2] = "sounds/STEPS/2";
         stepSoundWay[3] = "sounds/STEPS/3";
-        stepSoundWay[4] = "sounds/STEPS/3";
-        stepSoundWay[5] = "sounds/STEPS/3";
-        stepSoundWay[6] = "sounds/STEPS/3";
-        stepSoundWay[7] = "sounds/STEPS/3";
+        stepSoundWay[4] = "sounds/STEPS/4";
+        stepSoundWay[5] = "sounds/STEPS/4";
+        stepSoundWay[6] = "sounds/STEPS/4";
+        stepSoundWay[7] = "sounds/STEPS/4";
     }
 
 

@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.map.MapSettings;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.VisibleObject;
@@ -40,12 +41,12 @@ public class ThrowableItem extends Bullet {
         this.rotation = rotation;
         this.damageScale = damageScale;
         this.speedScale = speedScale;
-
         whoThrow = thrower;
         throwingTime = AnimationGlobalTime.time();
         id = item.id;
         position.set(startPosition);
         speed = 20f * speedScale;
+        System.out.println(damageScale);
         damage = ItemManager.throwingDamage[id] * damageScale;
         direction =
                 new Vector2(finishPosition.x - position.x, finishPosition.y - position.y);
@@ -64,8 +65,8 @@ public class ThrowableItem extends Bullet {
     }
     Vector2 temp = new Vector2(0,0);
 
-    public void processBullet(Vector2 playerPossition) {
-           super.processBullet(playerPossition);
+    public void processBullet(Vector2 playerPossition, float delta) {
+           super.processBullet(playerPossition, delta);
            if(rotation) {
                temp.set(playerPossition.x, playerPossition.y);
                temp.sub(position.x, position.y);
@@ -79,6 +80,10 @@ public class ThrowableItem extends Bullet {
 
         @Override public void die() {
         sound.setVolume(RotationSound, 0);
+        VisibleObject deathObject = ItemManager.getItemDeath(id, positionCenter().x, positionCenter().y);
+        if(deathObject != null) {
+            Game.objectsList.add(deathObject);
+        }
         super.die();
     }
 
