@@ -14,12 +14,12 @@ public class Save extends Decoration{
         DecorationsManager.texture[id].setPlayMode(Animation.PlayMode.LOOP);
         position.set(x - halfTextureWidth + com.shrubyway.game.map.MapSettings.TYLESIZE/2, y + 30);
         decorationI = i;
-        decorationI = j;
+        decorationJ = j;
     }
     @Override
     public void render() {
         GlobalBatch.render(DecorationsManager.texture[id].getKeyFrame(AnimationGlobalTime.time()
-                        - lastInteraction), Math.round(position.x),
+                        - lastHitTime), Math.round(position.x),
                 Math.round(position.y - 115));
         collisionBox().render();
         hitBox().render();

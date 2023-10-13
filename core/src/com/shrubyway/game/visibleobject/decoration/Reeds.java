@@ -24,7 +24,7 @@ public class Reeds extends Decoration{
 
     @Override public void render() {
         GlobalBatch.render(DecorationsManager.texture[id].getKeyFrame(AnimationGlobalTime.time()
-                        - lastInteraction), Math.round(position.x - 20),
+                        - lastHitTime), Math.round(position.x - 20),
                 Math.round(position.y - 15));
         collisionBox().render();
         hitBox().render();

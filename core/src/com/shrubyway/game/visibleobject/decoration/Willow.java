@@ -29,8 +29,8 @@ public class Willow extends Decoration {
         id = 10;
     }
 
-    @Override public void interact() {
-        super.interact();
+    @Override public void hit() {
+        super.hit();
         GlobalSoundManager.addSound(new SoundAtPosition(
                 GlobalAssetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
 

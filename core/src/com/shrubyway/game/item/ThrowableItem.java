@@ -46,7 +46,6 @@ public class ThrowableItem extends Bullet {
         id = item.id;
         position.set(startPosition);
         speed = 20f * speedScale;
-        System.out.println(damageScale);
         damage = ItemManager.throwingDamage[id] * damageScale;
         direction =
                 new Vector2(finishPosition.x - position.x, finishPosition.y - position.y);

@@ -25,8 +25,8 @@ public class PineBush extends Decoration{
         id = 5;
     }
 
-    @Override public void interact() {
-        super.interact();
+    @Override public void hit() {
+        super.hit();
         if(Math.random() < 0.2) {
             Game.objectsList.add(new VisibleItem(ItemManager.newItem(2),
                     position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),

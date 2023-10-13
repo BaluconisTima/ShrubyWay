@@ -6,8 +6,8 @@ public class OakStump extends Decoration{
     {
         id = 11;
     }
-    @Override public void interact() {
-        super.interact();
+    @Override public void hit() {
+        super.hit();
     }
     @Override public void setCollisionBox() {
         if(collisionBox == null)

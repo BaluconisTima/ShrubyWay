@@ -12,8 +12,8 @@ import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class BirchBush extends Decoration {
     @Override
-    public void interact() {
-        super.interact();
+    public void hit() {
+        super.hit();
         GlobalSoundManager.addSound(new SoundAtPosition(
                 GlobalAssetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
         if (Math.random() < 0.2) {

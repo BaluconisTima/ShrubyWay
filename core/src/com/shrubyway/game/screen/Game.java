@@ -144,9 +144,7 @@ public class Game extends Screen implements java.io.Serializable {
            saveGame();
         }
         if(ShrubyWay.inputProcessor.isLPressed()) {
-           for(int i = 0; i < ItemManager.itemNumber; i++) {
-               objectsList.add(new VisibleItem(new Item(i), player.positionCenter().x, player.positionCenter().y));
-           }
+          loadGame();
         }
 
 
@@ -334,7 +332,7 @@ public class Game extends Screen implements java.io.Serializable {
                     }
                     if(obj2 instanceof Decoration dec) {
                         if(!exp.damaged) {
-                            if(exp.getDamage(dec.positionCenter()) != 0) dec.interact();
+                            if(exp.getDamage(dec.positionCenter()) != 0) dec.hit();
                         }
                     }
                 }
@@ -375,7 +373,7 @@ public class Game extends Screen implements java.io.Serializable {
                                 if (bul.whoThrow == to) continue;
                             }
                             if (to instanceof Decoration dec) {
-                                dec.interact();
+                                dec.hit();
                             } else
                                 if (to instanceof Entity ent) {
 

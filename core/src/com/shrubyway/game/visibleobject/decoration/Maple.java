@@ -15,8 +15,8 @@ public class Maple extends Decoration {
     {
         id = 6;
     }
-    @Override public void interact() {
-        super.interact();
+    @Override public void hit() {
+        super.hit();
         GlobalSoundManager.addSound(new SoundAtPosition(
                 GlobalAssetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
         if(Math.random() < 0.2) {

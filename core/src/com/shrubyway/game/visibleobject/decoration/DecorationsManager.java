@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.animation.Animator;
 public class DecorationsManager {
-    public static int decorationNumber = 19;
+    public static int decorationNumber = 21;
     public static Class<? extends Decoration> decorations[] = new Class[decorationNumber];
     static Animation<TextureRegion> texture[] = new Animation[decorationNumber];
     static String way[] = new String[decorationNumber];
@@ -94,6 +94,14 @@ public class DecorationsManager {
         decorations[18] = Grass.class;
         way[18] += "GRASS.png";
         texture[18] = animator.toAnimation( GlobalAssetManager.get(way[18], Texture.class), 8, 0, 0);
+
+        decorations[19] = ChestClosed.class;
+        way[19] += "CHEST_CLOSED.png";
+        texture[19] = animator.toAnimation( GlobalAssetManager.get(way[19], Texture.class), 8, 0, 0);
+
+        decorations[20] = ChestOpened.class;
+        way[20] += "CHEST_OPENED.png";
+        texture[20] = animator.toAnimation( GlobalAssetManager.get(way[20], Texture.class), 8, 0, 0);
 
     }
 

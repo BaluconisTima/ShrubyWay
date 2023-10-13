@@ -80,6 +80,7 @@ public class Map {
                 if (decorations[i][j] != '0') {
                     int type = decorations[i][j] - '1';
                     Decoration temp = DecorationsManager.newOf(type);
+                    System.out.println(i + " " + j);
                     temp.change(i * MapSettings.TYLESIZE, j * MapSettings.TYLESIZE, i, j);
                     chunks[i / 16][j / 16].add(temp);
                 }

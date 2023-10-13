@@ -11,14 +11,15 @@ import com.shrubyway.game.visibleobject.InteractiveObject;
 abstract public class Decoration extends InteractiveObject {
     public int decorationI = 0, decorationJ = 0;
     public int id;
-    protected float lastInteraction = -100f;
+    protected float lastHitTime = -100f;
 
     public void change(float x, float y, int i, int j) {
         halfTextureWidth = DecorationsManager.texture[id].getKeyFrame(0f).getRegionWidth() / 2f;
         DecorationsManager.texture[id].setPlayMode(Animation.PlayMode.NORMAL);
         position.set(x - halfTextureWidth + MapSettings.TYLESIZE/2, y + 30);
         decorationI = i;
-        decorationI = j;
+        decorationJ = j;
+        if(id == 19) System.out.println("EX " + i + " " + j);
     }
 
     public void setCollisionBox() {
@@ -41,7 +42,7 @@ abstract public class Decoration extends InteractiveObject {
 
     @Override public void render(){
         GlobalBatch.render(DecorationsManager.texture[id].getKeyFrame(AnimationGlobalTime.time()
-                        - lastInteraction), Math.round(position.x),
+                        - lastHitTime), Math.round(position.x),
                 Math.round(position.y));
         collisionBox().render();
         hitBox().render();
@@ -51,8 +52,12 @@ abstract public class Decoration extends InteractiveObject {
         return new Vector2(position.x + halfTextureWidth, position.y);
     }
 
+    public void hit() {
+        lastHitTime = AnimationGlobalTime.time();
+    }
+
     public void interact() {
-        lastInteraction = AnimationGlobalTime.time();
+
     }
 
 

@@ -23,7 +23,7 @@ public class Grass extends Decoration{
     }
     @Override public void render() {
         GlobalBatch.render(DecorationsManager.texture[id].getKeyFrame(AnimationGlobalTime.time()
-                        - lastInteraction), Math.round(position.x - 5),
+                        - lastHitTime), Math.round(position.x - 5),
                 Math.round(position.y - 15));
         collisionBox().render();
         hitBox().render();

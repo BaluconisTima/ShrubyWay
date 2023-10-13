@@ -104,7 +104,7 @@ public class Menu extends Screen {
         ScreenUtils.clear(1, 1, 1, 1);
         GlobalBatch.render(Background, 0, 0);
 
-        GlobalBatch.batch.setColor(1, 1, 1, 0.3f);
+        GlobalBatch.batch.setColor(1, 1, 1, 0.4f);
         long speed2 = 1000;
         long y2 = System.currentTimeMillis() % (int)(5.583 * speed2);
         float time = (float)y2 / speed2;
