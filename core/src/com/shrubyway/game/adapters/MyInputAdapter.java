@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class MyInputAdapter extends InputAdapter {
     private boolean leftPressed, rightPressed, upPressed, downPressed,
-            spacePressed, ePressed, qPressed, escPressed, lPressed, cPressed, minusPressed, plusPressed;
+            spacePressed, ePressed, qPressed, escPressed, lPressed, cPressed, minusPressed, plusPressed, zPressed;
     private boolean numberPressed[] = new boolean[10];
     private boolean mouseLeft, mouseRight;
     private boolean runing;
@@ -30,6 +30,7 @@ public class MyInputAdapter extends InputAdapter {
         if(keycode == Input.Keys.C) cPressed = true;
         if(keycode == Input.Keys.MINUS) minusPressed = true;
         if(keycode == Input.Keys.PLUS) plusPressed = true;
+        if(keycode == Input.Keys.Z) zPressed = true;
 
         for(int i = 0; i < 10; i++) {
             if(keycode == Input.Keys.NUM_0 + i) numberPressed[i] = true;
@@ -52,6 +53,7 @@ public class MyInputAdapter extends InputAdapter {
         if(keycode == Input.Keys.C) cPressed = false;
         if(keycode == Input.Keys.MINUS) minusPressed = false;
         if(keycode == Input.Keys.PLUS) plusPressed = false;
+        if(keycode == Input.Keys.Z) zPressed = false;
         return false;
     }
     @Override
@@ -138,6 +140,11 @@ public class MyInputAdapter extends InputAdapter {
     public boolean isEscPressed() {
         if(escPressed) {escPressed = false; return true;}
         return escPressed;
+    }
+
+    public boolean isZPressed() {
+        if(zPressed) {zPressed = false; return true;}
+        return zPressed;
     }
 
     public boolean isLPressed() {

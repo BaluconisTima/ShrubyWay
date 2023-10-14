@@ -3,6 +3,7 @@ package com.shrubyway.game.visibleobject.decoration;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
 
 public class Save extends Decoration{
@@ -34,5 +35,15 @@ public class Save extends Decoration{
         if(hitBox == null) hitBox = new Rectangle(0,0,-1,-1);
         hitBox.change(position.x + halfTextureWidth - 30,
                 position.y + 30, -1, -1);
+    }
+
+    @Override  public void setInteractionBox() {
+        if(interactionBox == null) interactionBox = new Rectangle(0,0,-1,-1);
+        interactionBox.change(position.x + halfTextureWidth - 30,
+                position.y + 30, 60, 60);
+    }
+
+    @Override public void interact() {
+        Game.saveGame(true);
     }
 }

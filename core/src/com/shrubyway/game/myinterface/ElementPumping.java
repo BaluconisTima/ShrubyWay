@@ -15,7 +15,7 @@ public class ElementPumping {
      static Texture ElementBase, Elements;
      static float progress = 0, displayProgress = 0;
 
-     public static float localExp = 2000;
+     public static float localExp = 0;
      static Diamond fire, water, earth, air;
 
     static float scale = GlobalBatch.scale;
@@ -42,7 +42,7 @@ public class ElementPumping {
             air = new Diamond((centerX + 100) * scale, centerY * scale, 80 * scale);
 
             for (int i = 0; i < 200; i++) {
-                nextLevelCost[i] = 250 + i * 50;
+                nextLevelCost[i] = 200 + i * 40;
             }
             nextLevelCost[199] = (1 << 31) - 1;
      }

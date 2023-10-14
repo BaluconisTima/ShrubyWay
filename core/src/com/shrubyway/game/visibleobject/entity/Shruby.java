@@ -48,6 +48,37 @@ public class Shruby extends Entity {
                 70, 140);
         return hitBox;
    }
+
+   Rectangle interactionBox;
+
+   public Rectangle interactionBox() {
+        if(interactionBox == null) interactionBox = new Rectangle(0,0,0,0);
+
+        switch (faceDirection) {
+            case 0:
+                interactionBox.change(positionCenter().x - 25,
+                        positionCenter().y - 150,
+                        50, 150);
+                break;
+            case 1:
+                interactionBox.change(positionCenter().x - 25,
+                        positionCenter().y,
+                        50, 150);
+                break;
+            case 2:
+                interactionBox.change(positionCenter().x - 150,
+                        positionCenter().y - 50,
+                        150, 50);
+                break;
+            case 3:
+                interactionBox.change(positionCenter().x,
+                        positionCenter().y - 50,
+                        150, 50);
+                break;
+        }
+        return interactionBox;
+    }
+
     @Override public Rectangle attackBox() {
         if(attackBox == null)
             attackBox = new Rectangle(0,0,0,0);

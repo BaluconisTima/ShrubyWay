@@ -20,6 +20,8 @@ import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
+import com.shrubyway.game.visibleobject.entity.mob.Mob;
+
 abstract public class Entity extends InteractiveObject {
 
 
@@ -170,7 +172,7 @@ abstract public class Entity extends InteractiveObject {
         return moved;
     };
     public void renderShadow() {
-       // GlobalBatch.render(GlobalAssetManager.get("effects/shadow.png", Texture.class), Math.round(positionLegs().x) - 80, Math.round(positionLegs().y) - 20);
+        GlobalBatch.render(GlobalAssetManager.get("effects/shadow.png", Texture.class), Math.round(positionLegs().x) - 80, Math.round(positionLegs().y) - 20);
     }
     @Override public void render() {
         if(health.timeAfterHit() < 0.2f) {
@@ -187,6 +189,8 @@ abstract public class Entity extends InteractiveObject {
         GlobalBatch.batch.setColor(1, 1, 1, 1);
        if(inLiquid) renderWaterOverlay();
     }
+    public float alpha = 1f;
+
 
     protected static Animation<TextureRegion> WaterOverlay;
     protected void renderWaterOverlay() {
@@ -195,10 +199,12 @@ abstract public class Entity extends InteractiveObject {
                       GlobalAssetManager.get("effects/water_overlay.png", Texture.class),14, 0, 0);
 
           }
+        if(this instanceof Mob)
+            GlobalBatch.batch.setColor(1, 1, 1, alpha);
 
         GlobalBatch.render(WaterOverlay.getKeyFrame(AnimationGlobalTime.time(), true),
                 positionLegs().x - 90, positionLegs().y - 23);
-
+        GlobalBatch.batch.setColor(1, 1, 1, 1);
     }
 
     public void addMomentum(Vector2 x) {

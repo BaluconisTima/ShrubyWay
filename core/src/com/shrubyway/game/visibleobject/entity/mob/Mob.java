@@ -11,8 +11,14 @@ public abstract class Mob extends Entity {
     protected float lastTargetUpdate = 0;
     protected float targetUpdateInterval = 0.5f;
 
+
     public void ai(Vector2 playerPosition, float delta) {
 
+    }
+
+    @Override public void update(float delta) {
+         super.update(delta);
+         if(action == 3) alpha *= Math.pow(0.95f, delta * 60);
     }
 
     @Override public void die() {
@@ -94,7 +100,7 @@ public abstract class Mob extends Entity {
            if(momentum.len() > 1) return;
            tempDirection.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
            if(lastThrowTime + throwCooldown <= AnimationGlobalTime.time() && tempDirection.len() < shootDistance
-                   && tempDirection.len() > scareDistance * 0.7) {
+                   && tempDirection.len() > scareDistance * 0.7 && canThrow()) {
                tempDirection.set(playerPosition.x - positionCenter().x, playerPosition.y - positionCenter().y);
                throwItem(playerPosition, bullet, true);
                tempDirection.nor();

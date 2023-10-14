@@ -10,7 +10,7 @@ import com.shrubyway.game.visibleobject.effect.FruitExplosion;
 import java.lang.reflect.Constructor;
 
 public class ItemManager {
-    public static int itemNumber = 13;
+    public static int itemNumber = 14;
     public static TextureRegion itemTexture[] = new TextureRegion[itemNumber];
     public static String itemName[] = new String[itemNumber];
     public static String itemDescription[] = new String[itemNumber];
@@ -101,7 +101,7 @@ public class ItemManager {
 
         itemName[10] = "Ancient Explruit";
         itemDescription[10] = "The hard rind of this fruit \n" +
-                "should not give you too strong a sense of security.";
+                "should not give you too strong \na sense of security.";
         throwingDamage[10] = 1;
         ItemDeath[10] = FruitExplosion.class;
         itemActing[10] = new Food(10, -100f);
@@ -118,6 +118,11 @@ public class ItemManager {
                 " of the light of this artifact.";
         throwingDamage[12] = 0;
         itemActing[12] = null;
+
+        itemName[13] = "Stale bread";
+        itemDescription[13] = "Better not even think about how old it is.";
+        throwingDamage[13] = 1.5f;
+        itemActing[13] = new Food(1f, 5);
     }
 
 

@@ -19,13 +19,16 @@ abstract public class Decoration extends InteractiveObject {
         position.set(x - halfTextureWidth + MapSettings.TYLESIZE/2, y + 30);
         decorationI = i;
         decorationJ = j;
-        if(id == 19) System.out.println("EX " + i + " " + j);
     }
+    Rectangle interactionBox;
 
     public void setCollisionBox() {
     }
 
     public void setHitbox() {
+    }
+
+    public void setInteractionBox() {
     }
 
     @Override
@@ -38,6 +41,11 @@ abstract public class Decoration extends InteractiveObject {
     public Rectangle hitBox() {
         setHitbox();
         return hitBox;
+    }
+
+    public Rectangle interactionBox() {
+        setInteractionBox();
+        return interactionBox;
     }
 
     @Override public void render(){
