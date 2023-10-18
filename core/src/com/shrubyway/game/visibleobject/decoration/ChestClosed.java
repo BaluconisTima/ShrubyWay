@@ -79,7 +79,6 @@ public class ChestClosed extends Decoration {
         }
 
         for(Item item : dropItems){
-            System.out.println(item.id);
             float x = (float) (Math.random() * 30 - 15);
             VisibleItem temp2 = new VisibleItem(item, position.x + 100 + x,
                     position.y - 10);

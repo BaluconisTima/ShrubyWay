@@ -42,8 +42,10 @@ public class GlobalAssetManager {
                 String extension = file.extension();
                 if (extension.equals("png")) {
                     addAsset(file.path(), com.badlogic.gdx.graphics.Texture.class);
-                } else if (extension.equals("wav") || extension.equals("mp3") || extension.equals("ogg")) {
+                } else if (extension.equals("wav") || extension.equals("ogg")) {
                     addAsset(file.path(), com.badlogic.gdx.audio.Sound.class);
+                } else if (extension.equals("mp3")) {
+                    addAsset(file.path(), com.badlogic.gdx.audio.Music.class);
                 }
             }
         }
@@ -61,8 +63,10 @@ public class GlobalAssetManager {
                     String extension = fileHandle.extension();
                     if (extension.equals("png")) {
                         addAsset(fileHandle.path(), com.badlogic.gdx.graphics.Texture.class);
-                    } else if (extension.equals("wav") || extension.equals("ogg") || extension.equals("mp3")) {
+                    } else if (extension.equals("wav") || extension.equals("ogg")) {
                         addAsset(fileHandle.path(), com.badlogic.gdx.audio.Sound.class);
+                    } else if (extension.equals("mp3")) {
+                        addAsset(fileHandle.path(), com.badlogic.gdx.audio.Music.class);
                     }
                 }
             }

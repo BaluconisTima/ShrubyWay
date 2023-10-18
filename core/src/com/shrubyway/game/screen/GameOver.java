@@ -26,7 +26,7 @@ public class GameOver extends Screen {
     public Boolean tryingAgain = false, exit = false;
 
     public GameOver() {
-     //   SoundSettings.changeMusic("music/Menu.mp3");
+        SoundSettings.changeMusic("music/Menu.mp3");
     }
 
     @Override public void updateScreen() {

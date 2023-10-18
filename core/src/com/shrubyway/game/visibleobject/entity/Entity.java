@@ -47,6 +47,10 @@ abstract public class Entity extends InteractiveObject {
         soundAttack = GlobalAssetManager.get("sounds/EFFECTS/Swing.ogg", Sound.class);
     }
 
+    public Boolean dead() {
+        return (action == 3);
+    }
+
 
     public float getSpeed() {
         float tempSpeed = 0; tempSpeed += (speed);

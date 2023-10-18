@@ -13,15 +13,15 @@ public class FruitExplosion extends Explosion {
 
     public FruitExplosion(float x, float y) {
 
-        super(x - 400, y - 400, 8, 600);
-        float explosionPower = 200;
+        super(x - 400, y - 400, 8, 700);
+        float explosionPower = 350;
         Vector2 playerPosition = Game.player.positionCenter();
 
         explosionPower *= Math.max(0, (1 - playerPosition.dst(position) / 1700));
 
 
         CameraEffects.newExplosion(explosionPower);
-        GlobalSoundManager.addSound(new SoundAtPosition(GlobalAssetManager.get("sounds/EFFECTS/BerryExplosion.wav",
+        GlobalSoundManager.addSound(new SoundAtPosition(GlobalAssetManager.get("sounds/EFFECTS/FruitExplosion.ogg",
                 Sound.class),
                 new Vector2(x, y)));
         animation = animator.toAnimation(GlobalAssetManager.get("effects/fruitExplosion.png", Texture.class),

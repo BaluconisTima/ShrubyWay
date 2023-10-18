@@ -143,10 +143,10 @@ public class Game extends Screen implements java.io.Serializable {
                 ShrubyWay.inputProcessor.mousePosition().y
                         + localCamera.position.y - Gdx.graphics.getHeight() / 2);
 
-       /* if(ShrubyWay.inputProcessor.isCPressed()) {
-           saveGame();
+        if(ShrubyWay.inputProcessor.isCPressed()) {
+          objectsList.add(new VisibleItem(new Item(10), mousePosition.x, mousePosition.y));
         }
-        if(ShrubyWay.inputProcessor.isLPressed()) {
+        /*if(ShrubyWay.inputProcessor.isLPressed()) {
           loadGame();
         } */
 
@@ -330,6 +330,9 @@ public class Game extends Screen implements java.io.Serializable {
             temp.add(obj);
         }
         map.update(player.positionLegs());
+        if(player.dead()) {
+            SoundSettings.changeMusic(null);
+        }
 
         for (VisibleObject obj : temp) {
             if (!objectsList.getList().contains(obj)) continue;
@@ -486,6 +489,9 @@ public class Game extends Screen implements java.io.Serializable {
         inventory.render(mousePos);
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
         elementPumping.render(ShrubyWay.inputProcessor.mousePosition());
+       /* TextDrawer.drawBlack(player.positionLegs().x / MapSettings.TYLESIZE + " "
+                + player.positionLegs().y / MapSettings.TYLESIZE, 500, 500, 1); */
+
 
         if (gamePaused) {
              GlobalBatch.render(GlobalAssetManager.get("interface/shadow.png", Texture.class),
@@ -544,7 +550,7 @@ public class Game extends Screen implements java.io.Serializable {
             loadingScreen.updateStatus((int)(GlobalAssetManager.getProgress() * 100));
             loadingScreen.updateScreen();
         } else {
-           // SoundSettings.changeMusic("music/Forest.mp3");
+            SoundSettings.changeMusic("music/Forest Theme.mp3");
             menuInputWorking();
             if (!gamePaused) gameTick(Gdx.graphics.getDeltaTime());
         }

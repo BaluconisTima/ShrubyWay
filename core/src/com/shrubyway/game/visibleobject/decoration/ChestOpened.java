@@ -15,7 +15,6 @@ public class ChestOpened extends Decoration {
         position.set(x - halfTextureWidth + MapSettings.TYLESIZE/2, y + 30);
         decorationI = i;
         decorationJ = j;
-        //System.out.println(decorationI + " " + decorationJ);
         lastHitTime = AnimationGlobalTime.time();
     }
     @Override public void setCollisionBox() {
