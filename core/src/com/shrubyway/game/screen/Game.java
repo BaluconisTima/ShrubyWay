@@ -22,6 +22,7 @@ import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.map.MapSettings;
+import com.shrubyway.game.map.ScreenGrid;
 import com.shrubyway.game.myinterface.*;
 import com.shrubyway.game.saver.GameSaver;
 import com.shrubyway.game.sound.GlobalSoundManager;
@@ -39,7 +40,6 @@ import com.shrubyway.game.visibleobject.entity.Shruby;
 import com.shrubyway.game.visibleobject.entity.mob.Mob;
 import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 
 import java.io.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -47,6 +47,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class Game extends Screen implements java.io.Serializable {
     static public OrthographicCamera localCamera;
     Vector2 mousePosition;
+    static public ScreenGrid screenGrid;
 
     public boolean gameOver = false, menu = false;
     LoadingScreen loadingScreen;
@@ -90,6 +91,7 @@ public class Game extends Screen implements java.io.Serializable {
                         GlobalAssetManager.get("interface/m2.png", Texture.class), GlobalBatch.centerX() -
                 bWidht / 2, GlobalBatch.centerY() - bHeight / 2 - bHeight - 50);
         inventory = new Inventory();
+        screenGrid = new ScreenGrid();
         EntityManager.init();
         DecorationsManager.init();
         ItemManager.init();
@@ -109,7 +111,7 @@ public class Game extends Screen implements java.io.Serializable {
         objectsList.add(player);
         AnimationGlobalTime.clear();
         if(!GameSaver.checkSaveFile()) {
-            saveGame(false);
+         //   saveGame(false);
         }
         loadGame();
     }
@@ -144,7 +146,7 @@ public class Game extends Screen implements java.io.Serializable {
                         + localCamera.position.y - Gdx.graphics.getHeight() / 2);
 
         if(ShrubyWay.inputProcessor.isCPressed()) {
-          objectsList.add(new VisibleItem(new Item(10), mousePosition.x, mousePosition.y));
+          objectsList.add(MobsManager.newOf(3, mousePosition.x, mousePosition.y));
         }
         /*if(ShrubyWay.inputProcessor.isLPressed()) {
           loadGame();
@@ -324,11 +326,16 @@ public class Game extends Screen implements java.io.Serializable {
             MobsManager.playerAddUpdate(1);
             MobsManager.tryGenerateMob(player.positionLegs());
         }
+
+        screenGrid.build(objectsList.getList());
+
         temp.clear();
         temp2.clear();
+
         for (VisibleObject obj : objectsList.getList()) {
             temp.add(obj);
         }
+
         map.update(player.positionLegs());
         if(player.dead()) {
             SoundSettings.changeMusic(null);
@@ -357,7 +364,7 @@ public class Game extends Screen implements java.io.Serializable {
                 exp.damaged = true;
             } else
             if (obj instanceof Bullet bul) {
-                bul.processBullet(player.positionCenter(), delta);
+                bul.processBullet(delta);
 
             } else if (obj instanceof Entity ent) {
                 ent.liquidStatus(map.checkLiquid(ent.positionLegs()));
@@ -440,13 +447,16 @@ public class Game extends Screen implements java.io.Serializable {
         localCamera.position.add(new Vector3(-CameraEffects.getAddPositionExplosion().x,
                 -CameraEffects.getAddPositionExplosion().y, 0));
         localCamera.position.lerp(new Vector3(player.positionCenter(),0), 0.1f * delta * 60f);
-        CameraEffects.update();
+        CameraEffects.update(delta);
         localCamera.position.add(new Vector3(CameraEffects.getAddPositionExplosion(), 0));
         localCamera.update();
     }
 
     public void gameTick(float delta) {
         delta = Math.min(delta, 1f);
+
+        long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+        lastDelta = delta;
         playerInputWorking(delta);
         interfaceInputWorking(delta);
         globalProcessing(delta);
@@ -477,6 +487,7 @@ public class Game extends Screen implements java.io.Serializable {
             obj.render();
         }
     }
+    float lastDelta = 0;
 
     public void renderInterface() {
         player.interactionBox().render();
@@ -489,9 +500,7 @@ public class Game extends Screen implements java.io.Serializable {
         inventory.render(mousePos);
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
         elementPumping.render(ShrubyWay.inputProcessor.mousePosition());
-       /* TextDrawer.drawBlack(player.positionLegs().x / MapSettings.TYLESIZE + " "
-                + player.positionLegs().y / MapSettings.TYLESIZE, 500, 500, 1); */
-
+        //TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
 
         if (gamePaused) {
              GlobalBatch.render(GlobalAssetManager.get("interface/shadow.png", Texture.class),
@@ -546,6 +555,7 @@ public class Game extends Screen implements java.io.Serializable {
                     gameInitialized = true;
                     init();
                     updateScreen();
+                    return;
                 }
             loadingScreen.updateStatus((int)(GlobalAssetManager.getProgress() * 100));
             loadingScreen.updateScreen();

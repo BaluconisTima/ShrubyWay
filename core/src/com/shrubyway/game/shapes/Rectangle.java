@@ -14,6 +14,9 @@ public class Rectangle implements java.io.Serializable {
         topLeftCorner.set(x, y);
         bottomRightCorner.set(x + width, y + height);
     }
+    public boolean real() {
+        return (topLeftCorner.x < bottomRightCorner.x && topLeftCorner.y < bottomRightCorner.y);
+    }
     public boolean overlaps(Rectangle temp) {
         if(temp == null) return false;
         if(topLeftCorner.x >= bottomRightCorner.x ||

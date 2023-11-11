@@ -23,7 +23,7 @@ public abstract class Bullet extends InteractiveObject {
         Game.objectsList.del(this);
     }
 
-    public void processBullet(Vector2 playerPossition, float delta) {
+    public void processBullet(float delta) {
         this.tryMove(delta);
         if(this.throwingTime + 10f < AnimationGlobalTime.time()) {
             this.die();

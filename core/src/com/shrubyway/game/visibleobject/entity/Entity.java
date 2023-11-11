@@ -18,7 +18,6 @@ import com.shrubyway.game.sound.GlobalSoundManager;
 import com.shrubyway.game.sound.SoundAtPosition;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.InteractiveObject;
-import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 import com.shrubyway.game.visibleobject.entity.mob.Mob;
 
@@ -277,15 +276,7 @@ abstract public class Entity extends InteractiveObject {
 
     protected boolean checkCollisions(){
         Rectangle temp = collisionBox();
-        for(VisibleObject object : Game.objectsList.getList()) {
-            if(!(object instanceof InteractiveObject)) continue;
-            if(object == this) continue;
-            if(((InteractiveObject)object).collisionBox() == null) continue;
-            if(((InteractiveObject)object).collisionBox().overlaps(temp)) {
-                return true;
-            }
-        }
-        return false;
+        return Game.screenGrid.checkCollision(temp, this);
     };
     public void liquidStatus(boolean isLiquid) {
         inLiquid = isLiquid;

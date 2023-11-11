@@ -65,7 +65,7 @@ public class ThrowableItem extends Bullet {
     Vector2 temp = new Vector2(0,0);
 
     public void processBullet(Vector2 playerPossition, float delta) {
-           super.processBullet(playerPossition, delta);
+           super.processBullet(delta);
            if(rotation) {
                temp.set(playerPossition.x, playerPossition.y);
                temp.sub(position.x, position.y);

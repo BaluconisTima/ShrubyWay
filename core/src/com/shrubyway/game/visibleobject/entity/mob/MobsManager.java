@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class MobsManager {
-    public static int mobsNumber = 3;
+    public static int mobsNumber = 4;
     public static Constructor<? extends Mob> mobs[] = new Constructor[mobsNumber];
     private static float mobSpawnCost[] = new float[mobsNumber];
     public static Integer mobExp[] = new Integer[mobsNumber];
@@ -46,6 +46,15 @@ public class MobsManager {
         dropTableChance[2] = new ArrayList<>();
         mobSpawnCost[2] = 10;
         mobExp[2] = 0;
+
+        mobs[3] = (ExplerryBusher.class).getDeclaredConstructor(float.class, float.class);
+        mobs[3].newInstance(0, 0);
+        dropTableItem[3] = new ArrayList<>(Arrays.asList(8, 8, 1));
+        dropTableChance[3] = new ArrayList<>(Arrays.asList(0.8f, 0.2f, 0.6f));
+        mobSpawnCost[3] = 10;
+        mobExp[3] = 250;
+
+
 
         } catch (Exception e) {
             e.printStackTrace();

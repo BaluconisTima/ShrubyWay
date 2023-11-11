@@ -3,6 +3,7 @@ package com.shrubyway.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Texture;
 
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -30,6 +31,15 @@ public class GlobalAssetManager {
             assetManager.load(fileName, type);
             assetManager.finishLoadingAsset(fileName);
         }
+        if (type == Texture.class) {
+            Texture texture = assetManager.get(fileName, Texture.class);
+            Texture.TextureFilter minFilter = Texture.TextureFilter.Linear;
+            Texture.TextureFilter magFilter = Texture.TextureFilter.Nearest;
+            texture.setFilter(minFilter, magFilter);
+            texture.setWrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
+            return (T) texture;
+        }
+
         return assetManager.get(fileName, type);
     }
 
@@ -76,8 +86,8 @@ public class GlobalAssetManager {
     }
 
     static public void loadAll() {
-       // loadFromJar();
-        //ONLY FOR LOCAL TEST! DELETE THIS LINE IF YOU WANT TO BUILD JAR FILE!
+        //loadFromJar();
+        // ONLY FOR LOCAL TEST! DELETE THIS LINE IF YOU WANT TO BUILD JAR FILE!
        FileHandle assetsFolder = Gdx.files.local("");
        loadRec(assetsFolder);
     }

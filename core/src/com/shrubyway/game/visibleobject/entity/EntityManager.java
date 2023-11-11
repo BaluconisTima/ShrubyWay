@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EntityManager {
-    static int entityCount = 4;
+    static int entityCount = 5;
     static String actions[][] = new String[entityCount][];
     static boolean looping[][] = new boolean[entityCount][];
     static CopyOnWriteArrayList<String>[] actionTypes[] = new CopyOnWriteArrayList[entityCount][];
@@ -18,8 +18,8 @@ public class EntityManager {
     static public CopyOnWriteArrayList<CopyOnWriteArrayList<Animation<TextureRegion>[]>> animations[]
             = new CopyOnWriteArrayList[entityCount];
 
-    static Sound[] soundDeath = new Sound[entityCount];
-    static Sound[] soundDamage = new Sound[entityCount];
+    static public Sound[] soundDeath = new Sound[entityCount];
+    static public Sound[] soundDamage = new Sound[entityCount];
 
     public static void init() {
         actions[0] = new String[]{"AFK", "WALK", "ATTACK", "DEATH", "PORTAL", "HARMONICA", "EAT"};
@@ -80,6 +80,19 @@ public class EntityManager {
         soundDeath[3] =
                 GlobalAssetManager.get("sounds/EFFECTS/ExplerryDeath.wav", Sound.class);
         soundDamage[3] = GlobalAssetManager.get("sounds/EFFECTS/ExplerryDamage.ogg", Sound.class);
+
+        actions[4] = new String[]{"AFK", "WALK", "ATTACK", "DEATH"};
+        looping[4] = new boolean[]{true, true, false, false};
+        actionTypes[4] = new CopyOnWriteArrayList[]{
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("UP")),
+                new CopyOnWriteArrayList<>(Arrays.asList("1")) };
+        frameCount[4] = new int[]{30, 30, 12, 22};
+        animations[4] = AnimationLoader.load("ENTITIES/EXPLERRY BUSHER", actions[4], actionTypes[4], frameCount[4]);
+        soundDeath[4] =
+                GlobalAssetManager.get("sounds/EFFECTS/MobDeath.ogg", Sound.class);
+        soundDamage[4] = GlobalAssetManager.get("sounds/EFFECTS/BerryBush.wav", Sound.class);
     }
 
 
