@@ -12,12 +12,42 @@ import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class VisualObjectListSaver implements java.io.Serializable {
     ArrayList mobsID, mobsPosition, mobsHealth;
     ArrayList itemsID, itemsPosition;
     ArrayList decorationsID, decorationsPosition, decorationsIJ;
+
+
+    public VisualObjectListSaver(Set<VisibleObject> list)  {
+        mobsID = new ArrayList<Integer>();
+        mobsPosition = new ArrayList<Vector2>();
+        mobsHealth = new ArrayList<Health>();
+        itemsID = new ArrayList<Integer>();
+        itemsPosition = new ArrayList<Vector2>();
+        decorationsID = new ArrayList<Integer>();
+        decorationsPosition = new ArrayList<Vector2>();
+        decorationsIJ = new ArrayList<Vector2>();
+
+        for (VisibleObject object : list) {
+            if(object instanceof Mob mob) {
+                mobsID.add(mob.id);
+                mobsPosition.add(mob.position);
+                mobsHealth.add(mob.health);
+            }
+            else if(object instanceof VisibleItem item) {
+                itemsID.add(item.item.id);
+                itemsPosition.add(item.position);
+            }
+            else if(object instanceof Decoration decoration){
+                decorationsID.add(decoration.id);
+                decorationsPosition.add(decoration.position);
+                decorationsIJ.add(new Vector2(decoration.decorationI, decoration.decorationJ));
+            }
+        }
+    }
 
     public VisualObjectListSaver(List<VisibleObject> list) {
         mobsID = new ArrayList<Integer>();

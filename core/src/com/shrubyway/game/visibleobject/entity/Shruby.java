@@ -3,8 +3,8 @@ package com.shrubyway.game.visibleobject.entity;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.Health;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
@@ -23,7 +23,7 @@ public class Shruby extends Entity {
         position.set(x, y);
         regionWidth = (EntityManager.animations[entityID].get(0).get(0)[0].getKeyFrame(0)).getRegionWidth();
         regionHeight = EntityManager.animations[entityID].get(0).get(0)[0].getKeyFrame(0).getRegionHeight();
-        Sound sound = GlobalAssetManager.get("sounds/EFFECTS/PortalOut.ogg", Sound.class);
+        Sound sound = ShrubyWay.assetManager.get("sounds/EFFECTS/PortalOut.ogg", Sound.class);
         sound.play(SoundSettings.soundVolume);
         animationTime = 0;
     }

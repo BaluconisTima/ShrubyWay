@@ -9,13 +9,17 @@ import com.shrubyway.game.screen.*;
 import com.shrubyway.game.sound.SoundSettings;
 
 public class ShrubyWay extends ApplicationAdapter {
-    static Screen screen;
+    static public Screen screen;
     static public MyInputAdapter inputProcessor = new MyInputAdapter();
+
+    static public GlobalAssetManager assetManager = new GlobalAssetManager();
+
 
     @Override public void resize(int width, int height) {
         if(width == 0 || height == 0) return;
         GlobalBatch.changeScale(width, height);
     }
+
     @Override public void create() {
         GlobalBatch.changeScale(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_LINEAR);
@@ -23,7 +27,7 @@ public class ShrubyWay extends ApplicationAdapter {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         GlobalBatch.create();
         Gdx.graphics.setVSync(true);
-        screen = new Menu();
+        screen = new LoadingScreen();
         Gdx.input.setInputProcessor(inputProcessor);
     }
 
@@ -31,34 +35,16 @@ public class ShrubyWay extends ApplicationAdapter {
         SoundSettings.update();
         AnimationGlobalTime.update();
             screen.updateScreen();
-            if(screen instanceof Menu men && men.goToGame) {
-                Menu.goToGame = false;
-                screen = new Game();
-                render();
-            } else if(screen instanceof Game game) {
-                if(game.gameOver) {
-                    game.gameOver = false;
-                    screen = new GameOver();
-                    render();
-                } else if(game.menu) {
-                    game.menu = false;
-                    screen = new Menu();
-                    render();
-                }
-            } else if(screen instanceof GameOver gameover) {
-                   if(gameover.tryingAgain) {
-                       gameover.tryingAgain = false;
-                       screen = new Game();
-                       render();
-                   } else if(gameover.exit) {
-                       gameover.exit = false;
-                       screen = new Menu();
-                       render();
-                   }
-            }
             GlobalBatch.begin();
             screen.renderScreen();
             GlobalBatch.end();
+    }
+
+    @Override public void dispose() {
+        GlobalBatch.dispose();
+        screen.dispose();
+        inputProcessor.dispose();
+        assetManager.dispose();
     }
 
     @Override public void pause() {

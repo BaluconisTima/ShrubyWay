@@ -2,7 +2,7 @@ package com.shrubyway.game.visibleobject.decoration;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
@@ -17,7 +17,7 @@ public class Oak extends Decoration {
     @Override public void hit() {
         super.hit();
         GlobalSoundManager.addSound(new SoundAtPosition(
-        GlobalAssetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
+        ShrubyWay.assetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
         if(Math.random() < 0.2) {
             Game.objectsList.add(new VisibleItem(ItemManager.newItem(4),
                     position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),

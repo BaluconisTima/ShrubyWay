@@ -50,4 +50,8 @@ public class CameraEffects {
         return addPositionExplosion;
     }
 
+    static public void dispose() {
+        addPositionExplosion = null;
+    }
+
 }

@@ -67,4 +67,12 @@ public class Health implements java.io.Serializable {
     public float timeAfterHeal() {
         return AnimationGlobalTime.time() - lastHealTime;
     }
+
+    public void dispose() {
+        health = 0;
+        maxHealth = 0;
+        cooldown = 0;
+        lastHitTime = 0;
+        lastHealTime = 0;
+    }
 }

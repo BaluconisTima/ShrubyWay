@@ -8,4 +8,9 @@ public class Pair<F, S> {
         this.first = first;
         this.second = second;
     }
+
+    public void dispose() {
+        first = null;
+        second = null;
+    }
 }

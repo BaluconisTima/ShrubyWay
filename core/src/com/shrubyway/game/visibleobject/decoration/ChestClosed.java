@@ -1,6 +1,6 @@
 package com.shrubyway.game.visibleobject.decoration;
 
-import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.map.MapSettings;
@@ -62,7 +62,7 @@ public class ChestClosed extends Decoration {
     }
 
     @Override public void interact() {
-        GlobalAssetManager.get("sounds/EFFECTS/chest.ogg", com.badlogic.gdx.audio.Sound.class).play(
+        ShrubyWay.assetManager.get("sounds/EFFECTS/chest.ogg", com.badlogic.gdx.audio.Sound.class).play(
                 SoundSettings.soundVolume);
         Decoration temp = DecorationsManager.newOf(20);
         temp.change(decorationI * MapSettings.TYLESIZE,

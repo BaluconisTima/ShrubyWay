@@ -3,16 +3,17 @@ package com.shrubyway.game.screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.GlobalBatch;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.myinterface.TextDrawer;
 
 import java.util.ArrayList;
 
 public class LoadingScreen extends Screen{
-    static Texture background = new Texture("interface/SWbackgound.png");
-    static Texture loadingBar = new Texture("interface/loading.png");
-    static Texture loadStatus = new Texture("interface/loadingStatus.png");
-    static Texture logo = new Texture("interface/SWlogo.png");
-    static Texture phrase = new Texture("interface/phrase.png");
+    static Texture background;
+    static Texture loadingBar;
+    static Texture loadStatus;
+    static Texture logo;
+    static Texture phrase;
     static int maxStatus = 0;
     static ArrayList<String> phrases = new ArrayList<>();
     static {
@@ -38,18 +39,53 @@ public class LoadingScreen extends Screen{
 
     }
     static int phraseOfday = 0;
+
+    public LoadingScreen() {
+        if(background == null) ShrubyWay.assetManager.addAsset("interface/SWbackgound.png", Texture.class);
+        if(loadingBar == null) ShrubyWay.assetManager.addAsset("interface/loading.png", Texture.class);
+        if(loadStatus == null) ShrubyWay.assetManager.addAsset("interface/loadingStatus.png", Texture.class);
+        if(logo == null) ShrubyWay.assetManager.addAsset("interface/SWlogo.png", Texture.class);
+        if(phrase == null) ShrubyWay.assetManager.addAsset("interface/phrase.png", Texture.class);
+
+        ShrubyWay.assetManager.load("interface/SWbackgound.png", Texture.class);
+        ShrubyWay.assetManager.load("interface/loading.png", Texture.class);
+        ShrubyWay.assetManager.load("interface/loadingStatus.png", Texture.class);
+        ShrubyWay.assetManager.load("interface/SWlogo.png", Texture.class);
+        ShrubyWay.assetManager.load("interface/phrase.png", Texture.class);
+
+
+        background = ShrubyWay.assetManager.get("interface/SWbackgound.png", Texture.class);
+        loadingBar = ShrubyWay.assetManager.get("interface/loading.png", Texture.class);
+        loadStatus = ShrubyWay.assetManager.get("interface/loadingStatus.png", Texture.class);
+        logo = ShrubyWay.assetManager.get("interface/SWlogo.png", Texture.class);
+        phrase = ShrubyWay.assetManager.get("interface/phrase.png", Texture.class);
+        startLoading();
+    }
+
     static public void updateStatus(int status) {
         maxStatus = status;
     }
 
+    private void goToMenu() {
+        ShrubyWay.screen = new Menu();
+    }
+
     static public void startLoading() {
+        ShrubyWay.assetManager.loadAll();
         maxStatus = 0;
         loadingStatus = 0;
         phraseOfday = (int) (Math.random() * phrases.size());
     }
+
+
      @Override public void updateScreen() {
+         if (ShrubyWay.assetManager.update()) {
+             goToMenu();
+         }
+        updateStatus((int)(ShrubyWay.assetManager.getProgress() * 100));
         loadingStatus = maxStatus;
     }
+
     @Override public void renderScreen() {
         float centerX = GlobalBatch.centerX(), centerY = GlobalBatch.centerY();
 

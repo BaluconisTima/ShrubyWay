@@ -4,7 +4,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.CameraEffects;
-import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.sound.GlobalSoundManager;
 import com.shrubyway.game.sound.SoundAtPosition;
@@ -21,10 +21,10 @@ public class FruitExplosion extends Explosion {
 
 
         CameraEffects.newExplosion(explosionPower);
-        GlobalSoundManager.addSound(new SoundAtPosition(GlobalAssetManager.get("sounds/EFFECTS/FruitExplosion.ogg",
+        GlobalSoundManager.addSound(new SoundAtPosition(ShrubyWay.assetManager.get("sounds/EFFECTS/FruitExplosion.ogg",
                 Sound.class),
                 new Vector2(x, y)));
-        animation = animator.toAnimation(GlobalAssetManager.get("effects/fruitExplosion.png", Texture.class),
+        animation = animator.toAnimation(ShrubyWay.assetManager.get("effects/fruitExplosion.png", Texture.class),
                 12, 0, 0);
 
     }

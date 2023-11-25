@@ -24,14 +24,19 @@ public class GlobalBatch {
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
     }
+    public static void dispose() {
+        batch.dispose();
+        scale = 1f;
+    }
     public static void begin() {
         ScreenUtils.clear(0, 0, 0, 1);
         batch.begin();
     }
     public static void end() {
-
         batch.end();
     }
+
+
 
     public static void setProjectionMatrix(OrthographicCamera camera) {
         camera.position.scl(scale);

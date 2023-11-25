@@ -16,13 +16,9 @@ import com.shrubyway.game.sound.SoundSettings;
 
 
 public class Menu extends Screen {
-    static Texture Background = new Texture("interface/SWbackgound.png");
-    static Texture logo = new Texture("interface/SWlogo.png");
-
-    static Texture Shruby = new Texture("interface/Shruby.png");
-
-    static Texture menuLight = new Texture("interface/lightMenu.png");
-    static public Boolean goToGame = false;
+    static Texture Background, logo, Shruby, menuLight;
+    Sound sound;
+    static Button playButton, settingsButton, resetButton, exitButton, achivementsButton;
 
     static Vector2 topLeftCorner = GlobalBatch.topLeftCorner(),
             bottomRightCorner = GlobalBatch.bottomRightCorner(),
@@ -32,11 +28,7 @@ public class Menu extends Screen {
 
     static float centerX = GlobalBatch.centerX(),
             centerY = GlobalBatch.centerY();
-    static Animator animator = new Animator();
-    static Animation<TextureRegion> eyes = animator.toAnimation(new Texture("interface/EYES.png"),
-            134, 0, 0, 1/24f);
-
-
+    static Animation<TextureRegion> eyes;
     static int eyesCount = 32;
     static Vector2 eyesPositions[] = new Vector2[eyesCount];
     static float startTime[] = new float[eyesCount];
@@ -50,36 +42,50 @@ public class Menu extends Screen {
         }
     }
 
-    Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/Click.ogg"));
-
-    static Button playButton = new Button(new Texture("interface/play.png"),
-            new Texture("interface/playSel.png"), centerX - 272, 45) {
-    },
-    settingsButton = new Button(new Texture("interface/settings.png"),
-                    new Texture("interface/settingsSel.png"), centerX - 680, 65) {
-    },
-    resetButton = new Button(new Texture("interface/reset.png"),
-            new Texture("interface/resetSel.png"), centerX + 680 - 347, 65) {
-    },
-    exitButton = new Button(new Texture("interface/exit.png"),
-            new Texture("interface/exitSel.png"), topLeftCorner.x + 30, topLeftCorner.y - 150) {
-    },
-    achivementsButton = new Button(new Texture("interface/ach.png"),
-            new Texture("interface/achSel.png"), topRightCorner.x - 170, topRightCorner.y - 145) {
-    };
 
 
     public Menu() {
         SoundSettings.changeMusic("music/Menu.mp3");
+        // loading from assetManager
+        if(Background == null) Background = ShrubyWay.assetManager.get("interface/SWbackgound.png", Texture.class);
+        if(logo == null) logo = ShrubyWay.assetManager.get("interface/SWlogo.png", Texture.class);
+        if(Shruby == null) Shruby = ShrubyWay.assetManager.get("interface/Shruby.png", Texture.class);
+        if(menuLight == null) menuLight = ShrubyWay.assetManager.get("interface/lightMenu.png", Texture.class);
+        if(eyes == null) eyes = Animator.toAnimation(ShrubyWay.assetManager.get("interface/EYES.png", Texture.class),
+                134, 0, 0, 1/24f);
+
+        if(playButton == null) playButton = new Button(ShrubyWay.assetManager.get("interface/play.png", Texture.class),
+                ShrubyWay.assetManager.get("interface/playSel.png", Texture.class), centerX - 272, 45) {
+        };
+        if(settingsButton == null) settingsButton = new Button(ShrubyWay.assetManager.get("interface/settings.png", Texture.class),
+                ShrubyWay.assetManager.get("interface/settingsSel.png", Texture.class), centerX - 680, 65) {
+        };
+        if(resetButton == null) resetButton = new Button(ShrubyWay.assetManager.get("interface/reset.png", Texture.class),
+                ShrubyWay.assetManager.get("interface/resetSel.png", Texture.class), centerX + 680 - 347, 65) {
+        };
+        if(exitButton == null) exitButton = new Button(ShrubyWay.assetManager.get("interface/exit.png", Texture.class),
+                ShrubyWay.assetManager.get("interface/exitSel.png", Texture.class), topLeftCorner.x + 30, topLeftCorner.y - 150) {
+        };
+
+        if(achivementsButton == null) achivementsButton = new Button(ShrubyWay.assetManager.get("interface/ach.png", Texture.class),
+                ShrubyWay.assetManager.get("interface/achSel.png", Texture.class), topRightCorner.x - 170, topRightCorner.y - 145) {
+        };
+        if(sound == null) sound = ShrubyWay.assetManager.get("sounds/EFFECTS/Click.ogg", Sound.class);
     }
 
+
+    private void game() {
+        ShrubyWay.screen = new Game();
+        ShrubyWay.screen.updateScreen();
+    }
 
 
     @Override public void updateScreen() {
         if(ShrubyWay.inputProcessor.isMouseLeft()) {
             if (playButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
                 sound.play(SoundSettings.soundVolume);
-                goToGame = true;
+                game();
+
             }
             if (settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
                 sound.play(SoundSettings.soundVolume);
@@ -140,4 +146,18 @@ public class Menu extends Screen {
         else resetButton.render();
 
     }
+
+    @Override public void dispose() {
+        /*Background.dispose();
+        logo.dispose();
+        Shruby.dispose();
+        menuLight.dispose();
+        eyes.getKeyFrames()[0].getTexture().dispose();
+        playButton.dispose();
+        settingsButton.dispose();
+        exitButton.dispose();
+        achivementsButton.dispose();
+        resetButton.dispose(); */
+    }
+
 }

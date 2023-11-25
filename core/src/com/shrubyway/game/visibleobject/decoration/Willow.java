@@ -1,7 +1,7 @@
 package com.shrubyway.game.visibleobject.decoration;
 
 import com.badlogic.gdx.audio.Sound;
-import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.screen.Game;
@@ -32,7 +32,7 @@ public class Willow extends Decoration {
     @Override public void hit() {
         super.hit();
         GlobalSoundManager.addSound(new SoundAtPosition(
-                GlobalAssetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
+                ShrubyWay.assetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
 
         if(Event.happened(Event.getEvent("harmonicaDroped"))) return;
         if(Math.random() * 100 < 10) {

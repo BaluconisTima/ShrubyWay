@@ -5,8 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.sound.SoundSettings;
@@ -47,7 +47,7 @@ public class Background implements Serializable {
         for (int i = 0; i < MapSettings.TILETYPES; i++)
             for (int j = 0; j < 2; j++) {
                 String way = "TILES/" + i + "/" + j + "/";
-                Texture texture = GlobalAssetManager.get( way + "0001.png", Texture.class);
+                Texture texture = ShrubyWay.assetManager.get( way + "0001.png", Texture.class);
                 tile[i][j] = Animator.toAnimation(texture, texture.getWidth() / texture.getHeight(), 0, 0);
             }
     }
@@ -73,12 +73,12 @@ public class Background implements Serializable {
     private void soundLoader() {
         for (int i = 0; i < MapSettings.TILETYPES; i++) {
             tileSound[i] = -1;
-            stepSound[i][0] = GlobalAssetManager.get( stepSoundWay[i] + "_0.ogg", Sound.class);
-            stepSound[i][1] = GlobalAssetManager.get(stepSoundWay[i] + "_1.ogg", Sound.class);
+            stepSound[i][0] = ShrubyWay.assetManager.get( stepSoundWay[i] + "_0.ogg", Sound.class);
+            stepSound[i][1] = ShrubyWay.assetManager.get(stepSoundWay[i] + "_1.ogg", Sound.class);
         }
 
         for (int to : tileWithSound) {
-            sound = GlobalAssetManager.get("sounds/TILES/" + to + ".ogg", Sound.class);
+            sound = ShrubyWay.assetManager.get("sounds/TILES/" + to + ".ogg", Sound.class);
             tileSound[to] = sound.play();
             sound.setLooping(tileSound[to], true);
             sound.setVolume(tileSound[to], 0);
@@ -194,9 +194,9 @@ public class Background implements Serializable {
         y = (y + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
 
         long temp = stepSound[backgroundMap[x][y] - '0']
-                [(int) (Math.random() * 1.999)].play();
+                [(int) (Math.random() * 2)].play();
 
-        sound.setPitch(temp, 1 + (float) Math.random() * 0.2f - 0.1f);
+        //sound.setPitch(temp, 1 + (float) Math.random() * 0.2f - 0.1f);
         tempDistance.set(step.x, step.y);
 
 

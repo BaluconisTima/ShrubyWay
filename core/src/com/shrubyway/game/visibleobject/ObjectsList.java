@@ -27,6 +27,14 @@ public class ObjectsList {
         Collections.sort(list);
     }
 
+    public void dispose() {
+        for(VisibleObject object : list) {
+            object.dispose();
+        }
+        list.clear();
+        list = null;
+    }
+
 
 
 }

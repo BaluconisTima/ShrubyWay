@@ -11,7 +11,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.shrubyway.game.CameraEffects;
-import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
@@ -48,9 +47,6 @@ public class Game extends Screen implements java.io.Serializable {
     static public OrthographicCamera localCamera;
     Vector2 mousePosition;
     static public ScreenGrid screenGrid;
-
-    public boolean gameOver = false, menu = false;
-    LoadingScreen loadingScreen;
     Event event;
 
     public static ObjectsList objectsList = new ObjectsList();
@@ -65,10 +61,7 @@ public class Game extends Screen implements java.io.Serializable {
 
 
     public Game() {
-       GlobalAssetManager.loadAll();
-       if(loadingScreen == null)
-           loadingScreen = new LoadingScreen();
-       loadingScreen.startLoading();
+       init();
     }
 
     private void init() {
@@ -76,19 +69,19 @@ public class Game extends Screen implements java.io.Serializable {
         GlobalBatch.batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         GlobalBatch.batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
-        soundClick = GlobalAssetManager.get("sounds/EFFECTS/Click.ogg", Sound.class);
+        soundClick = ShrubyWay.assetManager.get("sounds/EFFECTS/Click.ogg", Sound.class);
 
-        float bWidht = GlobalAssetManager.get("interface/c1.png", Texture.class).getWidth(),
-                bHeight = GlobalAssetManager.get("interface/c1.png", Texture.class).getHeight();
+        float bWidht = ShrubyWay.assetManager.get("interface/c1.png", Texture.class).getWidth(),
+                bHeight = ShrubyWay.assetManager.get("interface/c1.png", Texture.class).getHeight();
 
-        continueButton= new Button(GlobalAssetManager.get("interface/c1.png", Texture.class),
-                GlobalAssetManager.get("interface/c2.png", Texture.class), GlobalBatch.centerX() -
+        continueButton= new Button(ShrubyWay.assetManager.get("interface/c1.png", Texture.class),
+                ShrubyWay.assetManager.get("interface/c2.png", Texture.class), GlobalBatch.centerX() -
                 bWidht / 2, GlobalBatch.centerY() - bHeight / 2 + bHeight + 50);
-        settingsButton = new Button(GlobalAssetManager.get("interface/s1.png", Texture.class),
-                        GlobalAssetManager.get("interface/s2.png", Texture.class), GlobalBatch.centerX() -
+        settingsButton = new Button(ShrubyWay.assetManager.get("interface/s1.png", Texture.class),
+                ShrubyWay.assetManager.get("interface/s2.png", Texture.class), GlobalBatch.centerX() -
                 bWidht / 2, GlobalBatch.centerY() - bHeight / 2);
-        menuButton = new Button(GlobalAssetManager.get("interface/m1.png", Texture.class),
-                        GlobalAssetManager.get("interface/m2.png", Texture.class), GlobalBatch.centerX() -
+        menuButton = new Button(ShrubyWay.assetManager.get("interface/m1.png", Texture.class),
+                ShrubyWay.assetManager.get("interface/m2.png", Texture.class), GlobalBatch.centerX() -
                 bWidht / 2, GlobalBatch.centerY() - bHeight / 2 - bHeight - 50);
         inventory = new Inventory();
         screenGrid = new ScreenGrid();
@@ -110,10 +103,12 @@ public class Game extends Screen implements java.io.Serializable {
 
         objectsList.add(player);
         AnimationGlobalTime.clear();
-        if(!GameSaver.checkSaveFile()) {
-         //   saveGame(false);
+        if(GameSaver.checkSaveFile()) {
+           loadGame();
+        } else {
+          //  GameSaver.loadDefaultSettings();
         }
-        loadGame();
+
     }
 
     public void correctPosition() {
@@ -271,7 +266,7 @@ public class Game extends Screen implements java.io.Serializable {
                 soundClick.play(SoundSettings.soundVolume);
                 resume();
                 map.pauseSounds();
-                menu = true;
+                Menu();
             }
             if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
                 soundClick.play(SoundSettings.soundVolume);
@@ -314,6 +309,14 @@ public class Game extends Screen implements java.io.Serializable {
     }
 
 
+    void gameOver() {
+        ShrubyWay.screen = new GameOver();
+    }
+
+    void Menu() {
+        ShrubyWay.screen = new Menu();
+    }
+
     CopyOnWriteArrayList<VisibleObject> temp = new CopyOnWriteArrayList<VisibleObject>();
     CopyOnWriteArrayList<InteractiveObject> temp2 = new CopyOnWriteArrayList<>();
 
@@ -324,10 +327,10 @@ public class Game extends Screen implements java.io.Serializable {
         if (AnimationGlobalTime.time() - lastMobUpdate > 1f) {
             lastMobUpdate = AnimationGlobalTime.time();
             MobsManager.playerAddUpdate(1);
-            MobsManager.tryGenerateMob(player.positionLegs());
+           // MobsManager.tryGenerateMob(player.positionLegs());
         }
 
-        screenGrid.build(objectsList.getList());
+  /*      screenGrid.build(objectsList.getList());*/
 
         temp.clear();
         temp2.clear();
@@ -438,7 +441,7 @@ public class Game extends Screen implements java.io.Serializable {
         objectsList.sort();
         if(!objectsList.contains(player)) {
             map.pauseSounds();
-            gameOver = true;
+            gameOver();
         }
         GlobalSoundManager.update(player.positionCenter());
     }
@@ -454,8 +457,6 @@ public class Game extends Screen implements java.io.Serializable {
 
     public void gameTick(float delta) {
         delta = Math.min(delta, 1f);
-
-        long usedMemory = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
         lastDelta = delta;
         playerInputWorking(delta);
         interfaceInputWorking(delta);
@@ -465,7 +466,6 @@ public class Game extends Screen implements java.io.Serializable {
 
 
     public void renderShadows() {
-
         for(VisibleObject obj : objectsList.getList()) {
             if(obj instanceof Entity ent) {
                 if(!ent.liquid()) {
@@ -500,10 +500,18 @@ public class Game extends Screen implements java.io.Serializable {
         inventory.render(mousePos);
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
         elementPumping.render(ShrubyWay.inputProcessor.mousePosition());
-        //TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
+        TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
+
+        long memory = Gdx.app.getJavaHeap() / 1024 / 1024;
+        TextDrawer.drawBlack("" + memory, 50, 100, 1);
+        int i = 0;
+        for(VisibleObject obj : objectsList.getList()) {
+            i++;
+            TextDrawer.drawBlack("" + obj.getClass().getSimpleName(), 50, 1000 - 50 * i, 0.5f);
+        }
 
         if (gamePaused) {
-             GlobalBatch.render(GlobalAssetManager.get("interface/shadow.png", Texture.class),
+             GlobalBatch.render(ShrubyWay.assetManager.get("interface/shadow.png", Texture.class),
                     0, 0);
             if(menuButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
                 menuButton.renderSellected();
@@ -516,7 +524,7 @@ public class Game extends Screen implements java.io.Serializable {
             } else continueButton.render();
         }
         GlobalBatch.batch.setColor(1,1,1,1 - CameraEffects.getSaveEffect());
-        GlobalBatch.render(GlobalAssetManager.get("interface/screen.png", Texture.class),
+        GlobalBatch.render(ShrubyWay.assetManager.get("interface/screen.png", Texture.class),
                 0, 0);
         GlobalBatch.batch.setColor(1,1,1,1);
     }
@@ -550,40 +558,25 @@ public class Game extends Screen implements java.io.Serializable {
     Boolean gameInitialized = false;
     @Override
     public void updateScreen() {
-        if(!gameInitialized) {
-                if (GlobalAssetManager.update()) {
-                    gameInitialized = true;
-                    init();
-                    updateScreen();
-                    return;
-                }
-            loadingScreen.updateStatus((int)(GlobalAssetManager.getProgress() * 100));
-            loadingScreen.updateScreen();
-        } else {
-            SoundSettings.changeMusic("music/Forest Theme.mp3");
-            menuInputWorking();
-            if (!gamePaused) gameTick(Gdx.graphics.getDeltaTime());
-        }
+        SoundSettings.changeMusic("music/Forest Theme.mp3");
+        menuInputWorking();
+        if (!gamePaused) gameTick(Gdx.graphics.getDeltaTime());
 
     }
 
     @Override
     public void renderScreen() {
-        if(!gameInitialized) {
-            loadingScreen.renderScreen();
-        }else {
-            renderFrame();
-        }
+        renderFrame();
     }
 
     static public void saveGame(Boolean effect) {
         if(effect) {
-            GlobalAssetManager.get("sounds/EFFECTS/save.ogg", Sound.class).play(SoundSettings.soundVolume);
+            ShrubyWay.assetManager.get("sounds/EFFECTS/save.ogg", Sound.class).play(SoundSettings.soundVolume);
             CameraEffects.save();
         }
          gameSaver.saveGameFiles();
-        String userHome = System.getProperty("user.home");
-        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE1.txt";
+        String userHome = System.getenv("APPDATA");
+        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE.txt";
 
         File shrubyDirectory = new File(userHome, "ShrubyWay");
         if (!shrubyDirectory.exists()) {
@@ -599,8 +592,9 @@ public class Game extends Screen implements java.io.Serializable {
     }
 
     void loadGame() {
-        String userHome = System.getProperty("user.home");
-        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE1.txt";
+
+        String userHome = System.getenv("APPDATA");
+        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE.txt";
 
         try (FileInputStream fileInputStream = new FileInputStream(filePath);
              ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
@@ -609,6 +603,10 @@ public class Game extends Screen implements java.io.Serializable {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
+
+    }
+
+    @Override public void dispose() {
 
     }
 

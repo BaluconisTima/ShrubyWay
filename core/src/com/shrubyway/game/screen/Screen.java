@@ -19,4 +19,8 @@ public class Screen {
     public void resumeScreen() {
 
     }
+
+    public void dispose() {
+
+    }
 }

@@ -4,8 +4,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Diamond;
@@ -20,7 +20,7 @@ public class ElementPumping {
 
     static float scale = GlobalBatch.scale;
 
-    static Sound levelUp = GlobalAssetManager.get("sounds/EFFECTS/levelUp.ogg", Sound.class);
+    static Sound levelUp = ShrubyWay.assetManager.get("sounds/EFFECTS/levelUp.ogg", Sound.class);
     static long lastSound = 0;
 
 
@@ -31,8 +31,15 @@ public class ElementPumping {
           // lastSound = levelUp.play(SoundSettings.soundVolume);
            //levelUp.loop();
           // levelUp.stop();
-            ElementBase = GlobalAssetManager.get("interface/ElementBase.png", Texture.class);
-            Elements = GlobalAssetManager.get("interface/Elements.png", Texture.class);
+            fireLevel = 1;
+            waterLevel = 1;
+            earthLevel = 1;
+            airLevel = 1;
+            localExp = 0;
+            progress = 0;
+
+            ElementBase = ShrubyWay.assetManager.get("interface/ElementBase.png", Texture.class);
+            Elements = ShrubyWay.assetManager.get("interface/Elements.png", Texture.class);
 
             float centerX = 1930 - ElementBase.getWidth() / 2.0f;
             float centerY = -10 + ElementBase.getHeight() / 2.0f;
@@ -96,28 +103,28 @@ public class ElementPumping {
 
      static public void addFireExp() {
          if(!newLevel()) return;
-         GlobalAssetManager.get("sounds/EFFECTS/fire.ogg", Sound.class).play(SoundSettings.soundVolume);
+         ShrubyWay.assetManager.get("sounds/EFFECTS/fire.ogg", Sound.class).play(SoundSettings.soundVolume);
          fireLevel++;
          progressUpdate();
      }
 
         static public void addWaterExp() {
             if(!newLevel()) return;
-            GlobalAssetManager.get("sounds/EFFECTS/water.ogg", Sound.class).play(SoundSettings.soundVolume);
+            ShrubyWay.assetManager.get("sounds/EFFECTS/water.ogg", Sound.class).play(SoundSettings.soundVolume);
             waterLevel++;
             progressUpdate();
         }
 
         static public void addEarthExp() {
             if(!newLevel()) return;
-            GlobalAssetManager.get("sounds/EFFECTS/earth.ogg", Sound.class).play(SoundSettings.soundVolume);
+            ShrubyWay.assetManager.get("sounds/EFFECTS/earth.ogg", Sound.class).play(SoundSettings.soundVolume);
             earthLevel++;
             progressUpdate();
         }
 
         static public void addAirExp() {
             if(!newLevel()) return;
-            GlobalAssetManager.get("sounds/EFFECTS/air.ogg", Sound.class).play(SoundSettings.soundVolume);
+            ShrubyWay.assetManager.get("sounds/EFFECTS/air.ogg", Sound.class).play(SoundSettings.soundVolume);
             airLevel++;
             progressUpdate();
         }
@@ -136,7 +143,7 @@ public class ElementPumping {
             // levelUp.resume();
            //  levelUp.loop();
              GlobalBatch.batch.setColor(1, 1, 1, (float) (Math.sin(AnimationGlobalTime.time() * 7) + 1) / 2);
-             GlobalBatch.render(GlobalAssetManager.get("interface/blink.png", Texture.class),
+             GlobalBatch.render(ShrubyWay.assetManager.get("interface/blink.png", Texture.class),
                      1930 - ElementBase.getWidth(), -10);
              GlobalBatch.batch.setColor(1, 1, 1, 1);
          } else {
@@ -144,26 +151,26 @@ public class ElementPumping {
          }
          GlobalBatch.render(Elements, 1930 - ElementBase.getWidth(), -10);
          if(water.contains(mouseOnScreenPosition)) {
-             GlobalBatch.render(GlobalAssetManager.get("interface/water.png", Texture.class),
+             GlobalBatch.render(ShrubyWay.assetManager.get("interface/water.png", Texture.class),
                      1930 - ElementBase.getWidth(), -10);
          }
          if(fire.contains(mouseOnScreenPosition)) {
-                GlobalBatch.render(GlobalAssetManager.get("interface/fire.png", Texture.class),
+                GlobalBatch.render(ShrubyWay.assetManager.get("interface/fire.png", Texture.class),
                         1930 - ElementBase.getWidth(), -10);
          }
          if(earth.contains(mouseOnScreenPosition)) {
-                GlobalBatch.render(GlobalAssetManager.get("interface/earth.png", Texture.class),
+                GlobalBatch.render(ShrubyWay.assetManager.get("interface/earth.png", Texture.class),
                         1930 - ElementBase.getWidth(), -10);
          }
          if(air.contains(mouseOnScreenPosition)) {
-                GlobalBatch.render(GlobalAssetManager.get("interface/air.png", Texture.class),
+                GlobalBatch.render(ShrubyWay.assetManager.get("interface/air.png", Texture.class),
                         1930 - ElementBase.getWidth(), -10);
          }
 
-         GlobalBatch.render(GlobalAssetManager.get("interface/darkness.png", Texture.class),
+         GlobalBatch.render(ShrubyWay.assetManager.get("interface/darkness.png", Texture.class),
                  1930 - ElementBase.getWidth(), -10);
 
-         Texture texture =  GlobalAssetManager.get("interface/Light.png", Texture.class);
+         Texture texture =  ShrubyWay.assetManager.get("interface/Light.png", Texture.class);
 
 
          int x = 160 + (int)((100 - displayProgress) * 1.1);

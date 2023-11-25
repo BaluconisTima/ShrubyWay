@@ -2,9 +2,9 @@ package com.shrubyway.game.visibleobject;
 
 import com.badlogic.gdx.math.Vector2;
 
-public abstract class VisibleObject implements Comparable<VisibleObject>, java.io.Serializable {
+public abstract class VisibleObject implements Comparable<VisibleObject> {
 
-    public final Vector2 position = new Vector2();
+    public Vector2 position = new Vector2();
     public static long ids;
     long id = ids++;
     public void render(){};
@@ -19,5 +19,9 @@ public abstract class VisibleObject implements Comparable<VisibleObject>, java.i
                 return (int) (id - o.id);
         }
         return (y1.compareTo(y2));
+    }
+
+    public void dispose() {
+        position = null;
     }
 }

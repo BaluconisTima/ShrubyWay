@@ -1,7 +1,7 @@
 package com.shrubyway.game.item;
 
 import com.badlogic.gdx.audio.Sound;
-import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.myinterface.ElementPumping;
 import com.shrubyway.game.sound.SoundSettings;
@@ -15,7 +15,7 @@ public class Food extends ItemActing {
     long soundID = -1;
 
     static {
-        eatingSound = GlobalAssetManager.get("sounds/EFFECTS/Eating.ogg", Sound.class);
+        eatingSound = ShrubyWay.assetManager.get("sounds/EFFECTS/Eating.ogg", Sound.class);
     }
     public Food(float eatingTime, float heling) {
             actingAnimation = 6;

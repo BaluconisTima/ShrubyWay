@@ -3,16 +3,16 @@ package com.shrubyway.game.myinterface;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.Health;
+import com.shrubyway.game.ShrubyWay;
 
 public class HealthBar {
     static Texture base, bar;
 
     static {
-        base = GlobalAssetManager.get("interface/heartBase.png", Texture.class);
-        bar = GlobalAssetManager.get("interface/heart.png", Texture.class);
+        base = ShrubyWay.assetManager.get("interface/heartBase.png", Texture.class);
+        bar = ShrubyWay.assetManager.get("interface/heart.png", Texture.class);
     }
     static TextureRegion halfbar = new TextureRegion(bar, bar.getWidth() / 2, 0, bar.getWidth() / 2,
             bar.getHeight());

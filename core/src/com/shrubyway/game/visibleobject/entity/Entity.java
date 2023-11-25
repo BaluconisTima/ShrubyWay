@@ -5,9 +5,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.Health;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.item.Item;
@@ -43,7 +43,7 @@ abstract public class Entity extends InteractiveObject {
     static Sound soundAttack;
 
     static  {
-        soundAttack = GlobalAssetManager.get("sounds/EFFECTS/Swing.ogg", Sound.class);
+        soundAttack = ShrubyWay.assetManager.get("sounds/EFFECTS/Swing.ogg", Sound.class);
     }
 
     public Boolean dead() {
@@ -175,7 +175,7 @@ abstract public class Entity extends InteractiveObject {
         return moved;
     };
     public void renderShadow() {
-        GlobalBatch.render(GlobalAssetManager.get("effects/shadow.png", Texture.class), Math.round(positionLegs().x) - 80, Math.round(positionLegs().y) - 20);
+        GlobalBatch.render(ShrubyWay.assetManager.get("effects/shadow.png", Texture.class), Math.round(positionLegs().x) - 80, Math.round(positionLegs().y) - 20);
     }
     @Override public void render() {
         if(health.timeAfterHit() < 0.2f) {
@@ -199,7 +199,7 @@ abstract public class Entity extends InteractiveObject {
     protected void renderWaterOverlay() {
           if(WaterOverlay == null) {
               WaterOverlay = Animator.toAnimation(
-                      GlobalAssetManager.get("effects/water_overlay.png", Texture.class),14, 0, 0);
+                      ShrubyWay.assetManager.get("effects/water_overlay.png", Texture.class),14, 0, 0);
 
           }
         if(this instanceof Mob)
@@ -297,10 +297,15 @@ abstract public class Entity extends InteractiveObject {
         lastTile = tile;
         if(action != 1) return false;
         if((AnimationGlobalTime.time() - lastStepTime)  >= stepCooldown / (getSpeed() / 10)) {
-            lastStepTime = AnimationGlobalTime.time();
+            lastStepTime = AnimationGlobalTime.time() + (float)Math.random() * 0.05f;
             return true;
         }
         return false;
+    }
+
+    @Override public void dispose() {
+        super.dispose();
+        health.dispose();
     }
 
 }

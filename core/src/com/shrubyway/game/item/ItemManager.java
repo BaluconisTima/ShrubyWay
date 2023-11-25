@@ -2,7 +2,7 @@ package com.shrubyway.game.item;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.effect.BerryExplosion;
 import com.shrubyway.game.visibleobject.effect.FruitExplosion;
@@ -35,10 +35,10 @@ public class ItemManager {
     }
 
     public static void init() {
-        int size = GlobalAssetManager.get("ITEMS/all.png", Texture.class).getWidth() / tableN;
-        int size2 = GlobalAssetManager.get("ITEMS/all.png", Texture.class).getHeight() / tableM;
+        int size = ShrubyWay.assetManager.get("ITEMS/all.png", Texture.class).getWidth() / tableN;
+        int size2 = ShrubyWay.assetManager.get("ITEMS/all.png", Texture.class).getHeight() / tableM;
         for (int i = 0; i < itemNumber; i++) {
-            itemTexture[i] = new TextureRegion(GlobalAssetManager.get("ITEMS/all.png", Texture.class),
+            itemTexture[i] = new TextureRegion(ShrubyWay.assetManager.get("ITEMS/all.png", Texture.class),
                     size * (i % tableN), size2 * (i / tableN), size, size2);
         }
         itemName[0] = "Stone";

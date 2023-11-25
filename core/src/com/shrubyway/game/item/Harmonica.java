@@ -1,13 +1,8 @@
 package com.shrubyway.game.item;
 
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.files.FileHandle;
-import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.sound.SoundSettings;
-
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
 
 public class Harmonica extends ItemActing {
 
@@ -19,7 +14,7 @@ public class Harmonica extends ItemActing {
     public Harmonica() {
         actingAnimation = 5;
         int x = (int)Math.floor(Math.random() * soundCount) + 1;
-        sound = GlobalAssetManager.get("sounds/EFFECTS/Harmonica/"
+        sound = ShrubyWay.assetManager.get("sounds/EFFECTS/Harmonica/"
                         + x + ".ogg",
                 Sound.class);
         actingTime = soundCooldown[x - 1];
@@ -39,7 +34,7 @@ public class Harmonica extends ItemActing {
             sound.stop();
         }
         int x = (int)Math.floor(Math.random() * soundCount) + 1;
-            sound = GlobalAssetManager.get("sounds/EFFECTS/Harmonica/" + x  + ".ogg",
+            sound = ShrubyWay.assetManager.get("sounds/EFFECTS/Harmonica/" + x  + ".ogg",
                     Sound.class);
             actingTime = soundCooldown[x - 1];
             soundPlaying = false;

@@ -10,11 +10,22 @@ import java.util.List;
 
 public class ScreenGrid {
 
-    private static final int GRID_SIZE = 1024;
+    private static final int GRID_SIZE = 256;
     private static final int CHUNK_COUNT = MapSettings.MAPSIZE / GRID_SIZE;
     private ArrayList<VisibleObject>[][] CollisionBoxes = new ArrayList[GRID_SIZE][GRID_SIZE];
     private ArrayList<VisibleObject>[][] HitBoxes = new ArrayList[GRID_SIZE][GRID_SIZE];
     private ArrayList<Pair<Integer, Integer>> lastChecked = new ArrayList<>();
+
+    public int getObjectsCount() {
+        int result = 0;
+        for(int i = 0; i < GRID_SIZE; i++) {
+            for(int j = 0; j < GRID_SIZE; j++) {
+              result += CollisionBoxes[i][j].size();
+             //   result += HitBoxes[i][j].size();
+            }
+        }
+        return result;
+    }
 
     public ScreenGrid() {
         for(int i = 0; i < GRID_SIZE; i++) {
@@ -64,7 +75,7 @@ public class ScreenGrid {
     }
 
     private void addHitBox(VisibleObject object) {
-        if(!(object instanceof InteractiveObject)) return;
+       /* if(!(object instanceof InteractiveObject)) return;
         Rectangle box = ((InteractiveObject)object).hitBox();
         if(box != null && !box.real()) return;
 
@@ -75,7 +86,7 @@ public class ScreenGrid {
                 lastChecked.add(to);
             }
             HitBoxes[to.first][to.second].add(object);
-        }
+        } */
     }
 
     private void add(VisibleObject object) {
@@ -91,6 +102,7 @@ public class ScreenGrid {
     }
 
     public boolean checkCollision(Rectangle collisionBox, VisibleObject object) {
+
         if(!(object instanceof InteractiveObject)) return false;
         temp.clear();
         overlapsChunks(((InteractiveObject)object).collisionBox(), temp);

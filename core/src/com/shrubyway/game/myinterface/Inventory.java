@@ -3,8 +3,8 @@ package com.shrubyway.game.myinterface;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.GlobalAssetManager;
 import com.shrubyway.game.GlobalBatch;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.screen.Game;
@@ -13,11 +13,11 @@ import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class Inventory {
-    Texture base = GlobalAssetManager.get("interface/mainInv.png", Texture.class),
-            full = GlobalAssetManager.get("interface/fullInv.png", Texture.class),
-            select = GlobalAssetManager.get("interface/selectInv.png", Texture.class);
+    Texture base = ShrubyWay.assetManager.get("interface/mainInv.png", Texture.class),
+            full = ShrubyWay.assetManager.get("interface/fullInv.png", Texture.class),
+            select = ShrubyWay.assetManager.get("interface/selectInv.png", Texture.class);
     public Boolean opened = false;
-    Sound click = GlobalAssetManager.get(("sounds/EFFECTS/Click.ogg"), Sound.class);
+    Sound click = ShrubyWay.assetManager.get(("sounds/EFFECTS/Click.ogg"), Sound.class);
     Rectangle buttons[][] = new Rectangle[5][9];
     public Item items[][] = new Item[5][9];
     public Integer numberOfItem[][] = new Integer[5][9];

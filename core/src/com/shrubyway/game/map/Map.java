@@ -7,21 +7,15 @@ import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
 import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.*;
 
 public class Map {
     Background background;
-    CopyOnWriteArrayList<VisibleObject>[][] chunks = new CopyOnWriteArrayList[16][16];
+    Set<VisibleObject>[][] chunks = new HashSet[16][16];
     boolean lastCheked[][] = new boolean[16][16];
     long timeChecking = 0;
 
     char decorations[][] = new char[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
-    public List<VisibleObject> tempList;
-
-
 
     public VisualObjectListSaver[][] getChunks() {
         VisualObjectListSaver[][] chunks = new VisualObjectListSaver[16][16];
@@ -35,7 +29,9 @@ public class Map {
     public void setChunks(VisualObjectListSaver[][] chunks) {
         for (int i = 0; i < 16; i++)
             for (int j = 0; j < 16; j++) {
-                this.chunks[i][j] = chunks[i][j].getList();
+                for(VisibleObject visibleObject : chunks[i][j].getList()) {
+                    this.chunks[i][j].add(visibleObject);
+                }
             }
     }
 
@@ -65,14 +61,13 @@ public class Map {
 
 
     public Map(int level) {
-        tempList = new ArrayList<>();
         lvl = level;
         background = new Background(level);
         decorationsLoad(level);
 
         for (int i = 0; i < 16; i++)
             for (int j = 0; j < 16; j++) {
-                chunks[i][j] = new CopyOnWriteArrayList<>();
+                chunks[i][j] = new HashSet<>();
             }
 
         for (int i = 0; i < MapSettings.TILENUMBER; i++)
@@ -87,10 +82,13 @@ public class Map {
     }
 
     public void updateChunk(int i2, int j2, Vector2 playerPosition) {
-        if (!lastCheked[i2 / 16][j2 / 16]) {
-            lastCheked[i2 / 16][j2 / 16] = true;
-            tempList.clear();
-            for (VisibleObject check : chunks[i2 / 16][j2 / 16]) {
+        int i = i2 / 16, j = j2 / 16;
+        if (!lastCheked[i][j]) {
+            lastCheked[i][j] = true;
+            Iterator<VisibleObject> iterator = chunks[i][j].iterator();
+
+            while(iterator.hasNext()) {
+                VisibleObject check = iterator.next();
                 boolean fx = false, fy = false;
                 if (check.position.x >
                         playerPosition.x - MapSettings.TYLESIZE * MapSettings.calculationDistanceX
@@ -136,40 +134,44 @@ public class Map {
                             check.position.y > playerPosition.y - MapSettings.TYLESIZE * MapSettings.calculationDistanceY
                             && check.position.y < playerPosition.y + MapSettings.TYLESIZE * MapSettings.calculationDistanceY) {
                         Game.objectsList.add(check);
-                        tempList.add(check);
+                        iterator.remove();
                     }
             }
-            chunks[i2 / 16][j2 / 16].removeAll(tempList);
-            tempList.clear();
         }
     }
 
     public void updateRenderingObjects(Vector2 playerPosition) {
         timeChecking++;
         int x, y;
-        CopyOnWriteArrayList<VisibleObject> temp = new CopyOnWriteArrayList<>(Game.objectsList.getList());
-        tempList.clear();
-        for (VisibleObject check : temp) {
+       List<VisibleObject> temp = Game.objectsList.getList(), tempList = new ArrayList<>();
+
+
+         for (VisibleObject check : temp) {
             if (Math.abs(check.position.x - playerPosition.x) >
                     MapSettings.TYLESIZE * MapSettings.calculationDistanceX ||
                     Math.abs(check.position.y - playerPosition.y) >
                             MapSettings.TYLESIZE * MapSettings.calculationDistanceY) {
+
+
                 x = (int) check.position.x;
                 while (x < 0) x += MapSettings.MAPSIZE;
                 while (x >= MapSettings.MAPSIZE) x -= MapSettings.MAPSIZE;
                 x /= MapSettings.TYLESIZE;
                 x /= 16;
+
                 y = (int) check.position.y;
                 while (y < 0) y += MapSettings.MAPSIZE;
                 while (y >= MapSettings.MAPSIZE) y -= MapSettings.MAPSIZE;
                 y /= MapSettings.TYLESIZE;
                 y /= 16;
+
                 chunks[x][y].add(check);
                 tempList.add(check);
             }
         }
         Game.objectsList.getList().removeAll(tempList);
         tempList.clear();
+
         x = (int) playerPosition.x;
         y = (int) playerPosition.y;
         x /= MapSettings.TYLESIZE;
@@ -191,7 +193,6 @@ public class Map {
                 lastCheked[i2 / 16][j2 / 16] = false;
             }
         }
-
 
     }
 

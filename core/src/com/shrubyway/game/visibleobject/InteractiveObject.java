@@ -41,4 +41,14 @@ public class InteractiveObject extends VisibleObject {
         temp.set(position.x, position.y);
         return temp;
     }
+
+    @Override public void dispose() {
+        super.dispose();
+        if(collisionBox != null) collisionBox.dispose();
+        if(hitBox != null) hitBox.dispose();
+        if(attackBox != null) attackBox.dispose();
+        collisionBox = null;
+        hitBox = null;
+        attackBox = null;
+    }
 }

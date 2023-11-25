@@ -1,7 +1,7 @@
 package com.shrubyway.game.sound;
 
 import com.badlogic.gdx.audio.Music;
-import com.shrubyway.game.GlobalAssetManager;
+import com.shrubyway.game.ShrubyWay;
 
 public class SoundSettings {
     public static float soundVolume = 1;
@@ -15,7 +15,7 @@ public class SoundSettings {
        if(currentMusic != null) music.stop();
         currentMusic = way;
         if(way == null) return;
-        music = GlobalAssetManager.get(way, Music.class);
+        music = ShrubyWay.assetManager.get(way, Music.class);
         music.play();
         music.setVolume(musicVolume);
         music.setLooping(true);

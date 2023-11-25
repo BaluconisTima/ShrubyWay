@@ -12,21 +12,25 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 public class GlobalAssetManager {
-    private static AssetManager assetManager = new AssetManager();
+    private AssetManager assetManager = new AssetManager();
 
-    static public void addAsset(String path, Class type) {
+    public void addAsset(String path, Class type) {
         assetManager.load(path, type);
     }
 
-    static public float getProgress() {
+    public float getProgress() {
         return assetManager.getProgress();
     }
 
-    static public boolean update() {
+    public boolean update() {
         return assetManager.update();
     }
 
-    static public <T> T get(String fileName, Class<T> type) {
+    public void load(String path, Class type) {
+        assetManager.load(path, type);
+    }
+
+    public <T> T get(String fileName, Class<T> type) {
         if(!assetManager.isLoaded(fileName)) {
             assetManager.load(fileName, type);
             assetManager.finishLoadingAsset(fileName);
@@ -43,7 +47,7 @@ public class GlobalAssetManager {
         return assetManager.get(fileName, type);
     }
 
-    static private void loadRec(FileHandle folder) {
+    private void loadRec(FileHandle folder) {
         FileHandle[] files = folder.list();
         for (FileHandle file : files) {
             if (file.isDirectory()) {
@@ -60,7 +64,7 @@ public class GlobalAssetManager {
             }
         }
     }
-    private static void loadFromJar() {
+    private void loadFromJar() {
         String jarPath = ShrubyWay.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         try (JarFile jarFile = new JarFile(URLDecoder.decode(jarPath, "UTF-8"))) {
             Enumeration<JarEntry> entries = jarFile.entries();
@@ -85,11 +89,15 @@ public class GlobalAssetManager {
         }
     }
 
-    static public void loadAll() {
+    public void loadAll() {
         //loadFromJar();
         // ONLY FOR LOCAL TEST! DELETE THIS LINE IF YOU WANT TO BUILD JAR FILE!
        FileHandle assetsFolder = Gdx.files.local("");
        loadRec(assetsFolder);
+    }
+
+    public void dispose() {
+        assetManager.dispose();
     }
 
 }

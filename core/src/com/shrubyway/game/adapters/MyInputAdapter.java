@@ -182,5 +182,9 @@ public class MyInputAdapter extends InputAdapter {
         return qPressed;
     }
 
+    public void dispose () {
+
+    }
+
 
 }
