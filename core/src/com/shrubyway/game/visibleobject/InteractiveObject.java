@@ -1,11 +1,16 @@
 package com.shrubyway.game.visibleobject;
 
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Body;
+import com.shrubyway.game.CollisionChecker;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
 
 public class InteractiveObject extends VisibleObject {
 
     protected Rectangle collisionBox = null;
+    protected Body CollisionBody = null;
+
     protected Rectangle hitBox = null;
     protected Rectangle attackBox = null;
     protected float damage = 0;
@@ -28,6 +33,27 @@ public class InteractiveObject extends VisibleObject {
         return collisionBox;
     }
 
+
+    private void correctBody() {
+        CollisionBody.setTransform((collisionBox.topLeftCorner.x + collisionBox.bottomRightCorner.x) / 2 * CollisionChecker.scale,
+                (collisionBox.topLeftCorner.y + collisionBox.bottomRightCorner.y)/2 * CollisionChecker.scale, 0);
+    }
+
+    public Body getCollisionBody() {
+        if(CollisionBody == null) {
+            createBody();
+        }
+        correctBody();
+        return CollisionBody;
+    }
+
+    public Body getCollisionBodyToChange() {
+        if(CollisionBody == null) {
+            createBody();
+        }
+        return CollisionBody;
+    }
+
     public Rectangle hitBox() {
         return hitBox;
     }
@@ -40,6 +66,33 @@ public class InteractiveObject extends VisibleObject {
     public Vector2 positionCenter() {
         temp.set(position.x, position.y);
         return temp;
+    }
+
+    public void hideBody() {
+        if(CollisionBody == null) {
+           return;
+        }
+       CollisionBody.setActive(false);
+    }
+
+    public void unhideBody() {
+        if(CollisionBody == null) {
+            return;
+        }
+        CollisionBody.setActive(true);
+    }
+
+    protected void createBody() {
+        if(CollisionBody == null) {
+            CollisionBody = Game.collisionChecker.addStatic(collisionBox());
+        }
+    }
+
+    protected void deleteBody() {
+        if(CollisionBody != null) {
+            CollisionBody.getWorld().destroyBody(CollisionBody);
+            CollisionBody = null;
+        }
     }
 
     @Override public void dispose() {

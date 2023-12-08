@@ -39,8 +39,8 @@ public abstract class Mob extends Entity {
 
 
         tempDirection2.set(tempDirection.x, tempDirection.y);
-
-        if(!tryMoveTo(tempDirection, delta)) {
+        tryMoveTo(tempDirection);
+       /* if(false) {
             if(AnimationGlobalTime.time() - lastTargetUpdate < targetUpdateInterval) {
                 tempDirection.nor();
                 if(Math.abs(tempDirection.x) < 70) {
@@ -62,7 +62,7 @@ public abstract class Mob extends Entity {
                     }
                 }
             }
-        }
+        } */
     }
 
     protected void closeAi(float distance, Vector2 playerPosition, float delta) {
@@ -134,7 +134,7 @@ public abstract class Mob extends Entity {
         if(tempDirection.len() >= shootDistance || tempDirection.len() <= scareDistance) tryMoveAi(delta);
         else {
             tempDirection.set(0, 0);
-            tryMoveTo(tempDirection, delta);
+            tryMoveTo(tempDirection);
         }
 
     }

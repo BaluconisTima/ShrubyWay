@@ -9,8 +9,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.shrubyway.game.CameraEffects;
+import com.shrubyway.game.CollisionChecker;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
@@ -24,6 +26,7 @@ import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.map.ScreenGrid;
 import com.shrubyway.game.myinterface.*;
 import com.shrubyway.game.saver.GameSaver;
+import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.GlobalSoundManager;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.InteractiveObject;
@@ -41,12 +44,15 @@ import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 import java.io.*;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Game extends Screen implements java.io.Serializable {
     static public OrthographicCamera localCamera;
-    Vector2 mousePosition;
+    Vector2 mousePosition = new Vector2(0,0);
     static public ScreenGrid screenGrid;
+
+    public static CollisionChecker collisionChecker = new CollisionChecker();
     Event event;
 
     public static ObjectsList objectsList = new ObjectsList();
@@ -108,40 +114,44 @@ public class Game extends Screen implements java.io.Serializable {
         } else {
           //  GameSaver.loadDefaultSettings();
         }
+        SoundSettings.changeMusic("music/Forest Theme.mp3");
+
 
     }
 
+    Vector2 tempVector = new Vector2(0,0);
+
     public void correctPosition() {
-        Vector2 temp = new Vector2(player.position());
-        if (temp.x < 0) {
-            temp.add(new Vector2(MapSettings.MAPSIZE, 0));
-            localCamera.position.add(new Vector3(MapSettings.MAPSIZE, 0, 0));
+        tempVector.set(player.position());
+        if (tempVector.x < 0) {
+            tempVector.x += MapSettings.MAPSIZE;
+            localCamera.position.x += MapSettings.MAPSIZE;
         }
-        if (temp.y < 0) {
-            temp.add(new Vector2(0, MapSettings.MAPSIZE));
-            localCamera.position.add(new Vector3(0, MapSettings.MAPSIZE, 0));
+        if (tempVector.y < 0) {
+            tempVector.y += MapSettings.MAPSIZE;
+            localCamera.position.y += MapSettings.MAPSIZE;
         }
-        if (temp.x >= MapSettings.MAPSIZE) {
-            temp.add(new Vector2(-MapSettings.MAPSIZE, 0));
-            localCamera.position.add(new Vector3(-MapSettings.MAPSIZE, 0, 0));
+        if (tempVector.x >= MapSettings.MAPSIZE) {
+            tempVector.x -= MapSettings.MAPSIZE;
+            localCamera.position.x -= MapSettings.MAPSIZE;
         }
-        if (temp.y >= MapSettings.MAPSIZE) {
-            temp.add(new Vector2(0, -MapSettings.MAPSIZE));
-            localCamera.position.add(new Vector3(0, -MapSettings.MAPSIZE, 0));
+        if (tempVector.y >= MapSettings.MAPSIZE) {
+            tempVector.y -= MapSettings.MAPSIZE;
+            localCamera.position.y -= MapSettings.MAPSIZE;
         }
-        player.changePosition(temp);
+        player.changePosition(tempVector);
     }
 
     boolean leftClick = false, rightClick = false;
 
     public void playerInputWorking(float delta) {
-        mousePosition = new Vector2(ShrubyWay.inputProcessor.mousePosition().x
+        mousePosition.set(ShrubyWay.inputProcessor.mousePosition().x
                 + localCamera.position.x - Gdx.graphics.getWidth() / 2,
                 ShrubyWay.inputProcessor.mousePosition().y
                         + localCamera.position.y - Gdx.graphics.getHeight() / 2);
 
         if(ShrubyWay.inputProcessor.isCPressed()) {
-          objectsList.add(MobsManager.newOf(3, mousePosition.x, mousePosition.y));
+          objectsList.add(new VisibleItem(new Item(8), mousePosition.x, mousePosition.y));
         }
         /*if(ShrubyWay.inputProcessor.isLPressed()) {
           loadGame();
@@ -203,7 +213,7 @@ public class Game extends Screen implements java.io.Serializable {
                     }
                 }
             }
-            player.tryMoveTo(movingVector, delta);
+            player.tryMoveTo(movingVector);
             correctPosition();
         }
         if (ShrubyWay.inputProcessor.isZPressed()) {
@@ -317,34 +327,24 @@ public class Game extends Screen implements java.io.Serializable {
         ShrubyWay.screen = new Menu();
     }
 
-    CopyOnWriteArrayList<VisibleObject> temp = new CopyOnWriteArrayList<VisibleObject>();
-    CopyOnWriteArrayList<InteractiveObject> temp2 = new CopyOnWriteArrayList<>();
-
     float lastMobUpdate = 5f;
 
     public void globalProcessing(float delta) {
 
-        if (AnimationGlobalTime.time() - lastMobUpdate > 1f) {
+       if (AnimationGlobalTime.time() - lastMobUpdate > 1f) {
             lastMobUpdate = AnimationGlobalTime.time();
             MobsManager.playerAddUpdate(1);
-           // MobsManager.tryGenerateMob(player.positionLegs());
+            MobsManager.tryGenerateMob(player.positionLegs());
         }
 
-  /*      screenGrid.build(objectsList.getList());*/
-
-        temp.clear();
-        temp2.clear();
-
-        for (VisibleObject obj : objectsList.getList()) {
-            temp.add(obj);
-        }
+        List<VisibleObject> temp = new CopyOnWriteArrayList<>(objectsList.getList());
 
         map.update(player.positionLegs());
         if(player.dead()) {
-            SoundSettings.changeMusic(null);
+              SoundSettings.stopMusic();
         }
 
-        for (VisibleObject obj : temp) {
+       for (VisibleObject obj : temp) {
             if (!objectsList.getList().contains(obj)) continue;
             if(obj instanceof Explosion exp) {
 
@@ -382,21 +382,14 @@ public class Game extends Screen implements java.io.Serializable {
             }
         }
 
-        for (VisibleObject obj : objectsList.getList()) {
-            if (obj instanceof InteractiveObject io) temp2.add(io);
-        }
-
-        for (InteractiveObject from : temp2) {
-            if (!objectsList.getList().contains(from)) continue;
-
+        for (VisibleObject from1 : temp)
+            if(from1 instanceof InteractiveObject from) {
             if (from.attackBox() != null && from.attackBox().topLeftCorner.x < from.attackBox().bottomRightCorner.x) {
-                for (InteractiveObject to : temp2) {
-                    if (!objectsList.getList().contains(to)) continue;
+                for (VisibleObject to1 : temp)
+                    if(to1 instanceof InteractiveObject to) {
                     if (from == to) continue;
-
                     if (to.hitBox() != null) {
                         if (from.attackBox().overlaps(to.hitBox())) {
-
                             if (from instanceof Bullet bul) {
                                 if (bul.whoThrow == to) continue;
                             }
@@ -404,8 +397,6 @@ public class Game extends Screen implements java.io.Serializable {
                                 dec.hit();
                             } else
                                 if (to instanceof Entity ent) {
-
-
                                 if(ent.health.getHealth() <= 0) continue;
                                 ent.getDamage(from.damage(),
                                         from.positionCenter());
@@ -432,7 +423,6 @@ public class Game extends Screen implements java.io.Serializable {
                 }
             }
         }
-
         for (VisibleObject obj : objectsList.getList()) {
             if (obj instanceof Entity ent) {
                 ent.update(delta);
@@ -444,6 +434,31 @@ public class Game extends Screen implements java.io.Serializable {
             gameOver();
         }
         GlobalSoundManager.update(player.positionCenter());
+
+        for(VisibleObject to: temp) {
+           if(to instanceof InteractiveObject inter) {
+               if(inter.collisionBox() != null
+                       && inter.collisionBox().topLeftCorner.x < inter.collisionBox().bottomRightCorner.x) {
+                  Body body = inter.getCollisionBody();
+                  if(inter instanceof Entity ent) {
+                      ent.nextMovement.scl(60);
+                      collisionChecker.setLinearVelocity(body, ent.nextMovement);
+                  }
+               }
+           }
+        }
+        collisionChecker.process(delta);
+
+        for(VisibleObject obj : temp) {
+            if(obj instanceof Entity ent) {
+                Rectangle col = ent.collisionBox();
+                float x_center = (col.topLeftCorner.x + col.bottomRightCorner.x) / 2f,
+                        y_center = (col.topLeftCorner.y + col.bottomRightCorner.y) / 2f;
+                ent.updatePosition(collisionChecker.getMovement(ent.getCollisionBodyToChange(), x_center, y_center));
+
+            }
+        }
+        temp.clear();
     }
 
     public void cameraUpdate(float delta) {
@@ -454,6 +469,7 @@ public class Game extends Screen implements java.io.Serializable {
         localCamera.position.add(new Vector3(CameraEffects.getAddPositionExplosion(), 0));
         localCamera.update();
     }
+
 
     public void gameTick(float delta) {
         delta = Math.min(delta, 1f);
@@ -502,13 +518,18 @@ public class Game extends Screen implements java.io.Serializable {
         elementPumping.render(ShrubyWay.inputProcessor.mousePosition());
         TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
 
-        long memory = Gdx.app.getJavaHeap() / 1024 / 1024;
+        float memory = Gdx.app.getJavaHeap() / 1024f / 1024f;
         TextDrawer.drawBlack("" + memory, 50, 100, 1);
-        int i = 0;
+       /* int i = 0;
         for(VisibleObject obj : objectsList.getList()) {
             i++;
-            TextDrawer.drawBlack("" + obj.getClass().getSimpleName(), 50, 1000 - 50 * i, 0.5f);
-        }
+            if(obj instanceof InteractiveObject inter) {
+                TextDrawer.drawBlack(inter.getCollisionBody().getPosition() + " " +
+                        inter.positionCenter(), 50, 1000 - 30 * i, 0.3f);
+            }
+
+
+        } */
 
         if (gamePaused) {
              GlobalBatch.render(ShrubyWay.assetManager.get("interface/shadow.png", Texture.class),
@@ -558,7 +579,6 @@ public class Game extends Screen implements java.io.Serializable {
     Boolean gameInitialized = false;
     @Override
     public void updateScreen() {
-        SoundSettings.changeMusic("music/Forest Theme.mp3");
         menuInputWorking();
         if (!gamePaused) gameTick(Gdx.graphics.getDeltaTime());
 

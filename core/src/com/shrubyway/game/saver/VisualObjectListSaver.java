@@ -21,6 +21,18 @@ public class VisualObjectListSaver implements java.io.Serializable {
     ArrayList decorationsID, decorationsPosition, decorationsIJ;
 
 
+    public VisualObjectListSaver() {
+        mobsID = new ArrayList<Integer>();
+        mobsPosition = new ArrayList<Vector2>();
+        mobsHealth = new ArrayList<Health>();
+        itemsID = new ArrayList<Integer>();
+        itemsPosition = new ArrayList<Vector2>();
+        decorationsID = new ArrayList<Integer>();
+        decorationsPosition = new ArrayList<Vector2>();
+        decorationsIJ = new ArrayList<Vector2>();
+    }
+
+
     public VisualObjectListSaver(Set<VisibleObject> list)  {
         mobsID = new ArrayList<Integer>();
         mobsPosition = new ArrayList<Vector2>();

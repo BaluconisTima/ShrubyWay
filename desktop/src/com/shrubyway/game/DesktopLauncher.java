@@ -14,7 +14,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		//System.out.println("DesktopLauncher.main: ");
 		config.setForegroundFPS(120);
-		config.setIdleFPS(60);
+		config.setIdleFPS(120);
 		config.setTitle("Shruby Way - early build");
 		config.setWindowIcon("SWicon.png");
 		config.setWindowedMode(1920, 1080);

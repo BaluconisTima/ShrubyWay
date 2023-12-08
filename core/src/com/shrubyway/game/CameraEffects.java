@@ -13,10 +13,12 @@ public class CameraEffects {
     static public void save() {
         savePhase = true;
     }
+
+    static public Vector2 direction = new Vector2(0, 0);
     static public void updateExp(float delta) {
         addPositionExplosion.scl((float)Math.pow(0.6f, delta * 60));
         explosionPower *= Math.pow(0.7f, delta * 60);
-        Vector2 direction = new Vector2(0, explosionPower);
+        direction.set(0, explosionPower);
         direction.rotate((float) (Math.random() * 360));
         addPositionExplosion.add(direction);
     }

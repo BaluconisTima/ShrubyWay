@@ -42,9 +42,12 @@ abstract public class Entity extends InteractiveObject {
     protected Boolean allowedMotion = false;
     static Sound soundAttack;
 
+    protected float loopedAnimationTime = (float)Math.random() * 1000.0f;
+
     static  {
         soundAttack = ShrubyWay.assetManager.get("sounds/EFFECTS/Swing.ogg", Sound.class);
     }
+
 
     public Boolean dead() {
         return (action == 3);
@@ -69,6 +72,7 @@ abstract public class Entity extends InteractiveObject {
 
         if(action == 3 && EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
                 isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
+            deleteBody();
             Game.objectsList.del(this);
         }
 
@@ -126,54 +130,44 @@ abstract public class Entity extends InteractiveObject {
     }
     protected Vector2 tempDirection = new Vector2(0,0);
     protected Vector2 tempDirection2 = new Vector2(0,0);
-    protected final int collisionsEps = 10;
 
     public void tryMoveMomentum(float delta) {
         if(action == 3) return;
-        momentum.scl(0.85f);
-        tempDirection.set(momentum);
-        tempDirection.scl(1f/collisionsEps * delta * 60f);
-        for(int i = 0; i < collisionsEps; i++) {
-            position.add(tempDirection);
-            if (checkCollisions()) {
-                position.sub(tempDirection);
-            }
-            if (checkCollisions()) {
-                position.add(tempDirection);
-            }
-        }
+        momentum.scl((float)Math.pow(0.85f, delta * 60));
+        nextMovement.add(momentum);
     }
 
    public boolean liquid() {
         return inLiquid;
    }
-    public boolean tryMoveTo(Vector2 direction, float delta){
-        if(!allowedMotion) return false;
-        boolean moved = false;
+
+   public Vector2 nextMovement = new Vector2(0,0);
+    public void tryMoveTo(Vector2 direction){
+        if(!allowedMotion) { return; }
         if(direction.len() != 0) {
             direction.nor();
-
-            float tempSpeed = getSpeed();
             tempDirection.set(direction);
-            tempDirection.scl(tempSpeed);
-            tempDirection.scl(1f / collisionsEps);
-            tempDirection.scl(delta / (1f / 60f));
-
-
-            for (int i = 0; i < collisionsEps; i++) {
-                position.add(tempDirection);
-                if (checkCollisions()) {
-                    position.sub(tempDirection);
-                } else moved = true;
-
-                if (checkCollisions()) {
-                    position.add(tempDirection);
-                }
-            }
+            tempDirection.scl(getSpeed());
+            changeAnimationsFor(tempDirection, 1);
+            nextMovement.set(nextMovement.x + tempDirection.x, nextMovement.y + tempDirection.y);
+        } else {
+            changeAnimationsFor(tempDirection, 0);
         }
-        changeAnimationsFor(direction, direction.len() == 0 ? 0 : 1);
-        return moved;
     };
+
+
+    @Override protected void createBody() {
+        if(CollisionBody == null) {
+            CollisionBody = Game.collisionChecker.add(collisionBox(), new Vector2(0, 0));
+        }
+    }
+
+
+    public void updatePosition(Vector2 direction) {
+        position.add(direction);
+        nextMovement.set(0,0);
+    }
+
     public void renderShadow() {
         GlobalBatch.render(ShrubyWay.assetManager.get("effects/shadow.png", Texture.class), Math.round(positionLegs().x) - 80, Math.round(positionLegs().y) - 20);
     }
@@ -184,7 +178,7 @@ abstract public class Entity extends InteractiveObject {
         EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
                 setFrameDuration(1f/(24f / speed * getSpeed()));
         GlobalBatch.render(EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
-                        getKeyFrame(AnimationGlobalTime.time() - animationTime, EntityManager.looping[entityID][action]),
+                        getKeyFrame(AnimationGlobalTime.time() - animationTime + loopedAnimationTime * (EntityManager.looping[entityID][action] ? 1:0), EntityManager.looping[entityID][action]),
                 Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
         collisionBox().render();
         hitBox().render();

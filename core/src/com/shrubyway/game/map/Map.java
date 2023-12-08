@@ -3,6 +3,7 @@ package com.shrubyway.game.map;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.saver.VisualObjectListSaver;
 import com.shrubyway.game.screen.Game;
+import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
 import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
@@ -18,6 +19,7 @@ public class Map {
     char decorations[][] = new char[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
 
     public VisualObjectListSaver[][] getChunks() {
+        int size = 0;
         VisualObjectListSaver[][] chunks = new VisualObjectListSaver[16][16];
         for (int i = 0; i < 16; i++)
             for (int j = 0; j < 16; j++) {
@@ -29,6 +31,7 @@ public class Map {
     public void setChunks(VisualObjectListSaver[][] chunks) {
         for (int i = 0; i < 16; i++)
             for (int j = 0; j < 16; j++) {
+                this.chunks[i][j].clear();
                 for(VisibleObject visibleObject : chunks[i][j].getList()) {
                     this.chunks[i][j].add(visibleObject);
                 }
@@ -133,6 +136,9 @@ public class Map {
                             && check.position.x < playerPosition.x + MapSettings.TYLESIZE * MapSettings.calculationDistanceY &&
                             check.position.y > playerPosition.y - MapSettings.TYLESIZE * MapSettings.calculationDistanceY
                             && check.position.y < playerPosition.y + MapSettings.TYLESIZE * MapSettings.calculationDistanceY) {
+                        if(check instanceof InteractiveObject inter) {
+                            inter.unhideBody();
+                        }
                         Game.objectsList.add(check);
                         iterator.remove();
                     }
@@ -166,6 +172,9 @@ public class Map {
                 y /= 16;
 
                 chunks[x][y].add(check);
+                if(check instanceof InteractiveObject inter) {
+                    inter.hideBody();
+                }
                 tempList.add(check);
             }
         }

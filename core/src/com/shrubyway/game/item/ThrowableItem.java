@@ -1,9 +1,9 @@
 package com.shrubyway.game.item;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.screen.Game;
@@ -33,7 +33,7 @@ public class ThrowableItem extends Bullet {
                     new Vector2(finishPosition.x - position.x, finishPosition.y - position.y);
             direction.nor();
             direction.scl(speed);
-            sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/rotation.ogg"));
+            sound = ShrubyWay.assetManager.get("sounds/EFFECTS/rotation.ogg", Sound.class);
             RotationSound = sound.play();
     }
     public ThrowableItem(Vector2 startPosition, Vector2 finishPosition, Item item,
@@ -51,7 +51,7 @@ public class ThrowableItem extends Bullet {
                 new Vector2(finishPosition.x - position.x, finishPosition.y - position.y);
         direction.nor();
         direction.scl(speed);
-        sound = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/rotation.ogg"));
+        sound = ShrubyWay.assetManager.get("sounds/EFFECTS/rotation.ogg", Sound.class);
         RotationSound = sound.play();
     }
 

@@ -25,7 +25,7 @@ public class Background implements Serializable {
     Animation<TextureRegion> tile[][];
     String stepSoundWay[] = new String[MapSettings.TILETYPES];
     long tileSound[] = new long[MapSettings.TILETYPES];
-    Sound stepSound[][] = new Sound[MapSettings.TILETYPES][2];
+    String stepSoundName[][] = new String[MapSettings.TILETYPES][2];
     int tileWithSound[] = {0};
 
     float nearestTile[] = new float[MapSettings.TILETYPES];
@@ -73,8 +73,8 @@ public class Background implements Serializable {
     private void soundLoader() {
         for (int i = 0; i < MapSettings.TILETYPES; i++) {
             tileSound[i] = -1;
-            stepSound[i][0] = ShrubyWay.assetManager.get( stepSoundWay[i] + "_0.ogg", Sound.class);
-            stepSound[i][1] = ShrubyWay.assetManager.get(stepSoundWay[i] + "_1.ogg", Sound.class);
+            stepSoundName[i][0] =  stepSoundWay[i] + "_0.ogg";
+            stepSoundName[i][1] = stepSoundWay[i] + "_1.ogg";
         }
 
         for (int to : tileWithSound) {
@@ -185,6 +185,7 @@ public class Background implements Serializable {
         return backgroundMap[x][y];
     }
    Vector2 tempDistance = new Vector2(0,0);
+     float last_step = 0;
     void makeStep(Vector2 step, Vector2 playerPosition) {
         int x = 0;
         x += (step.x) / MapSettings.TYLESIZE;
@@ -193,17 +194,12 @@ public class Background implements Serializable {
         x = (x + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
         y = (y + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
 
-        long temp = stepSound[backgroundMap[x][y] - '0']
-                [(int) (Math.random() * 2)].play();
-
-        //sound.setPitch(temp, 1 + (float) Math.random() * 0.2f - 0.1f);
         tempDistance.set(step.x, step.y);
-
-
         tempDistance.sub(playerPosition);
         float temp1 = tempDistance.len(); temp1 = temp1 / MapSettings.soundDistance;
         temp1 = Math.min(temp1, 1);
-        sound.setVolume(temp,  (1 - temp1) * SoundSettings.soundVolume);
+        ShrubyWay.assetManager.get(stepSoundName[backgroundMap[x][y] - '0'][(int) (Math.random() * 2)],
+                Sound.class).play((1 - temp1) * SoundSettings.soundVolume);
     }
 
 }
