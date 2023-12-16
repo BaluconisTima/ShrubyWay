@@ -25,7 +25,6 @@ public class Button {
             lastScale = GlobalBatch.scale;
             rectangle = new Rectangle(position.x * lastScale, position.y * lastScale,
                     textureNotSellected.getWidth() * lastScale, textureNotSellected.getHeight() * lastScale);
-
         }
     }
 

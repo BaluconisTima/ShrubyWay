@@ -32,9 +32,10 @@ public class LoadingScreen extends Screen{
         phrases.add("Explosive berries are not the best food.");
         phrases.add("The chests contain many interesting things!");
         phrases.add("You are playing an early version of the game");
-        phrases.add("QBA'G ORYVRIR GUR ANEENGBE");
         phrases.add("The old willow tree holds treasures.");
         phrases.add("You are not the first hero");
+
+        phrases.add("Also try BFDI: Branches!");
 
 
     }

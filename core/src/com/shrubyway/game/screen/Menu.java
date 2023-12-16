@@ -10,14 +10,17 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.Animator;
+import com.shrubyway.game.layout.Layout;
+import com.shrubyway.game.layout.ResetLayout;
+import com.shrubyway.game.layout.SettingsLayout;
 import com.shrubyway.game.myinterface.Button;
-import com.shrubyway.game.saver.GameSaver;
 import com.shrubyway.game.sound.SoundSettings;
 
 
 public class Menu extends Screen {
     static Texture Background, logo, Shruby, menuLight;
     Sound sound;
+    static private Layout layout;
     static Button playButton, settingsButton, resetButton, exitButton, achivementsButton;
 
     static Vector2 topLeftCorner = GlobalBatch.topLeftCorner(),
@@ -81,6 +84,11 @@ public class Menu extends Screen {
 
 
     @Override public void updateScreen() {
+        if(layout != null) {
+            layout.update(ShrubyWay.inputProcessor.mousePosition());
+            if(layout.isClosed()) layout = null;
+            return;
+        }
         if(ShrubyWay.inputProcessor.isMouseLeft()) {
             if (playButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
                 sound.play(SoundSettings.soundVolume);
@@ -89,6 +97,7 @@ public class Menu extends Screen {
             }
             if (settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
                 sound.play(SoundSettings.soundVolume);
+                layout = new SettingsLayout();
             }
             if (exitButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
                 sound.play(SoundSettings.soundVolume);
@@ -99,7 +108,7 @@ public class Menu extends Screen {
             }
             if (resetButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
                 sound.play(SoundSettings.soundVolume);
-                GameSaver.resetSave();
+                layout = new ResetLayout();
             }
         }
 
@@ -125,25 +134,28 @@ public class Menu extends Screen {
         GlobalBatch.render(menuLight, centerX - menuLight.getWidth() / 2, -700f + (float)Math.sin((float)y / speed) * 100f);
         GlobalBatch.render(Shruby, 0, 10);
 
-        if(playButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()))
+        if(playButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()) && layout == null)
             playButton.renderSellected();
         else playButton.render();
 
-        if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()))
+        if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()) && layout == null)
             settingsButton.renderSellected();
         else settingsButton.render();
 
-        if(exitButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()))
+        if(exitButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()) && layout == null)
             exitButton.renderSellected();
         else exitButton.render();
 
-        if(achivementsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()))
+        if(achivementsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()) && layout == null)
             achivementsButton.renderSellected();
         else achivementsButton.render();
 
-        if(resetButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()))
+        if(resetButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()) && layout == null)
             resetButton.renderSellected();
         else resetButton.render();
+
+
+        if(layout != null) layout.render(ShrubyWay.inputProcessor.mousePosition());
 
     }
 
