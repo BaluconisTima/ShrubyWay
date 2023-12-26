@@ -30,6 +30,7 @@ public class GlobalAssetManager {
         assetManager.load(path, type);
     }
 
+
     public <T> T get(String fileName, Class<T> type) {
         if(!assetManager.isLoaded(fileName)) {
             assetManager.load(fileName, type);
@@ -38,7 +39,7 @@ public class GlobalAssetManager {
         if (type == Texture.class) {
             Texture texture = assetManager.get(fileName, Texture.class);
             Texture.TextureFilter minFilter = Texture.TextureFilter.Linear;
-            Texture.TextureFilter magFilter = Texture.TextureFilter.Nearest;
+            Texture.TextureFilter magFilter = Texture.TextureFilter.Linear;
             texture.setFilter(minFilter, magFilter);
             texture.setWrap(Texture.TextureWrap.ClampToEdge, Texture.TextureWrap.ClampToEdge);
             return (T) texture;
@@ -55,7 +56,7 @@ public class GlobalAssetManager {
             } else {
                 String extension = file.extension();
                 if (extension.equals("png")) {
-                    addAsset(file.path(), com.badlogic.gdx.graphics.Texture.class);
+                    addAsset(file.path(), Texture.class);
                 } else if (extension.equals("wav") || extension.equals("ogg")) {
                     addAsset(file.path(), com.badlogic.gdx.audio.Sound.class);
                 } else if (extension.equals("mp3")) {

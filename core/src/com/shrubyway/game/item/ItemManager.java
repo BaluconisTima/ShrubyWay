@@ -3,6 +3,8 @@ package com.shrubyway.game.item;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.ShrubyWay;
+import com.shrubyway.game.item.Food.AgaricAct;
+import com.shrubyway.game.item.Food.Food;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.effect.BerryExplosion;
 import com.shrubyway.game.visibleobject.effect.FruitExplosion;
@@ -78,7 +80,7 @@ public class ItemManager {
         itemDescription[6] = "Causes hallucinations, addiction \n" +
                 "and loss of control over darkness.";
         throwingDamage[6] = 0;
-        itemActing[6] = new Food(0.05f, -1f);
+        itemActing[6] = new AgaricAct(0.2f, -1f, 20f);
 
         itemName[7] = "Harmonica";
         itemDescription[7] = "That old harmonica makes \n" +

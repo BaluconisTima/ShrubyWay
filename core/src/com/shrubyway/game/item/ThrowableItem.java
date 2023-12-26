@@ -34,7 +34,7 @@ public class ThrowableItem extends Bullet {
             direction.nor();
             direction.scl(speed);
             sound = ShrubyWay.assetManager.get("sounds/EFFECTS/rotation.ogg", Sound.class);
-            RotationSound = sound.play();
+            RotationSound = sound.play(SoundSettings.soundVolume);
     }
     public ThrowableItem(Vector2 startPosition, Vector2 finishPosition, Item item,
                          VisibleObject thrower, boolean rotation, float damageScale, float speedScale) {
@@ -52,7 +52,7 @@ public class ThrowableItem extends Bullet {
         direction.nor();
         direction.scl(speed);
         sound = ShrubyWay.assetManager.get("sounds/EFFECTS/rotation.ogg", Sound.class);
-        RotationSound = sound.play();
+        RotationSound = sound.play(SoundSettings.soundVolume);
     }
 
     @Override public Rectangle attackBox() {

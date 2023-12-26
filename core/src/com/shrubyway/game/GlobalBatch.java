@@ -17,7 +17,6 @@ public class GlobalBatch {
         scale = Math.min(scale, (float) height / 1080);
     }
     public static void create() {
-
         batch = new SpriteBatch();
         batch.enableBlending();
         Gdx.gl.glEnable(GL20.GL_BLEND);

@@ -44,13 +44,13 @@ public class MobsManager {
         mobs[2].newInstance(0, 0);
         dropTableItem[2] = new ArrayList<>();
         dropTableChance[2] = new ArrayList<>();
-        mobSpawnCost[2] = 10;
+        mobSpawnCost[2] = 1;
         mobExp[2] = 0;
 
         mobs[3] = (ExplerryBusher.class).getDeclaredConstructor(float.class, float.class);
         mobs[3].newInstance(0, 0);
         dropTableItem[3] = new ArrayList<>(Arrays.asList(8, 8, 1));
-        dropTableChance[3] = new ArrayList<>(Arrays.asList(0.8f, 0.2f, 0.6f));
+        dropTableChance[3] = new ArrayList<>(Arrays.asList(0.4f, 0.1f, 0.2f));
         mobSpawnCost[3] = 10;
         mobExp[3] = 250;
 
@@ -110,12 +110,21 @@ public class MobsManager {
         Game.objectsList.add(mob);
     }
     static public void tryGenerateMob(Vector2 playerPosition) {
+        int allCount = 0;
         for(int i = 0; i < mobsNumber; i++) {
-            int j = random.nextInt(mobsNumber);
-            if(AccountSpawner >= mobSpawnCost[j]) {
-                AccountSpawner -= mobSpawnCost[j];
-                addMobNear(playerPosition, j);
+            allCount += mobSpawnCost[i];
+        }
+        allCount = (int) (allCount * Math.random());
+
+        for(int i = 0; i < mobsNumber; i++) {
+            if(allCount < mobSpawnCost[i]) {
+                if(AccountSpawner >= mobSpawnCost[i]) {
+                    AccountSpawner -= mobSpawnCost[i];
+                    addMobNear(playerPosition, i);
+                }
+                return;
             }
+           allCount -= mobSpawnCost[i];
         }
     }
 

@@ -8,7 +8,7 @@ public class MyInputAdapter extends InputAdapter {
     private boolean leftPressed, rightPressed, upPressed, downPressed,
             spacePressed, ePressed, qPressed, escPressed, lPressed, cPressed, minusPressed, plusPressed, zPressed;
     private boolean numberPressed[] = new boolean[10];
-    private boolean mouseLeft, mouseRight;
+    private boolean mouseLeft, mouseRight, mouseLeft2;
     private boolean runing;
     private final Vector2 mousePosition = new Vector2();
     public final Vector2 movementDirection = new Vector2();
@@ -66,6 +66,7 @@ public class MyInputAdapter extends InputAdapter {
         mousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
         if (button == Input.Buttons.LEFT) {
             mouseLeft = true;
+            mouseLeft2 = true;
         } else if (button == Input.Buttons.RIGHT) {
             mouseRight = true;
         }
@@ -82,6 +83,7 @@ public class MyInputAdapter extends InputAdapter {
         mousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
         if (button == Input.Buttons.LEFT) {
             mouseLeft = false;
+            mouseLeft2 = false;
         } else if (button == Input.Buttons.RIGHT) {
             mouseRight = false;
         }
@@ -115,6 +117,10 @@ public class MyInputAdapter extends InputAdapter {
     public boolean isMouseLeft() {
         if(mouseLeft) {mouseLeft = false; return true;}
         return false;
+    }
+
+    public boolean isMouseLeftPressed() {
+        return mouseLeft2;
     }
     public boolean isMouseRight() {
         return mouseRight;

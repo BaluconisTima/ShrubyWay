@@ -1,6 +1,7 @@
 package com.shrubyway.game.visibleobject.entity;
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,6 +11,8 @@ import com.shrubyway.game.Health;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
+import com.shrubyway.game.effect.Effect;
+import com.shrubyway.game.effect.effecttypes.SpeedEffect;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ThrowableItem;
 import com.shrubyway.game.screen.Game;
@@ -21,10 +24,17 @@ import com.shrubyway.game.visibleobject.InteractiveObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 import com.shrubyway.game.visibleobject.entity.mob.Mob;
 
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+
 abstract public class Entity extends InteractiveObject {
 
 
     protected int entityID = -1;
+
+    List<Effect> effects = new CopyOnWriteArrayList<>();
+
     public Health health;
     public byte faceDirection = 0;
     protected int action = 0;
@@ -53,15 +63,56 @@ abstract public class Entity extends InteractiveObject {
         return (action == 3);
     }
 
+    public void addEffect(Effect effect) {
+        for(Effect effect1 : effects) {
+            if(effect1.getClass() == effect.getClass()) {
+                effect1.merge(effect);
+                return;
+            }
+        }
+        effects.add(effect);
+    }
+    public void removeEffect(Effect effect) {
+        if(effects.contains(effect))
+            effects.remove(effect);
+    }
 
-    public float getSpeed() {
+
+    public float getSpeed1() {
         float tempSpeed = 0; tempSpeed += (speed);
         if(inLiquid) tempSpeed *= 0.75;
         if(action != 2) {if (isRunning) tempSpeed *= 1.25;}
         else tempSpeed *= 1.5;
-        return tempSpeed;
+        return tempSpeed * speedScale;
     }
+
+    public float getSpeed() {
+        return Math.abs(getSpeed1());
+    }
+
+    public boolean isSpeedNegative() {
+        return (getSpeed1() < 0);
+    }
+    float speedScale = 1f;
+    private Color effectColor = Color.WHITE;
     public void update(float delta) {
+
+        speedScale = 1f;
+        for(Effect effect : effects) {
+            effect.update(delta);
+        }
+
+        effectColor = Color.WHITE;
+        for(Effect effect : effects) {
+            effectColor = new Color( (effect.color.r + effectColor.r) / 2,
+                    (effect.color.g + effectColor.g) / 2,
+                    (effect.color.b + effectColor.b) / 2,
+                    1);
+            if (effect instanceof SpeedEffect) {
+                speedScale *= ((SpeedEffect) effect).speed;
+            }
+        }
+
          tryMoveMomentum(delta);
         attacking = false;
         if(health.getHealth() <= 0) {
@@ -144,11 +195,14 @@ abstract public class Entity extends InteractiveObject {
    public Vector2 nextMovement = new Vector2(0,0);
     public void tryMoveTo(Vector2 direction){
         if(!allowedMotion) { return; }
+        if(isSpeedNegative()) direction.scl(-1);
         if(direction.len() != 0) {
             direction.nor();
             tempDirection.set(direction);
             tempDirection.scl(getSpeed());
+            if(isSpeedNegative()) tempDirection.scl(-1);
             changeAnimationsFor(tempDirection, 1);
+            if(isSpeedNegative()) tempDirection.scl(-1);
             nextMovement.set(nextMovement.x + tempDirection.x, nextMovement.y + tempDirection.y);
         } else {
             changeAnimationsFor(tempDirection, 0);
@@ -172,18 +226,26 @@ abstract public class Entity extends InteractiveObject {
         GlobalBatch.render(ShrubyWay.assetManager.get("effects/shadow.png", Texture.class), Math.round(positionLegs().x) - 80, Math.round(positionLegs().y) - 20);
     }
     @Override public void render() {
+
         if(health.timeAfterHit() < 0.2f) {
-            GlobalBatch.batch.setColor(1, health.timeAfterHit() * 5f, health.timeAfterHit() * 5f, 1);
+            effectColor.set(1, Math.min(effectColor.g, health.timeAfterHit() * 5f),
+                    Math.min(effectColor.b, health.timeAfterHit() * 5f), 1);
         }
+        GlobalBatch.batch.setColor(effectColor);
+
+        float tempSpeed = speed / Math.abs(getSpeed());
+        if(action != 1) tempSpeed = 1;
+
         EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
-                setFrameDuration(1f/(24f / speed * getSpeed()));
+                setFrameDuration(1f/(24f / tempSpeed));
         GlobalBatch.render(EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
                         getKeyFrame(AnimationGlobalTime.time() - animationTime + loopedAnimationTime * (EntityManager.looping[entityID][action] ? 1:0), EntityManager.looping[entityID][action]),
                 Math.round(position.x), Math.round(position.y) - (inLiquid ? -5 : 83));
         collisionBox().render();
         hitBox().render();
 
-        GlobalBatch.batch.setColor(1, 1, 1, 1);
+        effectColor.set(1, 1, 1, 1);
+        GlobalBatch.batch.setColor(effectColor);
        if(inLiquid) renderWaterOverlay();
     }
     public float alpha = 1f;

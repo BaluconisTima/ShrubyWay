@@ -1,10 +1,12 @@
-package com.shrubyway.game.item;
+package com.shrubyway.game.item.Food;
 
 import com.badlogic.gdx.audio.Sound;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.item.ItemActing;
 import com.shrubyway.game.myinterface.ElementPumping;
 import com.shrubyway.game.sound.SoundSettings;
+import com.shrubyway.game.visibleobject.entity.Entity;
 
 public class Food extends ItemActing {
     public float heling = 0;
@@ -21,7 +23,9 @@ public class Food extends ItemActing {
             actingAnimation = 6;
             this.actingTime = eatingTime;
             this.heling = heling;
+     }
 
+     public void afterActing(Entity owner) {
      }
 
     @Override public void Acting() {

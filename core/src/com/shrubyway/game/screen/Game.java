@@ -17,10 +17,12 @@ import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.event.Event;
-import com.shrubyway.game.item.Food;
+import com.shrubyway.game.item.Food.Food;
 import com.shrubyway.game.item.Harmonica;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
+import com.shrubyway.game.layout.Layout;
+import com.shrubyway.game.layout.SettingsLayout;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.map.ScreenGrid;
@@ -61,6 +63,7 @@ public class Game extends Screen implements java.io.Serializable {
     static GameSaver gameSaver = new GameSaver();
     public static Map map;
     static public Shruby player;
+    static private Layout layout;
     static ElementPumping elementPumping = new ElementPumping();
 
     Button continueButton, settingsButton, menuButton;
@@ -150,9 +153,9 @@ public class Game extends Screen implements java.io.Serializable {
                 ShrubyWay.inputProcessor.mousePosition().y
                         + localCamera.position.y - Gdx.graphics.getHeight() / 2);
 
-        if(ShrubyWay.inputProcessor.isCPressed()) {
-          objectsList.add(new VisibleItem(new Item(8), mousePosition.x, mousePosition.y));
-        }
+       /* if(ShrubyWay.inputProcessor.isCPressed()) {
+          objectsList.add(new VisibleItem(new Item(10), mousePosition.x, mousePosition.y));
+        } */
         /*if(ShrubyWay.inputProcessor.isLPressed()) {
           loadGame();
         } */
@@ -179,6 +182,7 @@ public class Game extends Screen implements java.io.Serializable {
                                 heling *= 1.3;
                                 waterLevel /= 4;
                             }
+                            ((Food)ItemManager.itemActing[temp]).afterActing(player);
                             player.health.heal(heling);
                         }
                         if (ItemManager.itemActing[temp] instanceof Harmonica) {
@@ -264,6 +268,11 @@ public class Game extends Screen implements java.io.Serializable {
             }
         }
         if(gamePaused) {
+            if(layout != null) {
+                layout.update(ShrubyWay.inputProcessor.mousePosition());
+                if(layout.isClosed()) layout = null;
+                return;
+            }
             continueButton.update();
             menuButton.update();
             settingsButton.update();
@@ -280,7 +289,11 @@ public class Game extends Screen implements java.io.Serializable {
             }
             if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
                 soundClick.play(SoundSettings.soundVolume);
-                // settings = true;
+                layout = new SettingsLayout();
+            }
+        } else {
+            if(layout != null) {
+                layout = null;
             }
         }
     }
@@ -516,33 +529,25 @@ public class Game extends Screen implements java.io.Serializable {
         inventory.render(mousePos);
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
         elementPumping.render(ShrubyWay.inputProcessor.mousePosition());
-        TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
-
+       /* TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
         float memory = Gdx.app.getJavaHeap() / 1024f / 1024f;
-        TextDrawer.drawBlack("" + memory, 50, 100, 1);
-       /* int i = 0;
-        for(VisibleObject obj : objectsList.getList()) {
-            i++;
-            if(obj instanceof InteractiveObject inter) {
-                TextDrawer.drawBlack(inter.getCollisionBody().getPosition() + " " +
-                        inter.positionCenter(), 50, 1000 - 30 * i, 0.3f);
-            }
+        TextDrawer.drawBlack("" + memory, 50, 100, 1); */
 
-
-        } */
 
         if (gamePaused) {
              GlobalBatch.render(ShrubyWay.assetManager.get("interface/shadow.png", Texture.class),
                     0, 0);
-            if(menuButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
+            if(menuButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()) && layout == null) {
                 menuButton.renderSellected();
             } else menuButton.render();
-            if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
+            if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())&& layout == null) {
                 settingsButton.renderSellected();
             } else settingsButton.render();
-            if(continueButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
+            if(continueButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())&& layout == null) {
                 continueButton.renderSellected();
             } else continueButton.render();
+
+            if(layout != null) layout.render(ShrubyWay.inputProcessor.mousePosition());
         }
         GlobalBatch.batch.setColor(1,1,1,1 - CameraEffects.getSaveEffect());
         GlobalBatch.render(ShrubyWay.assetManager.get("interface/screen.png", Texture.class),
@@ -594,7 +599,7 @@ public class Game extends Screen implements java.io.Serializable {
             ShrubyWay.assetManager.get("sounds/EFFECTS/save.ogg", Sound.class).play(SoundSettings.soundVolume);
             CameraEffects.save();
         }
-         gameSaver.saveGameFiles();
+        gameSaver.saveGameFiles();
         String userHome = System.getenv("APPDATA");
         String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE.txt";
 

@@ -1,0 +1,30 @@
+package com.shrubyway.game.effect.effecttypes;
+import com.shrubyway.game.effect.Effect;
+import com.shrubyway.game.visibleobject.entity.Entity;
+import com.badlogic.gdx.graphics.Color;
+public class SpeedEffect extends Effect {
+
+    public float speed;
+        public SpeedEffect(float time, Entity owner, float speed) {
+            super(time, Color.BLUE, owner);
+            this.speed = speed;
+            if(speed < 0) {
+                color = Color.GREEN;
+            } else
+            if(speed > 1) {
+                color = Color.YELLOW;
+            } else if(speed < 1) {
+                color = Color.BLUE;
+            }
+        }
+
+        @Override public void merge(Effect effect) {
+            if(effect instanceof SpeedEffect) {
+                SpeedEffect speedEffect = (SpeedEffect) effect;
+                if(Math.abs(speedEffect.speed) > Math.abs(speed)) {
+                    time_left = speedEffect.time_left + time_left * (speedEffect.speed - speed);
+                    speed = speedEffect.speed;
+                }
+            }
+        }
+}
