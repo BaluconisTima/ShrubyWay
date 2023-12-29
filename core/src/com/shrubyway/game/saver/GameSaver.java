@@ -7,6 +7,7 @@ import com.shrubyway.game.item.Item;
 import com.shrubyway.game.myinterface.ElementPumping;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.visibleobject.ObjectsList;
+import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
 
 import java.io.File;
 import java.io.Serializable;
@@ -23,6 +24,7 @@ public class GameSaver implements Serializable {
     VisualObjectListSaver [][] chunks;
 
     int fireLevel, waterLevel, earthLevel, airLevel;
+    int MobCount;
     float localExp;
 
     public void saveGameFiles() {
@@ -39,6 +41,23 @@ public class GameSaver implements Serializable {
        earthLevel = ElementPumping.earthLevel;
        airLevel = ElementPumping.airLevel;
        localExp = ElementPumping.localExp;
+       MobCount = MobsManager.MobCount;
+    }
+
+
+     public void loadDefaultSettings() {
+        Event.eventHashMap = new HashMap<String, Integer>();
+        Event.eventsHappened = new HashMap<Integer, Boolean>();
+        Game.inventory.items = new Item[5][9];
+        Game.inventory.numberOfItem = new Integer[5][9];
+        Game.player.position.set(31599, 31599);
+        Game.player.health = new Health(20, 0.3f);
+        ElementPumping.fireLevel = 1;
+        ElementPumping.waterLevel = 1;
+        ElementPumping.earthLevel = 1;
+        ElementPumping.airLevel = 1;
+        ElementPumping.localExp = 0;
+        MobsManager.MobCount = 0;
     }
 
     public void loadGameFiles() {
@@ -60,6 +79,7 @@ public class GameSaver implements Serializable {
         ElementPumping.earthLevel = earthLevel;
         ElementPumping.airLevel = airLevel;
         ElementPumping.localExp = localExp;
+        MobsManager.MobCount = MobCount;
     }
 
     static public boolean checkSaveFile() {

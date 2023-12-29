@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 public class MyInputAdapter extends InputAdapter {
     private boolean leftPressed, rightPressed, upPressed, downPressed,
-            spacePressed, ePressed, qPressed, escPressed, lPressed, cPressed, minusPressed, plusPressed, zPressed;
+            spacePressed, ePressed, qPressed, escPressed, lPressed, cPressed, minusPressed, plusPressed, enterPressed, xPressed;
     private boolean numberPressed[] = new boolean[10];
     private boolean mouseLeft, mouseRight, mouseLeft2;
     private boolean runing;
@@ -30,7 +30,8 @@ public class MyInputAdapter extends InputAdapter {
         if(keycode == Input.Keys.C) cPressed = true;
         if(keycode == Input.Keys.MINUS) minusPressed = true;
         if(keycode == Input.Keys.PLUS) plusPressed = true;
-        if(keycode == Input.Keys.Z) zPressed = true;
+        if(keycode == Input.Keys.ENTER) enterPressed = true;
+        if(keycode == Input.Keys.X) xPressed = true;
 
         for(int i = 0; i < 10; i++) {
             if(keycode == Input.Keys.NUM_0 + i) numberPressed[i] = true;
@@ -53,7 +54,8 @@ public class MyInputAdapter extends InputAdapter {
         if(keycode == Input.Keys.C) cPressed = false;
         if(keycode == Input.Keys.MINUS) minusPressed = false;
         if(keycode == Input.Keys.PLUS) plusPressed = false;
-        if(keycode == Input.Keys.Z) zPressed = false;
+        if(keycode == Input.Keys.Z) enterPressed = false;
+        if(keycode == Input.Keys.X) xPressed = false;
         return false;
     }
     @Override
@@ -61,6 +63,7 @@ public class MyInputAdapter extends InputAdapter {
         mousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
         return false;
     }
+
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         mousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
@@ -119,6 +122,7 @@ public class MyInputAdapter extends InputAdapter {
         return false;
     }
 
+
     public boolean isMouseLeftPressed() {
         return mouseLeft2;
     }
@@ -131,6 +135,10 @@ public class MyInputAdapter extends InputAdapter {
     public boolean isEPressed() {
         if(ePressed) {ePressed = false; return true;}
         return ePressed;
+    }
+    public boolean isXPressed() {
+        if(xPressed) {xPressed = false; return true;}
+        return xPressed;
     }
 
     public boolean isMinusPressed() {
@@ -148,9 +156,9 @@ public class MyInputAdapter extends InputAdapter {
         return escPressed;
     }
 
-    public boolean isZPressed() {
-        if(zPressed) {zPressed = false; return true;}
-        return zPressed;
+    public boolean isEnterPressed() {
+        if(enterPressed) {enterPressed = false; return true;}
+        return enterPressed;
     }
 
     public boolean isLPressed() {

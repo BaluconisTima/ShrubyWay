@@ -6,12 +6,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.Health;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.item.Item;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
 
 
 public class Shruby extends Entity {
-
     public Shruby(float x, float y) {
         entityID = 0;
         damage = 2f;
@@ -79,6 +79,18 @@ public class Shruby extends Entity {
         return interactionBox;
     }
 
+    @Override
+    public void tryMoveTo(Vector2 direction) {
+        super.tryMoveTo(direction);
+        if(direction.x != 0 || direction.y != 0) moved = true;
+    }
+
+    @Override
+    public void attack(Vector2 direction) {
+        super.attack(direction);
+        if(attacking) attacked = true;
+    }
+
     @Override public Rectangle attackBox() {
         if(attackBox == null)
             attackBox = new Rectangle(0,0,0,0);
@@ -134,10 +146,21 @@ public class Shruby extends Entity {
         return tempPosition;
     }
 
+    @Override
+    public void throwItem(Vector2 shootPosition, Item item, boolean rotating) {
+       if(!canThrow()) return;
+        super.throwItem(shootPosition, item, rotating);
+        throwed = true;
+        throwTime++;
+    }
+
     public Vector2 positionItemDrop() {
         tempPosition.set(position.x + regionWidth / 2, position.y + 50);
         return tempPosition;
     }
+
+    public int throwTime = 0;
+    public boolean moved = false, throwed = false, attacked = false;
 
 
 

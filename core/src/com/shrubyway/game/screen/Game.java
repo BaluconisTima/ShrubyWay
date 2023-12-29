@@ -22,7 +22,9 @@ import com.shrubyway.game.item.Harmonica;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.layout.Layout;
+import com.shrubyway.game.linemaker.LineMaker;
 import com.shrubyway.game.layout.SettingsLayout;
+import com.shrubyway.game.linemaker.narrator.Narrator;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.map.ScreenGrid;
@@ -66,7 +68,11 @@ public class Game extends Screen implements java.io.Serializable {
     static private Layout layout;
     static ElementPumping elementPumping = new ElementPumping();
 
+    static public LineMaker LineMaker = new LineMaker();
+
     Button continueButton, settingsButton, menuButton;
+
+    public static boolean mobDiedByThrow = false, playerEating = false;
 
 
     public Game() {
@@ -74,6 +80,7 @@ public class Game extends Screen implements java.io.Serializable {
     }
 
     private void init() {
+        event.clear();
         objectsList.getList().clear();
         GlobalBatch.batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         GlobalBatch.batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
@@ -99,6 +106,8 @@ public class Game extends Screen implements java.io.Serializable {
         ItemManager.init();
         MobsManager.init();
         elementPumping.init();
+        TutorialHints.finish();
+        Narrator.logic = null;
 
         objectsList = new ObjectsList();
         event = new Event();
@@ -115,11 +124,9 @@ public class Game extends Screen implements java.io.Serializable {
         if(GameSaver.checkSaveFile()) {
            loadGame();
         } else {
-          //  GameSaver.loadDefaultSettings();
+            loadGameDefault();
         }
         SoundSettings.changeMusic("music/Forest Theme.mp3");
-
-
     }
 
     Vector2 tempVector = new Vector2(0,0);
@@ -153,6 +160,10 @@ public class Game extends Screen implements java.io.Serializable {
                 ShrubyWay.inputProcessor.mousePosition().y
                         + localCamera.position.y - Gdx.graphics.getHeight() / 2);
 
+        if(ShrubyWay.inputProcessor.isXPressed()) {
+            LineMaker.skip();
+        }
+
        /* if(ShrubyWay.inputProcessor.isCPressed()) {
           objectsList.add(new VisibleItem(new Item(10), mousePosition.x, mousePosition.y));
         } */
@@ -184,6 +195,7 @@ public class Game extends Screen implements java.io.Serializable {
                             }
                             ((Food)ItemManager.itemActing[temp]).afterActing(player);
                             player.health.heal(heling);
+                            playerEating = true;
                         }
                         if (ItemManager.itemActing[temp] instanceof Harmonica) {
                             ShrubyWay.inputProcessor.setSpacePressed(false);
@@ -220,7 +232,7 @@ public class Game extends Screen implements java.io.Serializable {
             player.tryMoveTo(movingVector);
             correctPosition();
         }
-        if (ShrubyWay.inputProcessor.isZPressed()) {
+        if (ShrubyWay.inputProcessor.isEnterPressed()) {
 
             for (VisibleObject obj : objectsList.getList()) {
                 if(obj instanceof Decoration dec) {
@@ -267,6 +279,7 @@ public class Game extends Screen implements java.io.Serializable {
                 pause();
             }
         }
+
         if(gamePaused) {
             if(layout != null) {
                 layout.update(ShrubyWay.inputProcessor.mousePosition());
@@ -333,27 +346,40 @@ public class Game extends Screen implements java.io.Serializable {
 
 
     void gameOver() {
+        com.shrubyway.game.linemaker.LineMaker.skip();
         ShrubyWay.screen = new GameOver();
     }
 
     void Menu() {
+        com.shrubyway.game.linemaker.LineMaker.skip();
         ShrubyWay.screen = new Menu();
     }
 
     float lastMobUpdate = 5f;
 
     public void globalProcessing(float delta) {
+       TutorialHints.update();
+       Narrator.update(delta);
+       LineMaker.update(delta);
 
-       if (AnimationGlobalTime.time() - lastMobUpdate > 1f) {
+       if (AnimationGlobalTime.time() - lastMobUpdate > 1f && Event.happened("Forest_Tutorial_Finished")) {
             lastMobUpdate = AnimationGlobalTime.time();
             MobsManager.playerAddUpdate(1);
-            MobsManager.tryGenerateMob(player.positionLegs());
+
+                MobsManager.tryGenerateMob(player.positionLegs());
         }
 
         List<VisibleObject> temp = new CopyOnWriteArrayList<>(objectsList.getList());
+       MiniMap.mobs.clear();
+       for(VisibleObject obj : temp) {
+          if(obj instanceof Mob) {
+                MiniMap.mobs.add(((Mob) obj).position);
+          }
+       }
 
         map.update(player.positionLegs());
         if(player.dead()) {
+              LineMaker.skip();
               SoundSettings.stopMusic();
         }
 
@@ -411,8 +437,13 @@ public class Game extends Screen implements java.io.Serializable {
                             } else
                                 if (to instanceof Entity ent) {
                                 if(ent.health.getHealth() <= 0) continue;
+
                                 ent.getDamage(from.damage(),
                                         from.positionCenter());
+
+                                if(ent instanceof Mob && from instanceof Bullet bul && ent.health.getHealth() <= 0) {
+                                   mobDiedByThrow = true;
+                                }
 
                               if(ent.health.getHealth() <= 0) {
                                 if(ent instanceof Mob mob) {
@@ -529,6 +560,10 @@ public class Game extends Screen implements java.io.Serializable {
         inventory.render(mousePos);
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
         elementPumping.render(ShrubyWay.inputProcessor.mousePosition());
+        TutorialHints.render();
+
+
+       // TextDrawer.drawCenterBlack("Mobs: " + MobsManager.MobCount, 50, 50, 1);
        /* TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
         float memory = Gdx.app.getJavaHeap() / 1024f / 1024f;
         TextDrawer.drawBlack("" + memory, 50, 100, 1); */
@@ -558,12 +593,14 @@ public class Game extends Screen implements java.io.Serializable {
 
     public void pause() {
         gamePaused = true;
+        LineMaker.pause();
         AnimationGlobalTime.pause();
         map.pauseSounds();
     }
 
     public void resume() {
         gamePaused = false;
+        LineMaker.resume();
         AnimationGlobalTime.resume();
         map.resumeSounds();
     }
@@ -595,6 +632,7 @@ public class Game extends Screen implements java.io.Serializable {
     }
 
     static public void saveGame(Boolean effect) {
+        com.shrubyway.game.linemaker.LineMaker.skip();
         if(effect) {
             ShrubyWay.assetManager.get("sounds/EFFECTS/save.ogg", Sound.class).play(SoundSettings.soundVolume);
             CameraEffects.save();
@@ -617,7 +655,6 @@ public class Game extends Screen implements java.io.Serializable {
     }
 
     void loadGame() {
-
         String userHome = System.getenv("APPDATA");
         String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE.txt";
 
@@ -629,6 +666,9 @@ public class Game extends Screen implements java.io.Serializable {
             e.printStackTrace();
         }
 
+    }
+    void loadGameDefault() {
+        gameSaver.loadDefaultSettings();
     }
 
     @Override public void dispose() {

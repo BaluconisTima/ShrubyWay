@@ -2,7 +2,7 @@ package com.shrubyway.game.map;
 
 public class MapSettings {
     static public final int visibleDistanceX = 13, visibleDistanceY = 10;
-    static public final int calculationDistanceX = 16, calculationDistanceY = 16;
+    static public final int calculationDistanceX = 20, calculationDistanceY = 20;
 
     static public final int TILETYPES = 8;
     static public final int TYLESIZE = 150;

@@ -8,10 +8,16 @@ public class SoundSettings {
     public static float musicVolume = 1;
     static Music music;
     static String currentMusic = null;
+    static boolean reverse = false;
+    public static void setReverse(boolean _reverse) {
+        reverse = _reverse;
+    }
+
     public static void changeMusic(String way) {
         if(currentMusic == way) return;
         if(music != null && music.isPlaying()) music.stop();
        if(way == null) {
+           reverse = false;
            currentMusic = null;
            return;
        }

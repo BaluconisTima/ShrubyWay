@@ -15,7 +15,7 @@ buildscript {
 allprojects {
     apply plugin: "eclipse"
 
-    version = '0.18.0'
+    version = '0.20.2'
     ext {
         appName = "Shruby Way"
         gdxVersion = '1.3.2-SNAPSHOT'

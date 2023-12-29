@@ -1,6 +1,7 @@
 package com.shrubyway.game.visibleobject.entity.mob;
 
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.screen.Game;
@@ -62,6 +63,8 @@ public class MobsManager {
     }
 
     public static Mob newOf(int i, float x, float y){
+        if(MobCount == 1 && !Event.happened("Forest_Tutorial_More_Mobs")) return null;
+        MobCount++;
         try {
             return mobs[i].newInstance(x, y);
         } catch (Exception e) {
@@ -90,7 +93,9 @@ public class MobsManager {
 
     static Random random = new Random();
 
-    static void addMobNear(Vector2 playerPosition, int j) {
+    static public int MobCount = 0;
+
+    static public void addMobNear(Vector2 playerPosition, int j) {
         float x = playerPosition.x;
         float y = playerPosition.y;
         if(Math.random() < 0.5) {
@@ -107,7 +112,7 @@ public class MobsManager {
         }
 
         Mob mob = newOf(j, x, y);
-        Game.objectsList.add(mob);
+        if(mob != null) Game.objectsList.add(mob);
     }
     static public void tryGenerateMob(Vector2 playerPosition) {
         int allCount = 0;

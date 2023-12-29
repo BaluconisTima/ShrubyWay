@@ -8,7 +8,7 @@ public class ObjectsList {
     private CopyOnWriteArrayList<VisibleObject> list = new CopyOnWriteArrayList<>();
 
     public void add(VisibleObject object) {
-        list.add(object);
+        if(object != null) list.add(object);
     }
 
     public void del(VisibleObject object) {

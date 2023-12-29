@@ -14,9 +14,18 @@ public class Event {
             return x;
         }
     }
+
+    static public void clear() {
+        eventsHappened.clear();
+        eventHashMap.clear();
+    }
     static public HashMap eventsHappened = new HashMap<Integer, Boolean>();
     public static void cast(Integer event) {
         eventsHappened.put(event, true);
+    }
+
+    public static void cast(String eventName) {
+        cast(getEvent(eventName));
     }
 
     public static boolean happened(Integer event) {
@@ -26,6 +35,10 @@ public class Event {
         else {
             return false;
         }
+    }
+
+    public static boolean happened(String eventName) {
+        return happened(getEvent(eventName));
     }
 
 

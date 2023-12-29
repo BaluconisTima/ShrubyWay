@@ -52,8 +52,8 @@ public class ChestClosed extends Decoration {
 
     @Override public void setInteractionBox() {
         if(interactionBox == null) interactionBox = new Rectangle(0,0,-1,-1);
-        interactionBox.change(position.x + halfTextureWidth - 30,
-                position.y + 30, 60, 60);
+        interactionBox.change(position.x + halfTextureWidth - 40,
+                position.y + 40, 80, 80);
     }
 
     @Override

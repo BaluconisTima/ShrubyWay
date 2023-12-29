@@ -11,12 +11,12 @@ import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
 import java.util.*;
 
 public class Map {
-    Background background;
+    public Background background;
     Set<VisibleObject>[][] chunks = new HashSet[16][16];
     boolean lastCheked[][] = new boolean[16][16];
     long timeChecking = 0;
 
-    char decorations[][] = new char[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
+    public char decorations[][] = new char[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
 
     public VisualObjectListSaver[][] getChunks() {
         int size = 0;

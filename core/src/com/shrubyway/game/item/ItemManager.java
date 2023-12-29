@@ -123,7 +123,7 @@ public class ItemManager {
 
         itemName[13] = "Stale bread";
         itemDescription[13] = "Better not even think about how old it is.";
-        throwingDamage[13] = 1.5f;
+        throwingDamage[13] = 0;
         itemActing[13] = new Food(1f, 5);
     }
 

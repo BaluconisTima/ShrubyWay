@@ -18,7 +18,7 @@ import java.util.Scanner;
 
 public class Background implements Serializable {
 
-    char backgroundMap[][] = new char[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
+    public char backgroundMap[][] = new char[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
     private int level;
 
 

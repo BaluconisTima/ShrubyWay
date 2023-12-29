@@ -23,10 +23,14 @@ public abstract class Mob extends Entity {
 
     @Override public void die() {
         if(action == 3) return;
+        MobsManager.MobCount--;
         MobsManager.makeDrop(id, positionLegs().x, positionLegs().y);
         super.die();
         action = 3;
     }
+
+    int lastMoveTry = 0;
+    Vector2 tempDirection3 = new Vector2(0,0);
 
     private void tryMoveAi(float delta) {
         if(target.x - positionLegs().x > 70) tempDirection.x = 1;
@@ -39,30 +43,37 @@ public abstract class Mob extends Entity {
 
 
         tempDirection2.set(tempDirection.x, tempDirection.y);
-        tryMoveTo(tempDirection);
-       /* if(false) {
+        if(tempDirection3 != tempDirection2) {
+            lastMoveTry = 0;
+            tempDirection3.set(tempDirection2);
+        }
+
+        if(lastMoveTry == 0) {
+            tryMoveTo(tempDirection);
+        } else {
+            if(lastMoveTry == 1) {
             if(AnimationGlobalTime.time() - lastTargetUpdate < targetUpdateInterval) {
                 tempDirection.nor();
-                if(Math.abs(tempDirection.x) < 70) {
+                if (Math.abs(tempDirection.x) < 70) {
                     tempDirection.set(1, 0);
                     target.set(target.x + 150, target.y);
                 }
+                tryMoveTo(tempDirection);
+            } else {
+                if(lastMoveTry == 2) {
 
-                if (!tryMoveTo(tempDirection, delta)) {
-
-                    if(Math.abs(tempDirection.y) < 70) {
+                    if (Math.abs(tempDirection.y) < 70) {
                         tempDirection.set(0, 1);
                         target.set(target.x, target.y + 150);
                     }
-
-
-                    if (!tryMoveTo(tempDirection, delta)) {
+                    tryMoveTo(tempDirection);
+                } else {
                         tempDirection.set(0, 0);
-                        tryMoveTo(tempDirection, delta);
+                        tryMoveTo(tempDirection);
                     }
                 }
             }
-        } */
+        }
     }
 
     protected void closeAi(float distance, Vector2 playerPosition, float delta) {
@@ -137,5 +148,11 @@ public abstract class Mob extends Entity {
             tryMoveTo(tempDirection);
         }
 
+    }
+
+    @Override
+    public void updatePosition(Vector2 direction) {
+        if(direction.len() == 0) lastMoveTry++;
+        super.updatePosition(direction);
     }
 }

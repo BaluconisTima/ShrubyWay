@@ -7,12 +7,13 @@ import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.event.Event;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Diamond;
 import com.shrubyway.game.sound.SoundSettings;
 
 public class ElementPumping {
-     static Texture ElementBase, Elements;
+     static Texture ElementBase, Elements, FireElement, WaterElement, EarthElement, AirElement;
      static float progress = 0, displayProgress = 0;
 
      public static float localExp = 0;
@@ -40,6 +41,10 @@ public class ElementPumping {
 
             ElementBase = ShrubyWay.assetManager.get("interface/ElementBase.png", Texture.class);
             Elements = ShrubyWay.assetManager.get("interface/Elements.png", Texture.class);
+            FireElement = ShrubyWay.assetManager.get("interface/elementFire.png", Texture.class);
+            WaterElement = ShrubyWay.assetManager.get("interface/elementWater.png", Texture.class);
+            EarthElement = ShrubyWay.assetManager.get("interface/elementEarth.png", Texture.class);
+            AirElement = ShrubyWay.assetManager.get("interface/elementWind.png", Texture.class);
 
             float centerX = 1930 - ElementBase.getWidth() / 2.0f;
             float centerY = -10 + ElementBase.getHeight() / 2.0f;
@@ -49,13 +54,18 @@ public class ElementPumping {
             air = new Diamond((centerX + 100) * scale, centerY * scale, 80 * scale);
 
             for (int i = 0; i < 200; i++) {
-                nextLevelCost[i] = 200 + i * 40;
+                nextLevelCost[i] = 200 + i * 50;
             }
             nextLevelCost[199] = (1 << 31) - 1;
      }
 
+     public static int getLVL() {
+         return (fireLevel + waterLevel + earthLevel + airLevel - 4);
+     }
+
 
      public boolean leftClick(Vector2 position) {
+            if(!Event.happened("Pumping_Opened")) return false;
             if (fire.contains(position)) {
                 addFireExp();
                 return true;
@@ -96,33 +106,40 @@ public class ElementPumping {
          }
          return false;
      }
+
+     static public void setLocalExp(int exp) {
+         localExp = exp;
+         displayProgress = 0;
+         progressUpdate();
+     }
+
      static public void addExp(int exp) {
          localExp += exp;
          progressUpdate();
      }
 
-     static public void addFireExp() {
+     static private void addFireExp() {
          if(!newLevel()) return;
          ShrubyWay.assetManager.get("sounds/EFFECTS/fire.ogg", Sound.class).play(SoundSettings.soundVolume);
          fireLevel++;
          progressUpdate();
      }
 
-        static public void addWaterExp() {
+        static private void addWaterExp() {
             if(!newLevel()) return;
             ShrubyWay.assetManager.get("sounds/EFFECTS/water.ogg", Sound.class).play(SoundSettings.soundVolume);
             waterLevel++;
             progressUpdate();
         }
 
-        static public void addEarthExp() {
+        static private void addEarthExp() {
             if(!newLevel()) return;
             ShrubyWay.assetManager.get("sounds/EFFECTS/earth.ogg", Sound.class).play(SoundSettings.soundVolume);
             earthLevel++;
             progressUpdate();
         }
 
-        static public void addAirExp() {
+        static private void addAirExp() {
             if(!newLevel()) return;
             ShrubyWay.assetManager.get("sounds/EFFECTS/air.ogg", Sound.class).play(SoundSettings.soundVolume);
             airLevel++;
@@ -138,53 +155,76 @@ public class ElementPumping {
 
 
          progressUpdate();
+        // if(Event.happened("Pumping_Opened"))
          GlobalBatch.render(ElementBase, 1930 - ElementBase.getWidth(), -10);
+
          if(progress == 100) {
             // levelUp.resume();
            //  levelUp.loop();
              GlobalBatch.batch.setColor(1, 1, 1, (float) (Math.sin(AnimationGlobalTime.time() * 7) + 1) / 2);
+             if(Event.happened("Pumping_Opened"))
              GlobalBatch.render(ShrubyWay.assetManager.get("interface/blink.png", Texture.class),
                      1930 - ElementBase.getWidth(), -10);
              GlobalBatch.batch.setColor(1, 1, 1, 1);
          } else {
             // levelUp.stop();
          }
-         GlobalBatch.render(Elements, 1930 - ElementBase.getWidth(), -10);
-         if(water.contains(mouseOnScreenPosition)) {
+         if(!Event.happened("Pumping_Opened"))
+            GlobalBatch.render(Elements, 1930 - ElementBase.getWidth(), -13);
+         if(Event.happened("Fire_opened")) GlobalBatch.render(FireElement, 1930 - ElementBase.getWidth(), -10);
+         if(Event.happened("Water_opened")) GlobalBatch.render(WaterElement, 1930 - ElementBase.getWidth(), -10);
+         if(Event.happened("Earth_opened")) GlobalBatch.render(EarthElement, 1930 - ElementBase.getWidth(), -10);
+         if(Event.happened("Air_opened")) GlobalBatch.render(AirElement, 1930 - ElementBase.getWidth(), -10);
+
+
+
+
+         if(water.contains(mouseOnScreenPosition) && Event.happened("Water_opened")) {
              GlobalBatch.render(ShrubyWay.assetManager.get("interface/water.png", Texture.class),
                      1930 - ElementBase.getWidth(), -10);
          }
-         if(fire.contains(mouseOnScreenPosition)) {
+
+         if(fire.contains(mouseOnScreenPosition) && Event.happened("Fire_opened")) {
                 GlobalBatch.render(ShrubyWay.assetManager.get("interface/fire.png", Texture.class),
                         1930 - ElementBase.getWidth(), -10);
          }
-         if(earth.contains(mouseOnScreenPosition)) {
+         if(earth.contains(mouseOnScreenPosition) && Event.happened("Earth_opened")) {
                 GlobalBatch.render(ShrubyWay.assetManager.get("interface/earth.png", Texture.class),
                         1930 - ElementBase.getWidth(), -10);
          }
-         if(air.contains(mouseOnScreenPosition)) {
+         if(air.contains(mouseOnScreenPosition) && Event.happened("Air_opened")) {
                 GlobalBatch.render(ShrubyWay.assetManager.get("interface/air.png", Texture.class),
                         1930 - ElementBase.getWidth(), -10);
          }
 
+         if(Event.happened("Pumping_Opened"))
          GlobalBatch.render(ShrubyWay.assetManager.get("interface/darkness.png", Texture.class),
                  1930 - ElementBase.getWidth(), -10);
 
-         Texture texture =  ShrubyWay.assetManager.get("interface/Light.png", Texture.class);
+         if(Event.happened("Pumping_Opened")) {
+             Texture texture = ShrubyWay.assetManager.get("interface/Light.png", Texture.class);
 
 
-         int x = 160 + (int)((100 - displayProgress) * 1.1);
-         TextureRegion region = new TextureRegion(texture, 0, x,
-                 texture.getWidth(), texture.getHeight() - x);
-         GlobalBatch.render(region, 1930 - ElementBase.getWidth(), -10);
+             int x = 160 + (int) ((100 - displayProgress) * 1.1);
+             TextureRegion region = new TextureRegion(texture, 0, x,
+                     texture.getWidth(), texture.getHeight() - x);
+             GlobalBatch.render(region, 1930 - ElementBase.getWidth(), -10);
+         }
 
          float centerX = 1930 - ElementBase.getWidth() / 2.0f;
          float centerY = -10 + ElementBase.getHeight() / 2.0f;
 
-         TextDrawer.drawCenterOrange(String.valueOf(fireLevel), centerX - 3, centerY + 105, 1f);
-         TextDrawer.drawCenterLightBlue(String.valueOf(airLevel), centerX + 100, centerY + 5, 1f);
-         TextDrawer.drawCenterBlue(String.valueOf(waterLevel), centerX - 3, centerY - 100, 1f);
-         TextDrawer.drawCenterGray(String.valueOf(earthLevel), centerX - 107, centerY + 5, 1f);
+         if(Event.happened("Fire_opened"))
+             TextDrawer.drawCenterOrange(String.valueOf(fireLevel), centerX - 3, centerY + 105, 1f);
+
+         if(Event.happened("Air_opened"))
+             TextDrawer.drawCenterLightBlue(String.valueOf(airLevel), centerX + 100, centerY + 5, 1f);
+
+         if(Event.happened("Water_opened"))
+             TextDrawer.drawCenterBlue(String.valueOf(waterLevel), centerX - 3, centerY - 100, 1f);
+
+         if(Event.happened("Earth_opened"))
+             TextDrawer.drawCenterGray(String.valueOf(earthLevel), centerX - 107, centerY + 5, 1f);
 
      }
 
