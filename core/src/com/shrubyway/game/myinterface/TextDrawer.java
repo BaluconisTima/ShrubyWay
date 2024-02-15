@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.shrubyway.game.GlobalBatch;
-
+import com.badlogic.gdx.graphics.Color;
 public class TextDrawer {
     static public BitmapFont fontBlack = new BitmapFont(Gdx.files.internal("fonts/black.fnt"));
     static public BitmapFont fontWhite = new BitmapFont(Gdx.files.internal("fonts/white.fnt"));
@@ -42,6 +42,18 @@ public class TextDrawer {
         fontWhite.draw(GlobalBatch.batch, text, x * GlobalBatch.scale - layout.width / 2,
                 y * GlobalBatch.scale + layout.height / 2);
 
+        fontWhite.getData().setScale(0.5f);
+    }
+
+
+
+    static public void drawCenterWhite(String text, float x, float y, float scale, float alpha) {
+        fontWhite.getData().setScale(scale * GlobalBatch.scale);
+        GlyphLayout layout = new GlyphLayout(fontWhite, text);
+        fontWhite.setColor(1, 1, 1, alpha);
+        fontWhite.draw(GlobalBatch.batch, text, x * GlobalBatch.scale - layout.width / 2,
+                y * GlobalBatch.scale + layout.height / 2);
+        fontWhite.setColor(1, 1, 1, 1);
         fontWhite.getData().setScale(0.5f);
     }
 
@@ -101,6 +113,22 @@ public class TextDrawer {
         fontWhite.getData().setScale(0.5f);
         fontBlack.getData().setScale(0.5f);
     }
+
+    static public void drawWithShadowColor(String text, float x, float y, float scale, Color c) {
+        fontWhite.getData().setScale(scale * GlobalBatch.scale);
+        fontBlack.getData().setScale(scale * GlobalBatch.scale);
+        for(float i = -4 * scale; i <= 4 * scale; i+= scale) {
+            for(float j = -4 * scale; j <= 4 * scale; j+= scale) {
+                fontBlack.draw(GlobalBatch.batch, text, Math.round(x + i) * GlobalBatch.scale, Math.round(y + j) * GlobalBatch.scale);
+            }
+        }
+        fontWhite.setColor(c);
+        fontWhite.draw(GlobalBatch.batch, text, Math.round(x) * GlobalBatch.scale, Math.round(y) * GlobalBatch.scale);
+        fontWhite.setColor(1, 1, 1, 1);
+        fontWhite.getData().setScale(0.5f);
+        fontBlack.getData().setScale(0.5f);
+    }
+
     static public void drawWithShadow(String text, float x, float y, float scale, float alpha) {
         fontWhite.getData().setScale(scale * GlobalBatch.scale);
         fontWhite.setColor(1, 1, 1, alpha);

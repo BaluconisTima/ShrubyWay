@@ -32,6 +32,15 @@ public class Rectangle implements java.io.Serializable {
                 topLeftCorner.y < temp.bottomRightCorner.y &&
                 bottomRightCorner.y > temp.topLeftCorner.y);
     }
+
+    public Vector2 overlapCenter(Rectangle temp) {
+        Vector2 center = new Vector2();
+        center.x = Math.max(topLeftCorner.x, temp.topLeftCorner.x);
+        center.y = Math.max(topLeftCorner.y, temp.topLeftCorner.y);
+        center.x += Math.min(bottomRightCorner.x, temp.bottomRightCorner.x) - center.x;
+        center.y += Math.min(bottomRightCorner.y, temp.bottomRightCorner.y) - center.y;
+        return center;
+    }
     Vector2 closestPoint = new Vector2();
     public boolean overlaps(Circle x) {
         closestPoint.x = Math.max(topLeftCorner.x, Math.min(x.centerPosition.x, bottomRightCorner.x));

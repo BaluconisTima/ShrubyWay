@@ -141,9 +141,9 @@ abstract public class Entity extends InteractiveObject {
         return (allowedMotion);
     }
 
-    public void getDamage(float damage) {
+    public void getDamageWithoutMomentum(float damage, Vector2 hitPosition) {
         if(health.getHealth() > 0 && damage != 0) {
-            health.getDamage(damage);
+            health.getDamage(damage, hitPosition);
             GlobalSoundManager.addSound(new
                     SoundAtPosition(EntityManager.soundDamage[entityID], positionCenter()));
         }
@@ -152,12 +152,12 @@ abstract public class Entity extends InteractiveObject {
         }
     }
     protected Vector2 direction = new Vector2(0,0);
-    public void getDamage(float damage, Vector2 hitPosition) {
-        direction.set(positionCenter().x - hitPosition.x + (float)Math.random() * 30 - 15,
-                positionCenter().y - hitPosition.y  + (float)Math.random() * 30 - 15);
+    public void getDamage(float damage, Vector2 AttackPosition, Vector2 hitPosition) {
+        direction.set(positionCenter().x - AttackPosition.x + (float)Math.random() * 30 - 15,
+                positionCenter().y - AttackPosition.y  + (float)Math.random() * 30 - 15);
         direction.nor();
         direction.scl(damage * 100f / health.getMaxHealth());
-        getDamage(damage);
+        getDamageWithoutMomentum(damage, hitPosition);
 
         momentum.add(direction);
     }

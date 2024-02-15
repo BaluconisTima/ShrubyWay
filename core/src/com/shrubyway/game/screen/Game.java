@@ -39,6 +39,7 @@ import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.bullet.Bullet;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
 import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
+import com.shrubyway.game.visibleobject.effect.DamageDisplay;
 import com.shrubyway.game.visibleobject.effect.Explosion;
 import com.shrubyway.game.visibleobject.entity.Entity;
 import com.shrubyway.game.visibleobject.entity.EntityManager;
@@ -69,6 +70,8 @@ public class Game extends Screen implements java.io.Serializable {
     static ElementPumping elementPumping = new ElementPumping();
 
     static public LineMaker LineMaker = new LineMaker();
+
+    static public LineRenderer lineRenderer = new LineRenderer();
 
     Button continueButton, settingsButton, menuButton;
 
@@ -106,6 +109,7 @@ public class Game extends Screen implements java.io.Serializable {
         ItemManager.init();
         MobsManager.init();
         elementPumping.init();
+        lineRenderer.init();
         TutorialHints.finish();
         Narrator.logic = null;
 
@@ -164,9 +168,13 @@ public class Game extends Screen implements java.io.Serializable {
             LineMaker.skip();
         }
 
-       /* if(ShrubyWay.inputProcessor.isCPressed()) {
-          objectsList.add(new VisibleItem(new Item(10), mousePosition.x, mousePosition.y));
-        } */
+
+      if(ShrubyWay.inputProcessor.isCPressed()) {
+          ElementPumping.waterLevel++;
+          ElementPumping.fireLevel++;
+          ElementPumping.earthLevel++;
+          ElementPumping.airLevel++;
+        }
         /*if(ShrubyWay.inputProcessor.isLPressed()) {
           loadGame();
         } */
@@ -361,6 +369,7 @@ public class Game extends Screen implements java.io.Serializable {
        TutorialHints.update();
        Narrator.update(delta);
        LineMaker.update(delta);
+       lineRenderer.update(delta);
 
        if (AnimationGlobalTime.time() - lastMobUpdate > 1f && Event.happened("Forest_Tutorial_Finished")) {
             lastMobUpdate = AnimationGlobalTime.time();
@@ -391,7 +400,7 @@ public class Game extends Screen implements java.io.Serializable {
                     if(obj2 instanceof Entity ent2) {
                         ((Entity) obj2).addMomentum(exp.getMomentum(ent2.positionCenter()));
                         if(!exp.damaged) {
-                            ent2.getDamage(exp.getDamage(ent2.positionCenter()));
+                            ent2.getDamageWithoutMomentum(exp.getDamage(ent2.positionCenter()), ent2.positionCenter());
                         }
                     }
                     if(obj2 instanceof Bullet bul) {
@@ -405,9 +414,11 @@ public class Game extends Screen implements java.io.Serializable {
                 }
                 exp.damaged = true;
             } else
+              if(obj instanceof DamageDisplay dam) {
+                    dam.update(delta);
+             } else
             if (obj instanceof Bullet bul) {
                 bul.processBullet(delta);
-
             } else if (obj instanceof Entity ent) {
                 ent.liquidStatus(map.checkLiquid(ent.positionLegs()));
                 if (ent.makingStep(map.checkTile(ent.positionLegs()))) {
@@ -439,7 +450,7 @@ public class Game extends Screen implements java.io.Serializable {
                                 if(ent.health.getHealth() <= 0) continue;
 
                                 ent.getDamage(from.damage(),
-                                        from.positionCenter());
+                                        from.positionCenter(), from.attackBox().overlapCenter(to.hitBox()));
 
                                 if(ent instanceof Mob && from instanceof Bullet bul && ent.health.getHealth() <= 0) {
                                    mobDiedByThrow = true;
@@ -539,12 +550,19 @@ public class Game extends Screen implements java.io.Serializable {
                 }
             }
         }
+    }
 
+    public void renderDamage() {
+        for(VisibleObject obj : objectsList.getList()) {
+            if(obj instanceof DamageDisplay dam) {
+                dam.render();
+            }
+        }
     }
 
     public void renderObjects() {
         for (VisibleObject obj : objectsList.getList()) {
-            obj.render();
+            if(!(obj instanceof DamageDisplay)) obj.render();
         }
     }
     float lastDelta = 0;
@@ -561,6 +579,7 @@ public class Game extends Screen implements java.io.Serializable {
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
         elementPumping.render(ShrubyWay.inputProcessor.mousePosition());
         TutorialHints.render();
+        lineRenderer.render();
 
 
        // TextDrawer.drawCenterBlack("Mobs: " + MobsManager.MobCount, 50, 50, 1);
@@ -613,6 +632,7 @@ public class Game extends Screen implements java.io.Serializable {
         map.render(player.position());
         renderShadows();
         renderObjects();
+        renderDamage();
         renderInterface();
        // batch.end();
     }

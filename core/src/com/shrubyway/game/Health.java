@@ -1,6 +1,9 @@
 package com.shrubyway.game;
 
+import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.screen.Game;
+import com.shrubyway.game.visibleobject.effect.DamageDisplay;
 
 public class Health implements java.io.Serializable {
     private float health;
@@ -26,7 +29,7 @@ public class Health implements java.io.Serializable {
         this.lastHitTime = -1000;
     }
 
-    public void getDamage(float damage) {
+    public void getDamage(float damage, Vector2 hitPosition) {
         if(AnimationGlobalTime.time() - lastHitTime < cooldown) return;
             if(health <= 0) return;
 
@@ -39,6 +42,7 @@ public class Health implements java.io.Serializable {
                 }
                 damage = Math.max(0, damage - defense);
             }
+            Game.objectsList.add(new DamageDisplay(hitPosition.x, hitPosition.y, (int)damage));
             health -= damage;
             lastHitTime = AnimationGlobalTime.time();
     }

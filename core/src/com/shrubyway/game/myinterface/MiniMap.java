@@ -28,7 +28,7 @@ public class MiniMap {
            float alpha =
                    Math.max(((Math.abs(to.x - x1)%MapSettings.MAPSIZE))/ (float)MapSettings.calculationDistanceX,
                    Math.abs(((to.y - y1)%MapSettings.MAPSIZE))/ (float)MapSettings.calculationDistanceY);
-           System.out.println(alpha);
+           //System.out.println(alpha);
            alpha /= MapSettings.TYLESIZE;
            alpha = 1 - (float)(alpha * alpha);
 

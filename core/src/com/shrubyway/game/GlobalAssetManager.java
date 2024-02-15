@@ -91,10 +91,10 @@ public class GlobalAssetManager {
     }
 
     public void loadAll() {
-        loadFromJar();
+        //loadFromJar();
         //ONLY FOR LOCAL TEST! DELETE THIS LINE IF YOU WANT TO BUILD JAR FILE!
-       //FileHandle assetsFolder = Gdx.files.local("");
-       //loadRec(assetsFolder);
+       FileHandle assetsFolder = Gdx.files.local("");
+       loadRec(assetsFolder);
     }
 
     public void dispose() {

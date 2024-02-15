@@ -3,6 +3,7 @@ package com.shrubyway.game.linemaker;
 import com.badlogic.gdx.audio.Music;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.event.Event;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.sound.SoundSettings;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ public class LineMaker implements Serializable {
     static HashMap<Integer, String> lineText[] = new HashMap[VOICES];
 
     static String names[] = new String[VOICES];
+    static String displayedName[] = new String[VOICES];
     static Music lastLine[] = new Music[VOICES];
     static int lastLineID[] = new int[VOICES];
 
@@ -22,9 +24,12 @@ public class LineMaker implements Serializable {
             lineText[i] = new HashMap<Integer, String>();
             lastLine[i] = null;
         }
-        names[0] = "NAR";
-        names[1] = "POP";
-        names[2] = "BEA";
+        names[0] = "NAR"; displayedName[0] = "Narrator";
+        names[1] = "POP"; displayedName[1] = "Poppy";
+        names[2] = "BEA"; displayedName[2] = "Beau";
+
+
+
 
         loadText();
 
@@ -36,6 +41,7 @@ public class LineMaker implements Serializable {
                 lastLine[i].setVolume(SoundSettings.soundVolume);
             }
             if(lastLine[i] != null && !lastLine[i].isPlaying()) {
+                Game.lineRenderer.clearText();
                 Event.cast("Line_" + names[i] + "_" + lastLineID[i] + "_Finished");
                 lastLine[i] = null;
             }
@@ -67,13 +73,16 @@ public class LineMaker implements Serializable {
 
     static public void stopLine(int ID) {
         if(lastLine[ID] != null && lastLine[ID].isPlaying()) {
+            Game.lineRenderer.clearText();
             Event.cast("Line_" + names[ID] + "_" + lastLineID[ID] + "_Finished");
             lastLine[ID].stop();
             lastLine[ID] = null;
         }
     }
     static public void castLine(int ID, int lineID) {
+
         if(lastLine[ID] != null && lastLine[ID].isPlaying()) {
+            Game.lineRenderer.clearText();
             Event.cast("Line_" + names[ID] + "_" + lastLineID[ID] + "_Finished");
             lastLine[ID].stop();
             lastLine[ID] = null;
@@ -81,6 +90,7 @@ public class LineMaker implements Serializable {
 
         lastLine[ID] = ShrubyWay.assetManager.get("sounds/LINES/" + names[ID] + "/" + lineID + ".mp3", Music.class);
         Event.cast("Line_" + names[ID] + "_" + lineID + "_Casted");
+        Game.lineRenderer.setText(lineText[ID].get(lineID), displayedName[ID]);
         lastLineID[ID] = lineID;
         lastLine[ID].play();
         lastLine[ID].setVolume(SoundSettings.soundVolume);
