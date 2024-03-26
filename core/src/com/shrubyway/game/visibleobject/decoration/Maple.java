@@ -15,8 +15,8 @@ public class Maple extends Decoration {
     {
         id = 6;
     }
-    @Override public void hit() {
-        super.hit();
+    @Override public void hit(float damage, Vector2 hitPosition) {
+        super.hit(damage, hitPosition);
         GlobalSoundManager.addSound(new SoundAtPosition(
                 ShrubyWay.assetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
         if(Math.random() < 0.2) {

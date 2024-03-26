@@ -1,13 +1,14 @@
 package com.shrubyway.game.visibleobject.decoration;
 
+import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.shapes.Rectangle;
 
 public class OakStump extends Decoration{
     {
         id = 11;
     }
-    @Override public void hit() {
-        super.hit();
+    @Override public void hit(float damage, Vector2 hitPosition) {
+        super.hit(damage, hitPosition);
     }
     @Override public void setCollisionBox() {
         if(collisionBox == null)

@@ -1,6 +1,7 @@
 package com.shrubyway.game.myinterface;
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
@@ -11,6 +12,8 @@ import com.shrubyway.game.event.Event;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Diamond;
 import com.shrubyway.game.sound.SoundSettings;
+
+import java.text.DecimalFormat;
 
 public class ElementPumping {
      static Texture ElementBase, Elements, FireElement, WaterElement, EarthElement, AirElement;
@@ -27,7 +30,6 @@ public class ElementPumping {
 
 
 
-    private static Integer[] nextLevelCost = new Integer[200];
      static public void init() {
           // lastSound = levelUp.play(SoundSettings.soundVolume);
            //levelUp.loop();
@@ -48,15 +50,15 @@ public class ElementPumping {
 
             float centerX = 1930 - ElementBase.getWidth() / 2.0f;
             float centerY = -10 + ElementBase.getHeight() / 2.0f;
-            fire = new Diamond(centerX * scale, (centerY + 100)  * scale, 80 * scale);
-            water = new Diamond(centerX * scale, (centerY - 100) * scale, 80 * scale);
-            earth = new Diamond((centerX - 100) * scale, centerY * scale, 80 * scale);
-            air = new Diamond((centerX + 100) * scale, centerY * scale, 80 * scale);
+            fire = new Diamond(centerX * scale, (centerY + 100)  * scale, 75 * scale);
+            water = new Diamond(centerX * scale, (centerY - 100) * scale, 75 * scale);
+            earth = new Diamond((centerX - 100) * scale, centerY * scale, 75 * scale);
+            air = new Diamond((centerX + 100) * scale, centerY * scale, 75 * scale);
 
-            for (int i = 0; i < 200; i++) {
-                nextLevelCost[i] = 200 + i * 50;
-            }
-            nextLevelCost[199] = (1 << 31) - 1;
+     }
+
+     public static int getNextLevelCost() {
+         return 750;
      }
 
      public static int getLVL() {
@@ -90,18 +92,16 @@ public class ElementPumping {
 
 
      static void progressUpdate() {
-         progress = (localExp  * 1.0f / nextLevelCost[fireLevel + waterLevel + earthLevel + airLevel - 4]) * 100;
+         progress = (localExp  * 1.0f / getNextLevelCost()) * 100;
          progress = Math.min(progress, 100);
          progress = Math.max(progress, 0);
          displayProgress += (progress - displayProgress) / 5;
      }
 
      public static boolean newLevel() {
-         if(waterLevel + fireLevel + earthLevel + airLevel - 4 == 200) {
-             return false;
-         }
-         if(localExp >= nextLevelCost[fireLevel + waterLevel + earthLevel + airLevel - 4]) {
-             localExp -= nextLevelCost[fireLevel + waterLevel + earthLevel + airLevel - 4];
+
+         if(localExp >= getNextLevelCost()) {
+             localExp -= getNextLevelCost();
              return true;
          }
          return false;
@@ -146,6 +146,93 @@ public class ElementPumping {
             progressUpdate();
         }
 
+        static public float getDamageMultiplier(int level) {
+            level = Math.max(1, level);
+            int damLevel = level;
+            float damMod = 0;
+            float k = 1;
+            while(k <= damLevel) {
+                damMod++;
+                damLevel -= k;
+                k *= 1.61803398875;
+            }
+            damMod += ((float)damLevel) / k;
+            return damMod;
+        }
+
+        static public float getAttackCooldownMultiplier(int level) {
+            level = Math.max(1, level);
+            float x = (float)Math.pow(level, 0.9f) / 2;
+            return (float)Math.pow((0.95), x);
+        }
+
+        static public float getDefenseMultiplier(int level) {
+         level = Math.max(1, level);
+         float x = (float)Math.pow(level, 0.8f) / 2;
+         return (float)Math.pow((0.914), x);
+        }
+
+       static public float getThrowCooldownMultiplier(int level) {
+           level = Math.max(1, level);
+           float x = (float)Math.pow(level, 0.9f) / 2;
+           return (float)Math.pow((0.95), x);
+       }
+
+       static public float getThrowSpeedMutiplier(int level) {
+          /* level = Math.max(1, level);
+           int damLevel = level;
+           float damMod = 0;
+           float k = 1;
+           while(k <= damLevel) {
+               damMod++;
+               damLevel -= k;
+               k *= 1.4;
+           }
+           damMod += ((float)damLevel) / k;
+           return damMod; */
+           return 1;
+       }
+
+       static public float getThrowDamageAddition(int level) {
+           level = Math.max(1, level);
+           int damLevel = level;
+           float damMod = 0;
+           float k = 1;
+           while(k <= damLevel) {
+               damMod += 0.2f;
+               damLevel -= k;
+               k *= 1.8;
+           }
+           damMod += 0.2f * ((float)damLevel) / k;
+           return damMod;
+       }
+
+       static public float getPassiveHealTimeMultiplier(int level) {
+           level = Math.max(1, level);
+           float x = (float)Math.pow(level, 0.6f) / 2;
+           return (float)Math.pow((0.95), x);
+       }
+
+       static public float getEatingSpeedMultiplier(int level) {
+           level = Math.max(1, level);
+           float x = (float)Math.pow(level, 0.8f) / 2;
+           return (float)Math.pow((0.93), x);
+       }
+
+       static public float getEatingHealAddition(int level) {
+           level = Math.max(1, level);
+           int damLevel = level;
+           float damMod = 0;
+           float k = 1;
+           while(k <= damLevel) {
+               damMod += 0.2f;
+               damLevel -= k;
+               k *= 1.8;
+           }
+           damMod += 0.2f * ((float)damLevel) / k;
+           return damMod;
+       }
+
 
      public void render(Vector2 mouseOnScreenPosition) {
 
@@ -178,23 +265,24 @@ public class ElementPumping {
 
 
 
+         if(localExp >= getNextLevelCost()) {
+             if (water.contains(mouseOnScreenPosition) && Event.happened("Water_opened")) {
+                 GlobalBatch.render(ShrubyWay.assetManager.get("interface/water.png", Texture.class),
+                         1930 - ElementBase.getWidth(), -10);
+             }
 
-         if(water.contains(mouseOnScreenPosition) && Event.happened("Water_opened")) {
-             GlobalBatch.render(ShrubyWay.assetManager.get("interface/water.png", Texture.class),
-                     1930 - ElementBase.getWidth(), -10);
-         }
-
-         if(fire.contains(mouseOnScreenPosition) && Event.happened("Fire_opened")) {
-                GlobalBatch.render(ShrubyWay.assetManager.get("interface/fire.png", Texture.class),
-                        1930 - ElementBase.getWidth(), -10);
-         }
-         if(earth.contains(mouseOnScreenPosition) && Event.happened("Earth_opened")) {
-                GlobalBatch.render(ShrubyWay.assetManager.get("interface/earth.png", Texture.class),
-                        1930 - ElementBase.getWidth(), -10);
-         }
-         if(air.contains(mouseOnScreenPosition) && Event.happened("Air_opened")) {
-                GlobalBatch.render(ShrubyWay.assetManager.get("interface/air.png", Texture.class),
-                        1930 - ElementBase.getWidth(), -10);
+             if (fire.contains(mouseOnScreenPosition) && Event.happened("Fire_opened")) {
+                 GlobalBatch.render(ShrubyWay.assetManager.get("interface/fire.png", Texture.class),
+                         1930 - ElementBase.getWidth(), -10);
+             }
+             if (earth.contains(mouseOnScreenPosition) && Event.happened("Earth_opened")) {
+                 GlobalBatch.render(ShrubyWay.assetManager.get("interface/earth.png", Texture.class),
+                         1930 - ElementBase.getWidth(), -10);
+             }
+             if (air.contains(mouseOnScreenPosition) && Event.happened("Air_opened")) {
+                 GlobalBatch.render(ShrubyWay.assetManager.get("interface/air.png", Texture.class),
+                         1930 - ElementBase.getWidth(), -10);
+             }
          }
 
          if(Event.happened("Pumping_Opened"))
@@ -214,17 +302,78 @@ public class ElementPumping {
          float centerX = 1930 - ElementBase.getWidth() / 2.0f;
          float centerY = -10 + ElementBase.getHeight() / 2.0f;
 
-         if(Event.happened("Fire_opened"))
-             TextDrawer.drawCenterOrange(String.valueOf(fireLevel), centerX - 3, centerY + 105, 1f);
 
-         if(Event.happened("Air_opened"))
-             TextDrawer.drawCenterLightBlue(String.valueOf(airLevel), centerX + 100, centerY + 5, 1f);
+             if (Event.happened("Fire_opened"))
+                 TextDrawer.drawCenterOrange(String.valueOf(fireLevel), centerX - 3, centerY + 105, 1f);
 
-         if(Event.happened("Water_opened"))
-             TextDrawer.drawCenterBlue(String.valueOf(waterLevel), centerX - 3, centerY - 100, 1f);
+             if (Event.happened("Air_opened"))
+                 TextDrawer.drawCenterLightBlue(String.valueOf(airLevel), centerX + 100, centerY + 5, 1f);
 
-         if(Event.happened("Earth_opened"))
-             TextDrawer.drawCenterGray(String.valueOf(earthLevel), centerX - 107, centerY + 5, 1f);
+             if (Event.happened("Water_opened"))
+                 TextDrawer.drawCenterBlue(String.valueOf(waterLevel), centerX - 3, centerY - 100, 1f);
+
+             if (Event.happened("Earth_opened"))
+                 TextDrawer.drawCenterGray(String.valueOf(earthLevel), centerX - 107, centerY + 5, 1f);
+
+             DecimalFormat decimalFormat = new DecimalFormat("#.##");
+             if (Event.happened("Pumping_Opened")) {
+                 if (air.contains(mouseOnScreenPosition) && Event.happened("Air_opened")) {
+                     String x1 = decimalFormat.format(ElementPumping.getThrowCooldownMultiplier(ElementPumping.airLevel)
+                             * Game.player.throwCooldown) + " s.",
+                             x2 = decimalFormat.format(ElementPumping.getThrowCooldownMultiplier(ElementPumping.airLevel + 1)
+                                     * Game.player.throwCooldown) + " s.",
+                             y1 = decimalFormat.format(ElementPumping.getThrowSpeedMutiplier(ElementPumping.airLevel)),
+                             y2 = decimalFormat.format(ElementPumping.getThrowSpeedMutiplier(ElementPumping.airLevel + 1)),
+                             z1 = decimalFormat.format(ElementPumping.getThrowDamageAddition(ElementPumping.airLevel)),
+                             z2 = decimalFormat.format(ElementPumping.getThrowDamageAddition(ElementPumping.airLevel + 1));
+
+                     String text = "Throw Cooldown: " + x1 + " -> " + x2 + " \n" +
+                             "Speed multiplier: " + y1 + " -> " + y2 + "\n" +
+                             "Bonus damage: " + z1 + " -> " + z2 + "\n";
+                     TextDrawer.drawWithShadowColor(text, mouseOnScreenPosition.x * scale - 400, mouseOnScreenPosition.y * scale + 100, 0.4f,
+                             new Color((float) 0.9, (float) 0.9, 1, 1));
+                 }
+                 if (water.contains(mouseOnScreenPosition) && Event.happened("Water_opened")) {
+                     String x1 = decimalFormat.format(ElementPumping.getPassiveHealTimeMultiplier(ElementPumping.waterLevel)
+                             * Game.RegenCooldown) + " s.",
+                             x2 = decimalFormat.format(ElementPumping.getPassiveHealTimeMultiplier(ElementPumping.waterLevel + 1)
+                                     * Game.RegenCooldown) + " s.",
+                             y1 = decimalFormat.format(ElementPumping.getEatingSpeedMultiplier(ElementPumping.waterLevel)),
+                             y2 = decimalFormat.format(ElementPumping.getEatingSpeedMultiplier(ElementPumping.waterLevel + 1)),
+                             z1 = decimalFormat.format(ElementPumping.getEatingHealAddition(ElementPumping.waterLevel)),
+                             z2 = decimalFormat.format(ElementPumping.getEatingHealAddition(ElementPumping.waterLevel + 1));
+
+                     String text =
+                             "Passive Regeneration Time: "
+                                     + x1 + " -> " + x2 + " \n" +
+                                     "Eating Speed multiplier: " + y1 + " -> " + y2 + "\n" +
+                                     "Bonus regeneration: " + z1 + " -> " + z2 + "\n";
+                     TextDrawer.drawWithShadowColor(text, mouseOnScreenPosition.x * scale - 500, mouseOnScreenPosition.y * scale + 100, 0.4f,
+                             new Color(0, (float) 0.81, 1, 1));
+                 }
+                 if (earth.contains(mouseOnScreenPosition) && Event.happened("Earth_opened")) {
+                     String x1 = decimalFormat.format((1 - ElementPumping.getDefenseMultiplier(ElementPumping.earthLevel)) * 100) + "% ",
+                             x2 = decimalFormat.format((1 - ElementPumping.getDefenseMultiplier(ElementPumping.earthLevel + 1)) * 100) + "% ";
+
+
+                     String text = "Damage mitigation: " + x1 + " -> " + x2 + "\n";
+                     TextDrawer.drawWithShadowColor(text, mouseOnScreenPosition.x * scale - 400, mouseOnScreenPosition.y * scale + 50, 0.4f,
+                             new Color((float) 0.5, (float) 0.5, (float) 0.5, 1));
+                 }
+                 if (fire.contains(mouseOnScreenPosition) && Event.happened("Fire_opened")) {
+                     String x1 = decimalFormat.format(ElementPumping.getDamageMultiplier(ElementPumping.fireLevel) * Game.player.damage),
+                             x2 = decimalFormat.format(ElementPumping.getDamageMultiplier(ElementPumping.fireLevel + 1) * Game.player.damage),
+                             y1 = decimalFormat.format(ElementPumping.getAttackCooldownMultiplier(ElementPumping.fireLevel) * Game.player.attackCooldown) + " s.",
+                             y2 = decimalFormat.format(ElementPumping.getAttackCooldownMultiplier(ElementPumping.fireLevel + 1) * Game.player.attackCooldown) + " s.";
+
+                     String text = "Melee damage: " + x1 + " -> " + x2 + "\n" +
+                             "Attack cooldown: " + y1 + " -> " + y2 + "\n";
+                     TextDrawer.drawWithShadowColor(text, mouseOnScreenPosition.x * scale - 400, mouseOnScreenPosition.y * scale + 100, 0.4f,
+                             new Color(1, (float) 0.5, (float) 0, 1));
+                 }
+             }
+
+
 
      }
 

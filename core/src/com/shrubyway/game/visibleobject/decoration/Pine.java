@@ -26,8 +26,8 @@ public class Pine extends Decoration {
         id = 4;
     }
 
-    @Override public void hit() {
-        super.hit();
+    @Override public void hit(float damage, Vector2 hitPosition) {
+        super.hit(damage, hitPosition);
         if(Math.random() < 0.2) {
             Game.objectsList.add(new VisibleItem(ItemManager.newItem(2),
                     position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),

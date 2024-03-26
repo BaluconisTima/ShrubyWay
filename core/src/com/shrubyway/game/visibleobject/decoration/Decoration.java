@@ -60,7 +60,7 @@ abstract public class Decoration extends InteractiveObject {
         return new Vector2(position.x + halfTextureWidth, position.y);
     }
 
-    public void hit() {
+    public void hit(float damage, Vector2 hitPosition) {
         lastHitTime = AnimationGlobalTime.time();
     }
 

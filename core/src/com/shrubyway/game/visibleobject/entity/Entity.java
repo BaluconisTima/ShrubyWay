@@ -15,6 +15,7 @@ import com.shrubyway.game.effect.Effect;
 import com.shrubyway.game.effect.effecttypes.SpeedEffect;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ThrowableItem;
+import com.shrubyway.game.myinterface.ElementPumping;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.GlobalSoundManager;
@@ -156,7 +157,7 @@ abstract public class Entity extends InteractiveObject {
         direction.set(positionCenter().x - AttackPosition.x + (float)Math.random() * 30 - 15,
                 positionCenter().y - AttackPosition.y  + (float)Math.random() * 30 - 15);
         direction.nor();
-        direction.scl(damage * 100f / health.getMaxHealth());
+        direction.scl(damage / health.getMaxHealth() * 100f);
         getDamageWithoutMomentum(damage, hitPosition);
 
         momentum.add(direction);
@@ -166,14 +167,16 @@ abstract public class Entity extends InteractiveObject {
     protected void changeAnimationsFor(Vector2 direction, int actionLocal) {
         if(!allowedMotion) return;
         action = actionLocal;
-
-        if(Math.abs(direction.x) > Math.abs(direction.y)) {
-            if(direction.x < 0) faceDirection = 2;
-            else if(direction.x > 0) faceDirection = 3;
-        } else {
-            if(direction.y < 0) faceDirection = 0;
-            else if(direction.y > 0) faceDirection = 1;
-        }
+       if(direction != null && direction.len() != 0) {
+           if (Math.abs(direction.x) > Math.abs(direction.y)) {
+               if (direction.x < 0) faceDirection = 2;
+               else if (direction.x > 0) faceDirection = 3;
+           } else {
+               if (direction.y < 0) faceDirection = 0;
+               else if (direction.y > 0) faceDirection = 1;
+           }
+       }
+       //System.out.println("action: " + action + " faceDirection: " + faceDirection);
     }
     public void running(boolean running) {
         if(!allowedMotion) return;
@@ -184,7 +187,7 @@ abstract public class Entity extends InteractiveObject {
 
     public void tryMoveMomentum(float delta) {
         if(action == 3) return;
-        momentum.scl((float)Math.pow(0.85f, delta * 60));
+        momentum.scl((float)Math.pow(0.86f, delta * 60));
         nextMovement.add(momentum);
     }
 
@@ -206,6 +209,7 @@ abstract public class Entity extends InteractiveObject {
             nextMovement.set(nextMovement.x + tempDirection.x, nextMovement.y + tempDirection.y);
         } else {
             changeAnimationsFor(tempDirection, 0);
+            tempDirection.scl(0);
         }
     };
 
@@ -281,13 +285,13 @@ abstract public class Entity extends InteractiveObject {
      action = 3;
     }
 
-    protected float attackCooldown = 0.5f;
+    public float attackCooldown = 0.5f;
     protected float animationTime = 0f;
     protected float lastAttackTime;
 
     public void attack(Vector2 direction) {
         if(!allowedMotion && action != 2) return;
-        float attackCooldown = 0.5f * (float)Math.pow(0.96f, (double)(damageLevel - 1));
+        float attackCooldown = 0.5f * ElementPumping.getAttackCooldownMultiplier(damageLevel);
 
         if((AnimationGlobalTime.time() - lastAttackTime) > attackCooldown) {
             Vector2 directionTemp =
@@ -301,28 +305,24 @@ abstract public class Entity extends InteractiveObject {
             soundAttack.play(SoundSettings.soundVolume);
         }
     }
-    protected float throwCooldown = 0.5f;
+    public float throwCooldown = 0.5f;
     protected float lastThrowTime;
     protected boolean attacking = false;
 
     public boolean canThrow() {
         if(!allowedMotion) return false;
         return (AnimationGlobalTime.time() - lastThrowTime >=
-                throwCooldown * Math.pow(0.96f, (double)(throwLevel - 1)));
+                throwCooldown * ElementPumping.getThrowCooldownMultiplier(throwLevel));
     }
     public void throwItem(Vector2 shootPosition, Item item, boolean rotating) {
         if(!canThrow()) return;
         lastThrowTime = AnimationGlobalTime.time();
 
-        float damageScale = 1f, speedScale = 1f;
-        float throwlevel = throwLevel / 7;
-        while(Math.random() < throwlevel) {
-            damageScale *= 1.6f;
-            speedScale *= 1.3f;
-            throwlevel /= 5;
-        }
+        float damageAddition = ElementPumping.getThrowDamageAddition(ElementPumping.airLevel),
+                speedScale = ElementPumping.getThrowSpeedMutiplier(throwLevel);
+
         Bullet bullet = new ThrowableItem(positionCenter(), shootPosition, item, this,
-                rotating, damageScale, speedScale);
+                rotating, damageAddition, speedScale);
         changeAnimationsFor(bullet.direction, 2);
         Game.objectsList.add(bullet);
     }

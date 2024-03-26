@@ -1,6 +1,7 @@
 package com.shrubyway.game.visibleobject.decoration;
 
 import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.shapes.Rectangle;
@@ -30,7 +31,7 @@ public class ChestOpened extends Decoration {
                 position.y + 30, 60, 50);
     }
 
-    @Override public void hit() {
+    @Override public void hit(float damage, Vector2 hitPosition) {
 
     }
 }

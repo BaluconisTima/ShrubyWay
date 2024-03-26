@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.Animator;
 public class DecorationsManager {
-    public static int decorationNumber = 21;
+    public static int decorationNumber = 22;
     public static Class<? extends Decoration> decorations[] = new Class[decorationNumber];
     static Animation<TextureRegion> texture[] = new Animation[decorationNumber];
     static String way[] = new String[decorationNumber];
@@ -102,6 +102,10 @@ public class DecorationsManager {
         decorations[20] = ChestOpened.class;
         way[20] += "CHEST_OPENED.png";
         texture[20] = animator.toAnimation( ShrubyWay.assetManager.get(way[20], Texture.class), 8, 0, 0);
+
+        decorations[21] = Dummy.class;
+        way[21] += "DUMMY.png";
+        texture[21] = animator.toAnimation( ShrubyWay.assetManager.get(way[21], Texture.class), 10, 0, 0);
 
     }
 

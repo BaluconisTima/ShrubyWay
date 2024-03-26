@@ -170,14 +170,18 @@ public class Game extends Screen implements java.io.Serializable {
 
 
       if(ShrubyWay.inputProcessor.isCPressed()) {
-          ElementPumping.waterLevel++;
+          MobsManager.addMobNear(player.positionLegs(), 4);
+          /*ElementPumping.waterLevel++;
           ElementPumping.fireLevel++;
           ElementPumping.earthLevel++;
-          ElementPumping.airLevel++;
+          ElementPumping.airLevel++; */
         }
-        /*if(ShrubyWay.inputProcessor.isLPressed()) {
-          loadGame();
-        } */
+        if(ShrubyWay.inputProcessor.isLPressed()) {
+            /*ElementPumping.waterLevel--;
+            ElementPumping.fireLevel--;
+            ElementPumping.earthLevel--;
+            ElementPumping.airLevel--; */
+        }
 
 
         boolean spacePressed = ShrubyWay.inputProcessor.isSpacePressed();
@@ -195,12 +199,8 @@ public class Game extends Screen implements java.io.Serializable {
                         if (ItemManager.itemActing[temp] instanceof Food) {
                             Item temp2 = inventory.take();
                             float heling = ((Food) ItemManager.itemActing[temp2.id]).heling;
-                            float waterLevel = ElementPumping.waterLevel;
-                            waterLevel /= 12;
-                            while(Math.random() < waterLevel) {
-                                heling *= 1.3;
-                                waterLevel /= 4;
-                            }
+                            heling += ElementPumping.getEatingHealAddition(ElementPumping.waterLevel);
+
                             ((Food)ItemManager.itemActing[temp]).afterActing(player);
                             player.health.heal(heling);
                             playerEating = true;
@@ -364,6 +364,10 @@ public class Game extends Screen implements java.io.Serializable {
     }
 
     float lastMobUpdate = 5f;
+    static public float lastRegen = 5f;
+
+    static public float RegenCooldown = 15f;
+
 
     public void globalProcessing(float delta) {
        TutorialHints.update();
@@ -377,6 +381,10 @@ public class Game extends Screen implements java.io.Serializable {
 
                 MobsManager.tryGenerateMob(player.positionLegs());
         }
+       if(AnimationGlobalTime.time() - lastRegen > RegenCooldown * ElementPumping.getPassiveHealTimeMultiplier(ElementPumping.waterLevel)) {
+           lastRegen = AnimationGlobalTime.time();
+           player.health.heal(1f);
+       }
 
         List<VisibleObject> temp = new CopyOnWriteArrayList<>(objectsList.getList());
        MiniMap.mobs.clear();
@@ -408,7 +416,7 @@ public class Game extends Screen implements java.io.Serializable {
                     }
                     if(obj2 instanceof Decoration dec) {
                         if(!exp.damaged) {
-                            if(exp.getDamage(dec.positionCenter()) != 0) dec.hit();
+                            if(exp.getDamage(dec.positionCenter()) != 0) dec.hit(exp.getDamage(dec.positionCenter()), dec.positionCenter());
                         }
                     }
                 }
@@ -444,7 +452,7 @@ public class Game extends Screen implements java.io.Serializable {
                                 if (bul.whoThrow == to) continue;
                             }
                             if (to instanceof Decoration dec) {
-                                dec.hit();
+                                dec.hit(from.damage(), from.attackBox().overlapCenter(to.hitBox()));
                             } else
                                 if (to instanceof Entity ent) {
                                 if(ent.health.getHealth() <= 0) continue;

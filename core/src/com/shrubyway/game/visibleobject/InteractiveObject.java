@@ -3,6 +3,7 @@ package com.shrubyway.game.visibleobject;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.shrubyway.game.CollisionChecker;
+import com.shrubyway.game.myinterface.ElementPumping;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
 
@@ -13,20 +14,14 @@ public class InteractiveObject extends VisibleObject {
 
     protected Rectangle hitBox = null;
     protected Rectangle attackBox = null;
-    protected float damage = 0;
+    public float damage = 0;
 
     public int damageLevel = 0;
     public int throwLevel = 0;
 
     public float damage() {
-        float dam = (int)damage;
-        float damLevel = damageLevel;
-        damLevel /= 7;
-        while(Math.random() < damLevel) {
-            dam *= 1.5;
-            damLevel /= 3;
-        }
-        return dam;
+        if(damageLevel == 0) return damage;
+        return damage * ElementPumping.getDamageMultiplier(damageLevel);
     }
 
     public Rectangle collisionBox() {

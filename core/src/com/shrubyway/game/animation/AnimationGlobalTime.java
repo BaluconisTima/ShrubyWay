@@ -10,6 +10,10 @@ public class AnimationGlobalTime {
     static public void clear() {
         lastTime = 0;
     }
+
+    static public void setTime(float time) {
+        lastTime = time;
+    }
     static public float time(){
         return lastTime;
     }

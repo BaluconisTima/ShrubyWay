@@ -18,7 +18,7 @@ public class ThrowableItem extends Bullet {
     Boolean rotation;
     long RotationSound;
 
-    float damageScale = 1, speedScale = 1;
+    float damageAd = 1, speedScale = 1;
 
     public ThrowableItem(Vector2 startPosition, Vector2 finishPosition, Item item,
                          VisibleObject thrower, boolean rotation) {
@@ -37,16 +37,16 @@ public class ThrowableItem extends Bullet {
             RotationSound = sound.play(SoundSettings.soundVolume);
     }
     public ThrowableItem(Vector2 startPosition, Vector2 finishPosition, Item item,
-                         VisibleObject thrower, boolean rotation, float damageScale, float speedScale) {
+                         VisibleObject thrower, boolean rotation, float damageAd, float speedScale) {
         this.rotation = rotation;
-        this.damageScale = damageScale;
+        this.damageAd = damageAd;
         this.speedScale = speedScale;
         whoThrow = thrower;
         throwingTime = AnimationGlobalTime.time();
         id = item.id;
         position.set(startPosition);
         speed = 20f * speedScale;
-        damage = ItemManager.throwingDamage[id] * damageScale;
+        damage = ItemManager.throwingDamage[id] + damageAd;
         direction =
                 new Vector2(finishPosition.x - position.x, finishPosition.y - position.y);
         direction.nor();

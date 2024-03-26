@@ -1,6 +1,7 @@
 package com.shrubyway.game.visibleobject.decoration;
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.ItemManager;
@@ -29,8 +30,8 @@ public class Willow extends Decoration {
         id = 10;
     }
 
-    @Override public void hit() {
-        super.hit();
+    @Override public void hit(float damage, Vector2 hitPosition) {
+        super.hit(damage, hitPosition);
         GlobalSoundManager.addSound(new SoundAtPosition(
                 ShrubyWay.assetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
 

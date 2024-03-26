@@ -1,26 +1,24 @@
 package com.shrubyway.game.visibleobject.decoration;
 
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.Health;
 import com.shrubyway.game.ShrubyWay;
-import com.shrubyway.game.item.ItemManager;
-import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.GlobalSoundManager;
 import com.shrubyway.game.sound.SoundAtPosition;
-import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
+import com.badlogic.gdx.audio.Sound;
 
-public class OakBush extends Decoration  {
-
+public class Dummy extends Decoration {
+    Health health = new Health(10000000);
+    {
+        id = 21;
+    }
     @Override public void hit(float damage, Vector2 hitPosition) {
         super.hit(damage, hitPosition);
-        GlobalSoundManager.addSound(new SoundAtPosition(
-                ShrubyWay.assetManager.get("sounds/EFFECTS/bush.ogg", Sound.class), position));
-        if(Math.random() < 0.2) {
-            Game.objectsList.add(new VisibleItem(ItemManager.newItem(4),
-                    position().x + halfTextureWidth  + ((float) Math.random() * 200f - 100f),
-                    position().y + 50, new Vector2(0, -0.2f)));
-        }
+        GlobalSoundManager.addSound(new SoundAtPosition(ShrubyWay.assetManager.get("sounds/EFFECTS/Dummy.ogg",
+                Sound.class), position));
+        health.getDamage(damage, hitPosition);
+        health.heal(damage);
     }
 
     @Override
@@ -39,8 +37,6 @@ public class OakBush extends Decoration  {
     }
 
     {
-        id = 3;
+        id = 21;
     }
-
-
 }

@@ -2,6 +2,7 @@ package com.shrubyway.game;
 
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.myinterface.ElementPumping;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.visibleobject.effect.DamageDisplay;
 
@@ -34,13 +35,7 @@ public class Health implements java.io.Serializable {
             if(health <= 0) return;
 
             if(defenseLevel != null) {
-                float defense = defenseLevel;
-                defense /= 5;
-                while (Math.random() < defense) {
-                    damage *= 0.7;
-                    defense /= 3;
-                }
-                damage = Math.max(0, damage - defense);
+                damage = damage * ElementPumping.getDefenseMultiplier(defenseLevel);
             }
             Game.objectsList.add(new DamageDisplay(hitPosition.x, hitPosition.y, (int)damage));
             health -= damage;

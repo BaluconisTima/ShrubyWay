@@ -1,5 +1,6 @@
 package com.shrubyway.game.visibleobject.decoration;
 
+import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
@@ -46,7 +47,7 @@ public class ChestClosed extends Decoration {
                 position.y + 30, 60, 50);
     }
 
-    @Override public void hit() {
+    @Override public void hit(float damage, Vector2 hitPosition) {
        lastHitTime = AnimationGlobalTime.time();
     }
 

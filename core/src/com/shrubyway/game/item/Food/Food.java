@@ -31,10 +31,12 @@ public class Food extends ItemActing {
     @Override public void Acting() {
         stillActing = true;
         startActingTime = Math.min(startActingTime, AnimationGlobalTime.time());
-        if(AnimationGlobalTime.time() - startActingTime > actingTime * Math.pow(0.96, ElementPumping.waterLevel)) {
+        if(AnimationGlobalTime.time() - startActingTime > actingTime
+                * ElementPumping.getEatingSpeedMultiplier(ElementPumping.waterLevel)) {
             acted = true;
         }
-         float soundCooldown = (float)(soundCooldownBase * Math.max(0.45f, Math.pow(0.98, ElementPumping.waterLevel)));
+         float soundCooldown = (float)(soundCooldownBase * Math.max(0.45f,
+                 ElementPumping.getEatingSpeedMultiplier(ElementPumping.waterLevel)));
          if(soundID == -1 || AnimationGlobalTime.time() - lastSoundTime > soundCooldown) {
              lastSoundTime = AnimationGlobalTime.time();
              soundID = eatingSound.play(SoundSettings.soundVolume);

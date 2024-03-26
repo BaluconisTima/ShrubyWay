@@ -2,6 +2,7 @@ package com.shrubyway.game.saver;
 
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.Health;
+import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.myinterface.ElementPumping;
@@ -25,7 +26,7 @@ public class GameSaver implements Serializable {
 
     int fireLevel, waterLevel, earthLevel, airLevel;
     int MobCount;
-    float localExp;
+    float localExp, lastRegen, time;
 
     public void saveGameFiles() {
        eventHashMap = Event.eventHashMap;
@@ -42,6 +43,8 @@ public class GameSaver implements Serializable {
        airLevel = ElementPumping.airLevel;
        localExp = ElementPumping.localExp;
        MobCount = MobsManager.MobCount;
+       lastRegen = Game.lastRegen;
+       time = AnimationGlobalTime.time();
     }
 
 
@@ -58,6 +61,7 @@ public class GameSaver implements Serializable {
         ElementPumping.airLevel = 1;
         ElementPumping.localExp = 0;
         MobsManager.MobCount = 0;
+        Game.lastRegen = 0;
     }
 
     public void loadGameFiles() {
@@ -80,6 +84,8 @@ public class GameSaver implements Serializable {
         ElementPumping.airLevel = airLevel;
         ElementPumping.localExp = localExp;
         MobsManager.MobCount = MobCount;
+        Game.lastRegen = lastRegen;
+        AnimationGlobalTime.setTime(time);
     }
 
     static public boolean checkSaveFile() {

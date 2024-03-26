@@ -10,7 +10,7 @@ public class DamageDisplay extends Effect {
     static int range[];
     static {
         color = new Color[6];
-        color[0] = new Color(0, 1, 0, 1);
+        color[0] = new Color(1, 1, 1, 1);
         color[1] = new Color(1, 1, 0, 1);
         color[2] = new Color(1, 0.5f, 0, 1);
         color[3] = new Color(1, 0, 0, 1);
@@ -18,8 +18,8 @@ public class DamageDisplay extends Effect {
         color[5] = new Color(0, 0, 0, 1);
         range = new int[6];
         range[0] = 0;
-        range[1] = 10;
-        range[2] = 25;
+        range[1] = 7;
+        range[2] = 20;
         range[3] = 50;
         range[4] = 100;
         range[5] = 1000000;

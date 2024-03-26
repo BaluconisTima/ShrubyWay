@@ -339,8 +339,12 @@ public class NarratorTutorial extends actionLogic {
             }
             case 23: {
                 if(MobsManager.MobCount != 0) break;
+                if(!Event.happened("Pumping_Opened")) {
+                    ElementPumping.setLocalExp(ElementPumping.getNextLevelCost());
+                    Event.cast("Pumping_Opened");
+                }
                 waitLine(28, 23, 0);
-                Event.cast("Pumping_Opened");
+
                 break;
             }
             case 24:{

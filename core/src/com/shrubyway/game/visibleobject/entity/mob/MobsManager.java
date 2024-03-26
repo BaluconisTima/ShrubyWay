@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class MobsManager {
-    public static int mobsNumber = 4;
+    public static int mobsNumber = 5;
     public static Constructor<? extends Mob> mobs[] = new Constructor[mobsNumber];
     private static float mobSpawnCost[] = new float[mobsNumber];
     public static Integer mobExp[] = new Integer[mobsNumber];
@@ -55,7 +55,12 @@ public class MobsManager {
         mobSpawnCost[3] = 10;
         mobExp[3] = 250;
 
-
+        mobs[4] = (YellowLeafer.class).getDeclaredConstructor(float.class, float.class);
+        mobs[4].newInstance(0, 0);
+        dropTableItem[4] = new ArrayList<>(Arrays.asList(4, 4));
+        dropTableChance[4] = new ArrayList<>(Arrays.asList(0.6f, 0.1f));
+        mobSpawnCost[4] = 10;
+        mobExp[4] = 50;
 
         } catch (Exception e) {
             e.printStackTrace();
