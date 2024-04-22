@@ -1,17 +1,31 @@
 package com.shrubyway.game.visibleobject.entity.mob;
 
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.item.Item;
+import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.visibleobject.VisibleObject;
+import com.shrubyway.game.visibleobject.bullet.Wind;
 import com.shrubyway.game.visibleobject.entity.Entity;
 
 public class Leafer extends Mob {
-    float bored = 0;
-    float funny = 1;
+    float mood = 1;
     float checkTime = 0;
     Entity targetEntity = null;
     Vector2 targetPosition = null;
+    Vector2 tempLen = new Vector2();
+
+    @Override
+    public void attack(Vector2 direction) {
+        if(AnimationGlobalTime.time() - lastAttackTime < attackCooldown) return;
+        lastAttackTime = AnimationGlobalTime.time();
+        Vector2 directionTemp =
+                new Vector2(direction.x - positionCenter().x, direction.y - positionCenter().y);
+        changeAnimationsFor(directionTemp, 2);
+        animationTime = AnimationGlobalTime.time();
+        allowedMotion = false;
+        action = 2;
+        Game.objectsList.add(new Wind(directionTemp, positionCenter(), this, 1f, 100));
+    }
 
     public void Leafer_idiot_ai(float windDistance, float scareDistance, float delta, Vector2 playerPosition) {
         checkTime -= delta;
@@ -20,7 +34,7 @@ public class Leafer extends Mob {
         if(checkTime < 0) {
             checkTime = 0.6f;
             if(targetEntity == null && targetPosition == null) {
-                if(Math.random() < bored) {
+                if(Math.random() > mood) {
                     if(Math.random() < 0.7) {
                         targetEntity = Game.player;
                     } else {
@@ -43,16 +57,16 @@ public class Leafer extends Mob {
                     }
                 } else {
                    // walk around
-                    targetPosition = new Vector2(positionLegs().x + (float) (Math.random() * 600 - 300), positionLegs().y + (float) (Math.random() * 600 - 300));
+                    targetPosition = new Vector2(positionLegs().x + (float) (Math.random() * 800 - 400),
+                            positionLegs().y + (float) (Math.random() * 800 - 400));
                 }
             }
 
         }
-        if(playerPosition.dst2(positionLegs()) < scareDistance && health.getHealth() < health.getMaxHealth() * 0.3 + 1) {
+        tempLen.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
+        if(tempLen.len() < scareDistance && health.getHealth() < health.getMaxHealth() * 0.3 + 1) {
             if(targetEntity != Game.player) {
                 targetEntity = null;
-                funny = 0;
-                bored = 1;
             }
             float alpha = (float) (Math.random() * 0.5 * Math.PI - Math.PI * 0.25f);
             tempDirection.set(playerPosition.x - positionCenter().x, playerPosition.y - positionCenter().y);
@@ -60,34 +74,56 @@ public class Leafer extends Mob {
             tempDirection.rotateRad(alpha);
             tempDirection.scl(scareDistance);
             target.set(positionCenter().x - tempDirection.x, positionCenter().y - tempDirection.y);
-            tryMoveTo(tempDirection);
+            tryMoveAi(delta);
             return;
         }
         if(targetEntity != null) {
-            if(targetEntity.positionLegs().dst2(positionLegs()) > windDistance) {
-                tryMoveTo(targetEntity.positionLegs());
+            if(targetEntity.dead()) {
+                targetEntity = null;
+                checkTime = 0.2f;
+                target.set(positionLegs());
+                tryMoveAi(delta);
+                return;
+            }
+            tempLen.set(targetEntity.positionLegs().x - positionLegs().x, targetEntity.positionLegs().y - positionLegs().y);
+            if(tempLen.len() > windDistance) {
+                target.set(targetEntity.positionLegs());
+                tryMoveAi(delta);
                 return;
             } else {
-                if(canThrow()) {
-                    throwItem(playerPosition, new Item(4), true);
-                    funny *= 0.9;
-                    bored = Math.min(1f, bored / 0.9f);
-
-                    if(Math.random() > funny) {
+                    attack(targetEntity.positionLegs());
+                    mood *= 0.9;
+                    mood = Math.max(0.01f, mood);
+                    if(Math.random() > mood) {
                         targetEntity = null;
                         checkTime = 0.2f;
-                    }
                 }
+                target.set(positionLegs());
+                tryMoveAi(delta);
                 return;
             }
         }
         if(targetPosition != null) {
-            if(targetPosition.dst2(positionLegs()) < 100) {
-                funny = Math.min(1f, funny / 0.9f);
-                bored *= 0.9f;
+            mood /= 0.98;
+            mood = Math.min(0.99f, mood);
+            if(Math.random() < mood) {
+                targetPosition = null;
+                checkTime = 0.2f;
+                return;
+            }
+            tempLen.set(targetPosition.x - positionLegs().x, targetPosition.y - positionLegs().y);
+            if(tempLen.len() < 150) {
+                mood /= 0.9;
+                mood = Math.min(0.99f, mood);
                 targetPosition = null;
                 checkTime = 0.5f;
-            } else tryMoveTo(targetPosition);
+            } else {
+                target.set(targetPosition);
+                tryMoveAi(delta);
+            }
+            return;
         }
+        target.set(positionLegs());
+        tryMoveAi(delta);
     }
 }

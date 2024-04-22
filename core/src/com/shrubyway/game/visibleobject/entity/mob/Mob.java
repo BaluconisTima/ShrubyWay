@@ -32,7 +32,7 @@ public abstract class Mob extends Entity {
     int lastMoveTry = 0;
     Vector2 tempDirection3 = new Vector2(0,0);
 
-    private void tryMoveAi(float delta) {
+    protected void tryMoveAi(float delta) {
         if(target.x - positionLegs().x > 70) tempDirection.x = 1;
         else if(target.x - positionLegs().x < -70) tempDirection.x = -1;
         else tempDirection.x = 0;

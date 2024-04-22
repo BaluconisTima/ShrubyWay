@@ -7,7 +7,7 @@ import com.shrubyway.game.visibleobject.entity.EntityManager;
 
 public class YellowLeafer extends Leafer {
     @Override public void ai(Vector2 playerPosition, float delta) {
-        Leafer_idiot_ai(600, 500, delta, playerPosition);
+        Leafer_idiot_ai(500, 350, delta, playerPosition);
     }
 
     public YellowLeafer(float x, float y) {
@@ -16,8 +16,7 @@ public class YellowLeafer extends Leafer {
         health = new Health(10);
         speed = 8f;
         allowedMotion = true;
-        attackCooldown = 0f;
-        throwCooldown = 3f;
+        attackCooldown = 3f;
         action = 0;
         damage = 0f;
         regionWidth = EntityManager.animations[entityID].get(0).get(0)[0].getKeyFrame(0).getRegionWidth();

@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
+import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
@@ -79,10 +80,28 @@ public class ChestClosed extends Decoration {
            }
         }
 
+        ArrayList<Item> dropMoney = ItemManager.splitMoney(100 + (int)(Math.random() * 100));
+        dropItems.addAll(dropMoney);
+        dropMoney.clear();
+
+
+        Vector2 rotation = new Vector2(1, 0);
+        rotation.rotate(45);
+        rotation.nor();
+
+        for(int i = 0; i < dropItems.size(); i++){
+            int j = (int)(i + Math.random() * (dropItems.size() - i));
+            Item tempItem = dropItems.get(j);
+            dropItems.set(j, dropItems.get(i));
+            dropItems.set(i, tempItem);
+        }
         for(Item item : dropItems){
-            float x = (float) (Math.random() * 30 - 15);
-            VisibleItem temp2 = new VisibleItem(item, position.x + 100 + x,
-                    position.y - 10);
+            Vector2 rotation2 = new Vector2(rotation);
+            VisibleItem temp2 = new VisibleItem(item, position.x + halfTextureWidth, position.y, rotation2);
+            rotation.nor();
+            rotation.rotate(90 / Math.max(2, dropItems.size() - 1));
+            rotation.nor();
+
             Game.objectsList.add(temp2);
         }
 

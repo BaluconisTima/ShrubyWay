@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
+import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
@@ -20,6 +21,13 @@ public class VisibleItem extends VisibleObject {
     private Vector2 tempVector = new Vector2();
     static Sound pop = Gdx.audio.newSound(Gdx.files.internal("sounds/EFFECTS/Pop.ogg"));
 
+    public  VisibleItem(Item item, Vector2 pos) {
+        globalDir = new Vector2(0,0);
+        pop.play(SoundSettings.soundVolume);
+        this.item = item;
+        position.set(pos);
+        dropTime = AnimationGlobalTime.time();
+    }
     public VisibleItem(Item item, float x, float y) {
         globalDir = new Vector2(0,0);
         pop.play(SoundSettings.soundVolume);
@@ -62,6 +70,13 @@ public class VisibleItem extends VisibleObject {
 
         dir.set(playerPosition.x - positionCenter().x, playerPosition.y - positionCenter().y);
         if(dir.len() <= 20) {
+            if(ItemManager.checkIfSpecial(item.id)) {
+                Sound coin = ShrubyWay.assetManager.get("sounds/EFFECTS/coin.ogg", Sound.class);
+                coin.play(SoundSettings.soundVolume);
+                ItemManager.addMoney(item.id);
+                this.delete();
+                return;
+            }
             if(inventory.addItem(item)) this.delete();
         } else
             if(dir.len() < 150) {

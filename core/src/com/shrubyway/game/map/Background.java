@@ -29,6 +29,7 @@ public class Background implements Serializable {
     int tileWithSound[] = {0};
 
     float nearestTile[] = new float[MapSettings.TILETYPES];
+    float stepSummaryPower[][] = new float[MapSettings.TILETYPES][2];
     Sound sound;
     {
         stepSoundWay[0] = "sounds/STEPS/0";
@@ -112,7 +113,19 @@ public class Background implements Serializable {
         y += playerPosition.y;
         y /= MapSettings.TYLESIZE;
         for (int i = 0; i < MapSettings.TILETYPES; i++) {
+            stepSummaryPower[i][0] = Math.min(stepSummaryPower[i][0], 1);
+            stepSummaryPower[i][1] = Math.min(stepSummaryPower[i][1], 1);
+            if(stepSummaryPower[i][0] > 0) {
+                ShrubyWay.assetManager.get(stepSoundName[i][0],
+                        Sound.class).play(stepSummaryPower[i][0] * SoundSettings.soundVolume);
+            }
+            if(stepSummaryPower[i][1] > 0) {
+                ShrubyWay.assetManager.get(stepSoundName[i][1],
+                        Sound.class).play(stepSummaryPower[i][1] * SoundSettings.soundVolume);
+            }
             nearestTile[i] = 1;
+            stepSummaryPower[i][0] = 0;
+            stepSummaryPower[i][1] = 0;
         }
             for (int i = x - MapSettings.visibleDistanceX; i < x + MapSettings.visibleDistanceX; i++)
                 for (int j = y - MapSettings.visibleDistanceY; j < y + MapSettings.visibleDistanceY; j++) {
@@ -198,8 +211,7 @@ public class Background implements Serializable {
         tempDistance.sub(playerPosition);
         float temp1 = tempDistance.len(); temp1 = temp1 / MapSettings.soundDistance;
         temp1 = Math.min(temp1, 1);
-        ShrubyWay.assetManager.get(stepSoundName[backgroundMap[x][y] - '0'][(int) (Math.random() * 2)],
-                Sound.class).play((1 - temp1) * SoundSettings.soundVolume);
+        stepSummaryPower[backgroundMap[x][y] - '0'][(int)(Math.random() * 2)] += 1 - temp1;
     }
 
 }

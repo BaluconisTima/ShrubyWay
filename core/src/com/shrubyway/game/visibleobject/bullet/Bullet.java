@@ -9,14 +9,16 @@ import com.shrubyway.game.visibleobject.VisibleObject;
 
 public abstract class Bullet extends InteractiveObject {
     public Vector2 direction;
-    protected float speed;
+    protected float speed = 1f;
     public VisibleObject whoThrow;
     public float throwingTime;
+    Vector2 tmp = new Vector2(0,0);
 
     public void tryMove(float delta) {
-        Vector2 tempDirection = new Vector2(direction);
-        tempDirection.scl(speed * delta * 3f);
-        position.add(tempDirection);
+        tmp.set(direction);
+        tmp.nor();
+        tmp.scl(speed * delta * 60f);
+        position.add(tmp);
     }
 
     public void die() {

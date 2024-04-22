@@ -6,7 +6,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
-import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.screen.Game;
 
 public abstract class Explosion extends Effect{
@@ -28,7 +27,7 @@ public abstract class Explosion extends Effect{
                 this.position.y - 120 + animation.getKeyFrame(0).getRegionHeight() / 2);
 
         float distance = positionCenter.dst(position);
-        return (int) (power * Math.max(0, (1 - distance / radius)));
+        return (int) (power * Math.max(0, (1 - Math.pow((distance / radius), 1/2f))));
     }
 
     public Vector2 getMomentum(Vector2 position) {
@@ -38,7 +37,7 @@ public abstract class Explosion extends Effect{
         float distance = positionCenter.dst(position);
         Vector2 direction = new Vector2((position.x - positionCenter.x), (position.y - positionCenter.y));
         direction.nor();
-        float powerMomentum = (float) (power * Math.pow(Math.max(0, (1 - distance / 1.15 / radius)), 0.75));
+        float powerMomentum = (float) (power * Math.pow(Math.max(0, (1 - distance / 1.15 / radius)), 0.5));
         return new Vector2(direction.x * powerMomentum,
                 direction.y * powerMomentum);
     }

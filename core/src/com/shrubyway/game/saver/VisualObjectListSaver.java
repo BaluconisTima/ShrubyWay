@@ -92,6 +92,7 @@ public class VisualObjectListSaver implements java.io.Serializable {
         CopyOnWriteArrayList<VisibleObject> list = new CopyOnWriteArrayList<>();
         for (int i = 0; i < mobsID.size(); i++) {
             Mob mob = MobsManager.newOf((Integer) mobsID.get(i), ((Vector2) mobsPosition.get(i)).x, ((Vector2) mobsPosition.get(i)).y);
+            if(mob == null) continue;
             mob.health.setHealth((Health) mobsHealth.get(i));
             mob.position.set((Vector2) mobsPosition.get(i));
             list.add(mob);

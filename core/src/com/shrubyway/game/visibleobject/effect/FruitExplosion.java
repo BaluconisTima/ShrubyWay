@@ -13,7 +13,7 @@ public class FruitExplosion extends Explosion {
 
     public FruitExplosion(float x, float y) {
 
-        super(x - 400, y - 400, 8, 700);
+        super(x - 400, y - 400, 25, 700);
         float explosionPower = 350;
         Vector2 playerPosition = Game.player.positionCenter();
 

@@ -28,6 +28,8 @@ public class GameSaver implements Serializable {
     int MobCount;
     float localExp, lastRegen, time;
 
+    int PlayerMoney = 0;
+
     public void saveGameFiles() {
        eventHashMap = Event.eventHashMap;
        eventsHappened = Event.eventsHappened;
@@ -44,6 +46,7 @@ public class GameSaver implements Serializable {
        localExp = ElementPumping.localExp;
        MobCount = MobsManager.MobCount;
        lastRegen = Game.lastRegen;
+       PlayerMoney = Game.player.money;
        time = AnimationGlobalTime.time();
     }
 
@@ -61,6 +64,7 @@ public class GameSaver implements Serializable {
         ElementPumping.airLevel = 1;
         ElementPumping.localExp = 0;
         MobsManager.MobCount = 0;
+        Game.player.money = 0;
         Game.lastRegen = 0;
     }
 
@@ -72,7 +76,6 @@ public class GameSaver implements Serializable {
         Game.player.position.set(playerPosition);
         Game.localCamera.position.set(Game.player.positionCenter().x, Game.player.positionCenter().y, 0);
         Game.player.health.setHealth(playerHealth);
-
         ObjectsList objectsList = new ObjectsList();
         objectsList.getList().addAll(visualObjectListSaver.getList());
         objectsList.getList().add(Game.player);
@@ -86,6 +89,7 @@ public class GameSaver implements Serializable {
         MobsManager.MobCount = MobCount;
         Game.lastRegen = lastRegen;
         AnimationGlobalTime.setTime(time);
+        Game.player.money = PlayerMoney;
     }
 
     static public boolean checkSaveFile() {

@@ -50,7 +50,6 @@ public class ThrowableItem extends Bullet {
         direction =
                 new Vector2(finishPosition.x - position.x, finishPosition.y - position.y);
         direction.nor();
-        direction.scl(speed);
         sound = ShrubyWay.assetManager.get("sounds/EFFECTS/rotation.ogg", Sound.class);
         RotationSound = sound.play(SoundSettings.soundVolume);
     }

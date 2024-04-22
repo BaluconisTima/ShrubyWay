@@ -22,6 +22,7 @@ import com.shrubyway.game.item.Harmonica;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.layout.Layout;
+import com.shrubyway.game.layout.PoppyShop;
 import com.shrubyway.game.linemaker.LineMaker;
 import com.shrubyway.game.layout.SettingsLayout;
 import com.shrubyway.game.linemaker.narrator.Narrator;
@@ -72,6 +73,8 @@ public class Game extends Screen implements java.io.Serializable {
     static public LineMaker LineMaker = new LineMaker();
 
     static public LineRenderer lineRenderer = new LineRenderer();
+
+    static public PoppyShop shop = null;
 
     Button continueButton, settingsButton, menuButton;
 
@@ -170,17 +173,14 @@ public class Game extends Screen implements java.io.Serializable {
 
 
       if(ShrubyWay.inputProcessor.isCPressed()) {
-          MobsManager.addMobNear(player.positionLegs(), 4);
-          /*ElementPumping.waterLevel++;
-          ElementPumping.fireLevel++;
-          ElementPumping.earthLevel++;
-          ElementPumping.airLevel++; */
+          for(int i = 0; i < ItemManager.itemNumber; i++) {
+              objectsList.add(new VisibleItem(new Item(i), player.positionCenter().x,
+                      player.positionCenter().y));
+          }
         }
         if(ShrubyWay.inputProcessor.isLPressed()) {
-            /*ElementPumping.waterLevel--;
-            ElementPumping.fireLevel--;
-            ElementPumping.earthLevel--;
-            ElementPumping.airLevel--; */
+            //  shop = new PoppyShop();
+            objectsList.add(MobsManager.newOf(4, mousePosition.x, mousePosition.y));
         }
 
 
@@ -535,12 +535,17 @@ public class Game extends Screen implements java.io.Serializable {
 
 
     public void gameTick(float delta) {
-        delta = Math.min(delta, 1f);
-        lastDelta = delta;
-        playerInputWorking(delta);
-        interfaceInputWorking(delta);
-        globalProcessing(delta);
-        cameraUpdate(delta);
+        if(shop != null) {
+            shop.update(ShrubyWay.inputProcessor.mousePosition());
+            if(shop.isClosed()) shop = null;
+        } else {
+            delta = Math.min(delta, 1f);
+            lastDelta = delta;
+            playerInputWorking(delta);
+            interfaceInputWorking(delta);
+            globalProcessing(delta);
+            cameraUpdate(delta);
+        }
     }
 
 
@@ -591,13 +596,17 @@ public class Game extends Screen implements java.io.Serializable {
 
 
        // TextDrawer.drawCenterBlack("Mobs: " + MobsManager.MobCount, 50, 50, 1);
-       /* TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
-        float memory = Gdx.app.getJavaHeap() / 1024f / 1024f;
-        TextDrawer.drawBlack("" + memory, 50, 100, 1); */
+        TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
+        TextDrawer.drawBlack("" + player.position, 50, 100, 1);
 
-
+        GlobalBatch.batch.setColor(1,1,1,1 - CameraEffects.getSaveEffect());
+        GlobalBatch.render(ShrubyWay.assetManager.get("interface/screen.png", Texture.class),
+                0, 0);
+        GlobalBatch.batch.setColor(1,1,1,1);
+    }
+    public void renderPause() {
         if (gamePaused) {
-             GlobalBatch.render(ShrubyWay.assetManager.get("interface/shadow.png", Texture.class),
+            GlobalBatch.render(ShrubyWay.assetManager.get("interface/shadow.png", Texture.class),
                     0, 0);
             if(menuButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()) && layout == null) {
                 menuButton.renderSellected();
@@ -611,10 +620,6 @@ public class Game extends Screen implements java.io.Serializable {
 
             if(layout != null) layout.render(ShrubyWay.inputProcessor.mousePosition());
         }
-        GlobalBatch.batch.setColor(1,1,1,1 - CameraEffects.getSaveEffect());
-        GlobalBatch.render(ShrubyWay.assetManager.get("interface/screen.png", Texture.class),
-                0, 0);
-        GlobalBatch.batch.setColor(1,1,1,1);
     }
 
 
@@ -622,6 +627,7 @@ public class Game extends Screen implements java.io.Serializable {
         gamePaused = true;
         LineMaker.pause();
         AnimationGlobalTime.pause();
+        if(shop != null) shop.pause();
         map.pauseSounds();
     }
 
@@ -629,19 +635,27 @@ public class Game extends Screen implements java.io.Serializable {
         gamePaused = false;
         LineMaker.resume();
         AnimationGlobalTime.resume();
+        if(shop != null) shop.resume();
         map.resumeSounds();
     }
 
 
     public void renderFrame() {
-        GlobalBatch.setProjectionMatrix(localCamera);
-        ScreenUtils.clear(1, 1, 1, 1);
+
+        ScreenUtils.clear(0, 0, 0, 1);
+
+        if(shop != null) {
+            shop.render(ShrubyWay.inputProcessor.mousePosition());
+        } else {
+            GlobalBatch.setProjectionMatrix(localCamera);
+            map.render(player.position());
+            renderShadows();
+            renderObjects();
+            renderDamage();
+            renderInterface();
+        }
         //batch.begin();
-        map.render(player.position());
-        renderShadows();
-        renderObjects();
-        renderDamage();
-        renderInterface();
+        renderPause();
        // batch.end();
     }
 

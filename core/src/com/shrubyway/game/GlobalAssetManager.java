@@ -14,6 +14,7 @@ import java.util.jar.JarFile;
 public class GlobalAssetManager {
     private AssetManager assetManager = new AssetManager();
 
+
     public void addAsset(String path, Class type) {
         assetManager.load(path, type);
     }
@@ -61,6 +62,8 @@ public class GlobalAssetManager {
                     addAsset(file.path(), com.badlogic.gdx.audio.Sound.class);
                 } else if (extension.equals("mp3")) {
                     addAsset(file.path(), com.badlogic.gdx.audio.Music.class);
+                } else if(extension.equals("mp4")) {
+                   // addAsset(file.path(), FileHandle.class);
                 }
             }
         }
@@ -82,6 +85,8 @@ public class GlobalAssetManager {
                         addAsset(fileHandle.path(), com.badlogic.gdx.audio.Sound.class);
                     } else if (extension.equals("mp3")) {
                         addAsset(fileHandle.path(), com.badlogic.gdx.audio.Music.class);
+                    } else if(extension.equals("mp4")) {
+                        // TODO
                     }
                 }
             }

@@ -64,7 +64,7 @@ public class Inventory {
 
 
     public boolean havePlaceFor(int itemID) {
-
+        if(ItemManager.checkIfSpecial(itemID)) return true;
         for(int i = 0; i < 5; i++)
             for(int j = 0; j < 9; j++) {
                 if(items[i][j] == null) return true;
