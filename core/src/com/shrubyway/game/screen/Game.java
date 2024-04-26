@@ -22,14 +22,15 @@ import com.shrubyway.game.item.Harmonica;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.layout.Layout;
-import com.shrubyway.game.layout.PoppyShop;
-import com.shrubyway.game.linemaker.LineMaker;
 import com.shrubyway.game.layout.SettingsLayout;
+import com.shrubyway.game.linemaker.LineMaker;
 import com.shrubyway.game.linemaker.narrator.Narrator;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.map.ScreenGrid;
 import com.shrubyway.game.myinterface.*;
+import com.shrubyway.game.overlay.Overlay;
+import com.shrubyway.game.overlay.PoppyShop;
 import com.shrubyway.game.saver.GameSaver;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.GlobalSoundManager;
@@ -74,7 +75,7 @@ public class Game extends Screen implements java.io.Serializable {
 
     static public LineRenderer lineRenderer = new LineRenderer();
 
-    static public PoppyShop shop = null;
+    static public Overlay overlay = null;
 
     Button continueButton, settingsButton, menuButton;
 
@@ -179,8 +180,8 @@ public class Game extends Screen implements java.io.Serializable {
           }
         }
         if(ShrubyWay.inputProcessor.isLPressed()) {
-            //  shop = new PoppyShop();
-            objectsList.add(MobsManager.newOf(4, mousePosition.x, mousePosition.y));
+            overlay = new PoppyShop();
+           // objectsList.add(MobsManager.newOf(4, mousePosition.x, mousePosition.y));
         }
 
 
@@ -243,7 +244,8 @@ public class Game extends Screen implements java.io.Serializable {
         if (ShrubyWay.inputProcessor.isEnterPressed()) {
 
             for (VisibleObject obj : objectsList.getList()) {
-                if(obj instanceof Decoration dec) {
+                if(obj instanceof Decoration) {
+                    Decoration dec = (Decoration) obj;
                     if(player.interactionBox().overlaps(dec.interactionBox())) {
                         dec.interact();
                     }
@@ -402,19 +404,21 @@ public class Game extends Screen implements java.io.Serializable {
 
        for (VisibleObject obj : temp) {
             if (!objectsList.getList().contains(obj)) continue;
-            if(obj instanceof Explosion exp) {
-
+            if(obj instanceof Explosion) {
+                Explosion exp = (Explosion) obj;
                 for(VisibleObject obj2 : temp) {
-                    if(obj2 instanceof Entity ent2) {
+                    if(obj2 instanceof Entity) {
+                        Entity ent2 = (Entity) obj2;
                         ((Entity) obj2).addMomentum(exp.getMomentum(ent2.positionCenter()));
                         if(!exp.damaged) {
                             ent2.getDamageWithoutMomentum(exp.getDamage(ent2.positionCenter()), ent2.positionCenter());
                         }
                     }
-                    if(obj2 instanceof Bullet bul) {
+                    if(obj2 instanceof Bullet) {
 
                     }
-                    if(obj2 instanceof Decoration dec) {
+                    if(obj2 instanceof Decoration) {
+                        Decoration dec = (Decoration) obj2;
                         if(!exp.damaged) {
                             if(exp.getDamage(dec.positionCenter()) != 0) dec.hit(exp.getDamage(dec.positionCenter()), dec.positionCenter());
                         }
@@ -422,51 +426,64 @@ public class Game extends Screen implements java.io.Serializable {
                 }
                 exp.damaged = true;
             } else
-              if(obj instanceof DamageDisplay dam) {
+              if(obj instanceof DamageDisplay) {
+                    DamageDisplay dam = (DamageDisplay) obj;
                     dam.update(delta);
              } else
-            if (obj instanceof Bullet bul) {
+            if (obj instanceof Bullet) {
+                Bullet bul = (Bullet) obj;
                 bul.processBullet(delta);
-            } else if (obj instanceof Entity ent) {
+            } else if (obj instanceof Entity) {
+                Entity ent = (Entity) obj;
                 ent.liquidStatus(map.checkLiquid(ent.positionLegs()));
                 if (ent.makingStep(map.checkTile(ent.positionLegs()))) {
                     map.makeStep(ent.positionLegs(), player.positionLegs());
                 }
-                if (obj instanceof Mob mob) {
+                if (obj instanceof Mob) {
+                    Mob mob = (Mob) obj;
                     mob.ai(player.positionLegs(), delta);
                 }
-            } else if (obj instanceof VisibleItem visobj) {
+            } else if (obj instanceof VisibleItem) {
+                VisibleItem visobj = (VisibleItem) obj;
                 visobj.moveToPlayer(player.positionItemDrop(), inventory, delta);
             }
         }
 
         for (VisibleObject from1 : temp)
-            if(from1 instanceof InteractiveObject from) {
+            if(from1 instanceof InteractiveObject) {
+            InteractiveObject from = (InteractiveObject) from1;
             if (from.attackBox() != null && from.attackBox().topLeftCorner.x < from.attackBox().bottomRightCorner.x) {
                 for (VisibleObject to1 : temp)
-                    if(to1 instanceof InteractiveObject to) {
+                    if(to1 instanceof InteractiveObject) {
+                    InteractiveObject to = (InteractiveObject) to1;
                     if (from == to) continue;
                     if (to.hitBox() != null) {
                         if (from.attackBox().overlaps(to.hitBox())) {
-                            if (from instanceof Bullet bul) {
+                            if (from instanceof Bullet) {
+                                Bullet bul = (Bullet) from;
                                 if (bul.whoThrow == to) continue;
                             }
-                            if (to instanceof Decoration dec) {
+                            if (to instanceof Decoration) {
+                                Decoration dec = (Decoration) to;
                                 dec.hit(from.damage(), from.attackBox().overlapCenter(to.hitBox()));
                             } else
-                                if (to instanceof Entity ent) {
+                                if (to instanceof Entity) {
+                                Entity ent = (Entity) to;
                                 if(ent.health.getHealth() <= 0) continue;
 
                                 ent.getDamage(from.damage(),
                                         from.positionCenter(), from.attackBox().overlapCenter(to.hitBox()));
 
-                                if(ent instanceof Mob && from instanceof Bullet bul && ent.health.getHealth() <= 0) {
+                                if(ent instanceof Mob && from instanceof Bullet && ent.health.getHealth() <= 0) {
+                                   Bullet bul = (Bullet) from;
                                    mobDiedByThrow = true;
                                 }
 
                               if(ent.health.getHealth() <= 0) {
-                                if(ent instanceof Mob mob) {
-                                       if(from instanceof Bullet bul) {
+                                if(ent instanceof Mob) {
+                                    Mob mob = (Mob) ent;
+                                       if(from instanceof Bullet) {
+                                           Bullet bul = (Bullet) from;
                                            if(bul.whoThrow == player) {
                                                elementPumping.addExp(MobsManager.getExp(mob));
                                            }
@@ -478,7 +495,8 @@ public class Game extends Screen implements java.io.Serializable {
                                 }
                                 }
                             }
-                            if (from instanceof Bullet bul) {
+                            if (from instanceof Bullet) {
+                                Bullet bul = (Bullet) from;
                                 bul.die();
                             }
                         }
@@ -487,7 +505,8 @@ public class Game extends Screen implements java.io.Serializable {
             }
         }
         for (VisibleObject obj : objectsList.getList()) {
-            if (obj instanceof Entity ent) {
+            if (obj instanceof Entity) {
+                Entity ent = (Entity) obj;
                 ent.update(delta);
             }
         }
@@ -499,11 +518,13 @@ public class Game extends Screen implements java.io.Serializable {
         GlobalSoundManager.update(player.positionCenter());
 
         for(VisibleObject to: temp) {
-           if(to instanceof InteractiveObject inter) {
+           if(to instanceof InteractiveObject) {
+                InteractiveObject inter = (InteractiveObject) to;
                if(inter.collisionBox() != null
                        && inter.collisionBox().topLeftCorner.x < inter.collisionBox().bottomRightCorner.x) {
                   Body body = inter.getCollisionBody();
-                  if(inter instanceof Entity ent) {
+                  if(inter instanceof Entity) {
+                      Entity ent = (Entity) inter;
                       ent.nextMovement.scl(60);
                       collisionChecker.setLinearVelocity(body, ent.nextMovement);
                   }
@@ -513,7 +534,8 @@ public class Game extends Screen implements java.io.Serializable {
         collisionChecker.process(delta);
 
         for(VisibleObject obj : temp) {
-            if(obj instanceof Entity ent) {
+            if(obj instanceof Entity) {
+                Entity ent = (Entity) obj;
                 Rectangle col = ent.collisionBox();
                 float x_center = (col.topLeftCorner.x + col.bottomRightCorner.x) / 2f,
                         y_center = (col.topLeftCorner.y + col.bottomRightCorner.y) / 2f;
@@ -535,12 +557,16 @@ public class Game extends Screen implements java.io.Serializable {
 
 
     public void gameTick(float delta) {
-        if(shop != null) {
-            shop.update(ShrubyWay.inputProcessor.mousePosition());
-            if(shop.isClosed()) shop = null;
+        delta = Math.min(delta, 1f);
+        lastDelta = delta;
+
+        if(overlay != null) {
+            if(ShrubyWay.inputProcessor.isMouseLeft()) {
+                overlay.leftClick(ShrubyWay.inputProcessor.mousePosition());
+            }
+            overlay.update(delta);
+            if(overlay.isClosed()) overlay = null;
         } else {
-            delta = Math.min(delta, 1f);
-            lastDelta = delta;
             playerInputWorking(delta);
             interfaceInputWorking(delta);
             globalProcessing(delta);
@@ -551,10 +577,12 @@ public class Game extends Screen implements java.io.Serializable {
 
     public void renderShadows() {
         for(VisibleObject obj : objectsList.getList()) {
-            if(obj instanceof Entity ent) {
+            if(obj instanceof Entity) {
+                Entity ent = (Entity) obj;
                 if(!ent.liquid()) {
                     float x = 1;
-                    if(ent instanceof Mob mb) {
+                    if(ent instanceof Mob) {
+                        Mob mb = (Mob) ent;
                         x = mb.alpha;
                     }
                     GlobalBatch.batch.setColor(1,1,1,0.3f * x);
@@ -567,7 +595,8 @@ public class Game extends Screen implements java.io.Serializable {
 
     public void renderDamage() {
         for(VisibleObject obj : objectsList.getList()) {
-            if(obj instanceof DamageDisplay dam) {
+            if(obj instanceof DamageDisplay) {
+                DamageDisplay dam = (DamageDisplay) obj;
                 dam.render();
             }
         }
@@ -627,7 +656,7 @@ public class Game extends Screen implements java.io.Serializable {
         gamePaused = true;
         LineMaker.pause();
         AnimationGlobalTime.pause();
-        if(shop != null) shop.pause();
+        if(overlay != null) overlay.pause();
         map.pauseSounds();
     }
 
@@ -635,7 +664,7 @@ public class Game extends Screen implements java.io.Serializable {
         gamePaused = false;
         LineMaker.resume();
         AnimationGlobalTime.resume();
-        if(shop != null) shop.resume();
+        if(overlay != null) overlay.resume();
         map.resumeSounds();
     }
 
@@ -644,8 +673,10 @@ public class Game extends Screen implements java.io.Serializable {
 
         ScreenUtils.clear(0, 0, 0, 1);
 
-        if(shop != null) {
-            shop.render(ShrubyWay.inputProcessor.mousePosition());
+        if(overlay != null) {
+            if(gamePaused) overlay.render(null);
+            else
+            overlay.render(ShrubyWay.inputProcessor.mousePosition());
         } else {
             GlobalBatch.setProjectionMatrix(localCamera);
             map.render(player.position());

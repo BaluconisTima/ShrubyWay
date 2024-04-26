@@ -4,7 +4,6 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.video.VideoPlayer;
-import com.badlogic.gdx.video.VideoPlayerCreator;
 import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.saver.SettingsSaver;
@@ -23,7 +22,7 @@ public class ShrubyWay extends ApplicationAdapter {
 
     static public GlobalAssetManager assetManager = new GlobalAssetManager();
 
-    static public VideoPlayer videoPlayer;
+    static public VideoPlayer videoPlayer = null;
 
 
     @Override public void resize(int width, int height) {
@@ -34,9 +33,6 @@ public class ShrubyWay extends ApplicationAdapter {
     @Override public void create() {
         GlobalBatch.changeScale(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_LINEAR);
-        videoPlayer = VideoPlayerCreator.createVideoPlayer();
-
-
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         GlobalBatch.create();

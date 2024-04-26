@@ -44,16 +44,19 @@ public class VisualObjectListSaver implements java.io.Serializable {
         decorationsIJ = new ArrayList<Vector2>();
 
         for (VisibleObject object : list) {
-            if(object instanceof Mob mob) {
+            if(object instanceof Mob) {
+                Mob mob = (Mob) object;
                 mobsID.add(mob.id);
                 mobsPosition.add(mob.position);
                 mobsHealth.add(mob.health);
             }
-            else if(object instanceof VisibleItem item) {
+            else if(object instanceof VisibleItem) {
+                VisibleItem item = (VisibleItem) object;
                 itemsID.add(item.item.id);
                 itemsPosition.add(item.position);
             }
-            else if(object instanceof Decoration decoration){
+            else if(object instanceof Decoration){
+                Decoration decoration = (Decoration) object;
                 decorationsID.add(decoration.id);
                 decorationsPosition.add(decoration.position);
                 decorationsIJ.add(new Vector2(decoration.decorationI, decoration.decorationJ));
@@ -72,16 +75,19 @@ public class VisualObjectListSaver implements java.io.Serializable {
         decorationsIJ = new ArrayList<Vector2>();
 
         for (VisibleObject object : list) {
-            if(object instanceof Mob mob) {
+            if(object instanceof Mob) {
+                Mob mob = (Mob) object;
                 mobsID.add(mob.id);
                 mobsPosition.add(mob.position);
                 mobsHealth.add(mob.health);
             }
-            else if(object instanceof VisibleItem item) {
+            else if(object instanceof VisibleItem) {
+                VisibleItem item = (VisibleItem) object;
                 itemsID.add(item.item.id);
                 itemsPosition.add(item.position);
             }
-            else if(object instanceof Decoration decoration){
+            else if(object instanceof Decoration){
+                Decoration decoration = (Decoration) object;
                 decorationsID.add(decoration.id);
                 decorationsPosition.add(decoration.position);
                 decorationsIJ.add(new Vector2(decoration.decorationI, decoration.decorationJ));

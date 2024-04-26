@@ -59,6 +59,7 @@ public class Rectangle implements java.io.Serializable {
     }
 
     public boolean checkPoint(Vector2 point) {
+        if(point == null) return false;
         return (point.x >= topLeftCorner.x && point.x <= bottomRightCorner.x &&
                 point.y >= topLeftCorner.y && point.y <= bottomRightCorner.y);
     }

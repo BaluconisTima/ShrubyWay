@@ -136,8 +136,8 @@ public class Map {
                             && check.position.x < playerPosition.x + MapSettings.TYLESIZE * MapSettings.calculationDistanceY &&
                             check.position.y > playerPosition.y - MapSettings.TYLESIZE * MapSettings.calculationDistanceY
                             && check.position.y < playerPosition.y + MapSettings.TYLESIZE * MapSettings.calculationDistanceY) {
-                        if(check instanceof InteractiveObject inter) {
-                            inter.unhideBody();
+                        if(check instanceof InteractiveObject) {
+                            ((InteractiveObject)check).unhideBody();
                         }
                         Game.objectsList.add(check);
                         iterator.remove();
@@ -172,8 +172,8 @@ public class Map {
                 y /= 16;
 
                 chunks[x][y].add(check);
-                if(check instanceof InteractiveObject inter) {
-                    inter.hideBody();
+                if(check instanceof InteractiveObject) {
+                    ((InteractiveObject)check).hideBody();
                 }
                 tempList.add(check);
             }

@@ -33,6 +33,15 @@ public class Button {
         GlobalBatch.render(textureNotSellected, position.x, position.y);
     }
 
+    public void render(Vector2 mousePosition) {
+        update();
+        if(rectangle.checkPoint(mousePosition)) {
+            GlobalBatch.render(textureSellected, position.x, position.y);
+        } else {
+            GlobalBatch.render(textureNotSellected, position.x, position.y);
+        }
+    }
+
     public void renderSellected() {
         update();
         GlobalBatch.render(textureSellected, position.x, position.y);

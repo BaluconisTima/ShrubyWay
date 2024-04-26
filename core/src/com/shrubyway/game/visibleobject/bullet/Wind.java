@@ -28,14 +28,16 @@ public class Wind extends Bullet {
         direction.nor();
         direction.scl(power * delta * 600);
         for(VisibleObject object: Game.objectsList.getList()) {
-            if (object instanceof Entity ent) {
+            if (object instanceof Entity) {
+                Entity ent = (Entity) object;
                 if (ent == whoThrow) continue;
                 tempDirection.set(ent.positionCenter().x - position.x, ent.positionCenter().y - position.y);
                 if (tempDirection.len() < radius) {
                     ent.addMomentum(direction);
                 }
             }
-            if (object instanceof Bullet bullet) {
+            if (object instanceof Bullet) {
+                Bullet bullet = (Bullet) object;
                 if (tempDirection.len() < radius) {
                     if (bullet instanceof Wind) continue;
                     bullet.direction.nor();

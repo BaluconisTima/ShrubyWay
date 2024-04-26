@@ -46,8 +46,8 @@ project(":desktop") {
         implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
 
     }
-    sourceCompatibility = 17
-    targetCompatibility = 17
+    sourceCompatibility = 8
+    targetCompatibility = 8
 
 }
 
@@ -62,11 +62,11 @@ project(":core") {
         implementation "com.badlogicgames.gdx:gdx-box2d-platform:$gdxVersion:natives-desktop"
 
         tasks.withType(JavaCompile) {
-            options.compilerArgs << '-source' << '17'
+            options.compilerArgs << '-source' << '8'
         }
     }
-    sourceCompatibility = 17
-    targetCompatibility = 17
+    sourceCompatibility = 8
+    targetCompatibility = 8
 }
 
 dependencies {
