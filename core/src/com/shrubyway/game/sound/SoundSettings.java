@@ -36,6 +36,14 @@ public class SoundSettings {
         if(currentMusic != null) currentMusic = null;
     }
 
+    public static void pauseMusic() {
+        if(music != null && music.isPlaying()) music.pause();
+    }
+
+    public static void resumeMusic() {
+        if(music != null && !music.isPlaying()) music.play();
+    }
+
     public static void update() {
         if(currentMusic != null) music.setVolume(musicVolume);
 

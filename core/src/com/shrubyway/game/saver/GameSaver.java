@@ -66,6 +66,7 @@ public class GameSaver implements Serializable {
         MobsManager.MobCount = 0;
         Game.player.money = 0;
         Game.lastRegen = 0;
+        Game.overlay = null;
     }
 
     public void loadGameFiles() {

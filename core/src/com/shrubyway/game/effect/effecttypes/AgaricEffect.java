@@ -1,9 +1,10 @@
 package com.shrubyway.game.effect.effecttypes;
+import com.badlogic.gdx.graphics.Color;
 import com.shrubyway.game.sound.SoundSettings;
 import com.shrubyway.game.visibleobject.entity.Entity;
 public class AgaricEffect extends SpeedEffect {
     public AgaricEffect(float time, Entity owner) {
-        super(time, owner, -0.7f);
+        super(time, owner, -0.7f, new Color(0, 218f/256, 175f/256, 1));
         SoundSettings.setReverse(true);
     }
 

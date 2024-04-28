@@ -5,17 +5,10 @@ import com.badlogic.gdx.graphics.Color;
 public class SpeedEffect extends Effect {
 
     public float speed;
-        public SpeedEffect(float time, Entity owner, float speed) {
+        public SpeedEffect(float time, Entity owner, float speed, Color color) {
             super(time, Color.BLUE, owner);
             this.speed = speed;
-            if(speed < 0) {
-                color = Color.GREEN;
-            } else
-            if(speed > 1) {
-                color = Color.YELLOW;
-            } else if(speed < 1) {
-                color = Color.BLUE;
-            }
+            this.color = color;
         }
 
         @Override public void merge(Effect effect) {

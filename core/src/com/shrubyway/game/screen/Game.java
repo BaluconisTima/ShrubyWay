@@ -116,6 +116,7 @@ public class Game extends Screen implements java.io.Serializable {
         lineRenderer.init();
         TutorialHints.finish();
         Narrator.logic = null;
+        overlay = null;
 
         objectsList = new ObjectsList();
         event = new Event();
@@ -181,7 +182,11 @@ public class Game extends Screen implements java.io.Serializable {
         }
         if(ShrubyWay.inputProcessor.isLPressed()) {
             overlay = new PoppyShop();
-           // objectsList.add(MobsManager.newOf(4, mousePosition.x, mousePosition.y));
+            /*ElementPumping.fireLevel+= 20;
+            ElementPumping.waterLevel+= 20;
+            ElementPumping.earthLevel+= 20;
+            ElementPumping.airLevel+= 20; */
+            //objectsList.add(MobsManager.newOf(4, mousePosition.x, mousePosition.y));
         }
 
 
@@ -565,7 +570,10 @@ public class Game extends Screen implements java.io.Serializable {
                 overlay.leftClick(ShrubyWay.inputProcessor.mousePosition());
             }
             overlay.update(delta);
-            if(overlay.isClosed()) overlay = null;
+            if(overlay.isClosed()) {
+                SoundSettings.changeMusic("music/Forest Theme.mp3");
+                overlay = null;
+            }
         } else {
             playerInputWorking(delta);
             interfaceInputWorking(delta);
@@ -625,8 +633,8 @@ public class Game extends Screen implements java.io.Serializable {
 
 
        // TextDrawer.drawCenterBlack("Mobs: " + MobsManager.MobCount, 50, 50, 1);
-        TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
-        TextDrawer.drawBlack("" + player.position, 50, 100, 1);
+    //    TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
+      //  TextDrawer.drawBlack("" + player.position, 50, 100, 1);
 
         GlobalBatch.batch.setColor(1,1,1,1 - CameraEffects.getSaveEffect());
         GlobalBatch.render(ShrubyWay.assetManager.get("interface/screen.png", Texture.class),

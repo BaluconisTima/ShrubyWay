@@ -12,7 +12,7 @@ import com.shrubyway.game.sound.SoundSettings;
 
 
 public class Shruby extends Entity {
-    public static int money = 0;
+    public int money = 0;
     public Shruby(float x, float y) {
         entityID = 0;
         damage = 2f;

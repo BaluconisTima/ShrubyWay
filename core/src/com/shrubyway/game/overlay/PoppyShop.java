@@ -1,16 +1,27 @@
 package com.shrubyway.game.overlay;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.video.VideoPlayer;
 import com.badlogic.gdx.video.VideoPlayerCreator;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
+import com.shrubyway.game.animation.Animator;
+import com.shrubyway.game.event.Event;
+import com.shrubyway.game.item.Item;
+import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.myinterface.Button;
+import com.shrubyway.game.myinterface.TextDrawer;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.SoundSettings;
+import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 public class PoppyShop extends Overlay {
 
@@ -23,10 +34,10 @@ public class PoppyShop extends Overlay {
     static String[] itemDescription = new String[itemsInShop];
     static Rectangle[] itemRect = new Rectangle[itemsInShop];
     static Button sell, exit;
+    static Animation<TextureRegion> open, close;
 
 
     private void playClip(int clipNumber) {
-        System.out.println("Playing clip " + clipNumber);
         while(true) {
             clipNumber = Math.max(0, Math.min(clipNumber, 15));
             if (clipNumber > 1) lastNonIdle = clipNumber;
@@ -42,46 +53,104 @@ public class PoppyShop extends Overlay {
     }
 
     private void sell(){
-        //TODO
+        playClip(5 + (int)(Math.random() * 2));
     }
     boolean closed = false;
 
     private void exit() {
         ShrubyWay.videoPlayer.stop();
-        playClip(13 + (int)(Math.random() * 2));
+        int clipNumber = 13 + (int)(Math.random() * 2);
+        playClip(clipNumber);
+        if(clipNumber == 13) {
+            closeTime = -0.7f;
+        } else {
+            closeTime = -2.2f;
+        }
+
         ShrubyWay.videoPlayer.setOnCompletionListener(new VideoPlayer.CompletionListener() {
             @Override
             public void onCompletionListener(FileHandle file) {
                 closed = true;
+                playClip(0);
             }
         });
 
     }
+
+    private void classicCompletionListener() {
+        ShrubyWay.videoPlayer.setOnCompletionListener(new VideoPlayer.CompletionListener() {
+            @Override
+            public void onCompletionListener(FileHandle file) {
+                if(localClipNumber == 0 && (Math.random() < 1/7f)) {
+                    playClip(1);
+                } else {
+                    playClip(0);
+                }
+            }
+        });
+    }
+    long last_bad_click = 0;
     @Override public void leftClick(Vector2 mousePos) {
         if(sell.rectangle.checkPoint(mousePos)) sell();
         if(exit.rectangle.checkPoint(mousePos)) exit();
+
+        for(int i = 0; i < itemsInShop; i++) {
+            if(itemRect[i].checkPoint(mousePos)) {
+                if (itemPrice[i] != null) {
+                    if (Game.player.money >= itemPrice[i]) {
+                        last_bad_click = -1;
+                        Sound sold = ShrubyWay.assetManager.get("sounds/EFFECTS/sold.ogg", Sound.class);
+                        sold.play(SoundSettings.soundVolume);
+                        Game.player.money -= itemPrice[i];
+                        if (Game.inventory.havePlaceFor(itemID[i])) {
+                            Game.inventory.addItem(new Item(itemID[i]));
+                            playClip(2 + (int) (Math.random() * 2));
+                        } else {
+                            playClip(4);
+                            Game.objectsList.add(new VisibleItem(new Item(itemID[i]),
+                                    Game.player.positionLegs().x, Game.player.positionLegs().y));
+                        }
+                    } else {
+                        if (last_bad_click == i) {
+                            playClip(10);
+                            last_bad_click = -1;
+                        } else {
+                            playClip(7 + (int) (Math.random() * 3));
+                            last_bad_click = i;
+                        }
+                    }
+                } else {
+                    last_bad_click = -1;
+                    if (!Event.happened("Poppy_Shop_Willow_touched")) {
+                        Event.cast("Poppy_Shop_Willow_touched");
+                        SoundSettings.pauseMusic();
+                        ShrubyWay.videoPlayer.setOnCompletionListener(new VideoPlayer.CompletionListener() {
+                            @Override
+                            public void onCompletionListener(FileHandle file) {
+                              SoundSettings.resumeMusic();
+                              playClip(0);
+                                classicCompletionListener();
+                            }
+                        });
+                        playClip(15);
+
+                    } else {
+                        playClip(11 + (int) (Math.random() * 2));
+                    }
+                }
+            }
+        }
     }
 
 
 
     public PoppyShop() {
-        System.out.println("PoppyShop created");
+        closeTime = -inf;
+        openTime = 0;
+        ShrubyWay.assetManager.get("sounds/EFFECTS/shopPine.ogg", Sound.class).play(SoundSettings.soundVolume);
         SoundSettings.changeMusic("music/Shop.mp3");
-        while (ShrubyWay.videoPlayer == null) ShrubyWay.videoPlayer = VideoPlayerCreator.createVideoPlayer();
-        ShrubyWay.videoPlayer.setLooping(false);
-        ShrubyWay.videoPlayer.setVolume(SoundSettings.soundVolume);
-        ShrubyWay.videoPlayer.setOnCompletionListener(new VideoPlayer.CompletionListener() {
-                @Override
-
-                public void onCompletionListener(FileHandle file) {
-                    System.out.println("Clip " + localClipNumber + " completed");
-                    if(localClipNumber == 0 && (Math.random() < 1/7f)) {
-                        playClip(1);
-                    } else {
-                        playClip(0);
-                    }
-                }
-            });
+        ShrubyWay.videoPlayer.stop();
+        classicCompletionListener();
         playClip(0);
     }
 
@@ -91,6 +160,9 @@ public class PoppyShop extends Overlay {
     @Override public void resume() {
         ShrubyWay.videoPlayer.resume();
     }
+
+    static final float inf = 1000000000;
+    static float openTime = -inf, closeTime = -inf;
     @Override public void render(Vector2 mousePos) {
         if(ShrubyWay.videoPlayer == null) ShrubyWay.videoPlayer= VideoPlayerCreator.createVideoPlayer();
 
@@ -98,18 +170,52 @@ public class PoppyShop extends Overlay {
         if(frame != null) GlobalBatch.render(frame, 0, 0);
 
         GlobalBatch.render(ShrubyWay.assetManager.get("interface/shoppanel.png", Texture.class), 260, 26);
+        TextDrawer.drawCenterWhite(Game.player.money + " M.", 715, 100, 1);
         sell.render(mousePos);
         exit.render(mousePos);
 
+        for(int i = 0; i < itemsInShop; i++) {
+            if (itemRect[i].checkPoint(mousePos)) {
+                TextDrawer.drawWithShadow(ItemManager.itemName[itemID[i]], mousePos.x, mousePos.y - 50, 0.7f);
+                TextDrawer.drawWithShadowColor(itemDescription[i], mousePos.x, mousePos.y - 100, 0.4f, new Color(119f/256,136f/256,153f/256, 1));
+            }
+        }
+
+        if(openTime >= 0) {
+            TextureRegion frameOpen = open.getKeyFrame(openTime);
+            GlobalBatch.render(frameOpen, 0, 0);
+            if(open.isAnimationFinished(openTime)) {
+                openTime = -inf;
+            }
+        }
+        if(closeTime >= 0) {
+            TextureRegion frameClose = close.getKeyFrame(closeTime);
+            GlobalBatch.render(frameClose, 0, 0);
+        }
+
     }
     @Override public void update(float delta) {
+        ShrubyWay.videoPlayer.setVolume(SoundSettings.soundVolume);
         ShrubyWay.videoPlayer.update();
+        if(openTime > -inf) {
+            openTime += delta;
+        }
+        if(closeTime > -inf) {
+            if(closeTime <= 0 && closeTime + delta > 0) {
+                ShrubyWay.assetManager.get("sounds/EFFECTS/shopPine.ogg", Sound.class).play(SoundSettings.soundVolume);
+            }
+            closeTime += delta;
+        }
     }
     @Override public boolean isClosed() {
         return closed;
     }
 
     static {
+        open = Animator.toAnimation("interface/ShopOpen/",  8);
+        close = Animator.toAnimation("interface/ShopClose/",  8);
+        open.setPlayMode(Animation.PlayMode.NORMAL);
+        close.setPlayMode(Animation.PlayMode.NORMAL);
 
         sell = new Button(ShrubyWay.assetManager.get("interface/shopsell.png", Texture.class),
         ShrubyWay.assetManager.get("interface/shopsellsel.png", Texture.class),
@@ -118,8 +224,6 @@ public class PoppyShop extends Overlay {
         exit = new Button(ShrubyWay.assetManager.get("interface/shopexit.png", Texture.class),
         ShrubyWay.assetManager.get("interface/shopexitsel.png", Texture.class),
         867, 50);
-
-
 
         itemID[0] = 15;
         itemPrice[0] = 50;

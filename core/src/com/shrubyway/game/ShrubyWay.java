@@ -3,7 +3,9 @@ package com.shrubyway.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.video.VideoPlayer;
+import com.badlogic.gdx.video.VideoPlayerCreator;
 import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.saver.SettingsSaver;
@@ -35,6 +37,19 @@ public class ShrubyWay extends ApplicationAdapter {
         Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_LINEAR);
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        if(videoPlayer == null) {
+            videoPlayer = VideoPlayerCreator.createVideoPlayer();
+            videoPlayer.setLooping(false);
+            videoPlayer.setVolume(0);
+            try {
+            System.out.println("Playing clip 0");
+            videoPlayer.play(Gdx.files.internal("SCENES/SHOP/TEST1/0.webm"));
+            videoPlayer.update();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        Texture texture = videoPlayer.getTexture();
         GlobalBatch.create();
         Gdx.graphics.setVSync(true);
         screen = new LoadingScreen();

@@ -206,7 +206,7 @@ public class ItemManager {
                                 "of a throwing weapon can lead to beneficial results,\n" +
                                 "as the effect is not limited to you.";
         throwingDamage[25] = 2;
-        itemActing[25] = null; //TODO
+        itemActing[25] = null; //PotionAct();
         ItemDeath[25] = null; //TODO
 
         itemName[26] = "Flask of speed potion";
