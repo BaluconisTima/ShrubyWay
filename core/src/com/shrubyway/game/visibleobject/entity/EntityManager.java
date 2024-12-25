@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EntityManager {
-    static int entityCount = 6;
+    static int entityCount = 8;
     static String actions[][] = new String[entityCount][];
     static boolean looping[][] = new boolean[entityCount][];
     static CopyOnWriteArrayList<String>[] actionTypes[] = new CopyOnWriteArrayList[entityCount][];
@@ -106,6 +106,32 @@ public class EntityManager {
         soundDeath[5] =
                 ShrubyWay.assetManager.get("sounds/EFFECTS/MobDeath.ogg", Sound.class);
         soundDamage[5] = ShrubyWay.assetManager.get("sounds/EFFECTS/BerryBush.wav", Sound.class);
+
+        actions[6] = new String[]{"AFK", "WALK", "ATTACK", "DEATH"};
+        looping[6] = new boolean[]{true, true, false, false};
+        actionTypes[6] = new CopyOnWriteArrayList[]{
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN")) };
+        frameCount[6] = new int[]{24, 33, 14, 21};
+        animations[6] = AnimationLoader.load("ENTITIES/RED LEAFER", actions[6], actionTypes[6], frameCount[6]);
+        soundDeath[6] =
+                ShrubyWay.assetManager.get("sounds/EFFECTS/MobDeath.ogg", Sound.class);
+        soundDamage[6] = ShrubyWay.assetManager.get("sounds/EFFECTS/BerryBush.wav", Sound.class);
+
+        actions[7] = new String[]{"AFK", "WALK", "ATTACK", "DEATH"};
+        looping[7] = new boolean[]{true, true, false, false};
+        actionTypes[7] = new CopyOnWriteArrayList[]{
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN")) };
+        frameCount[7] = new int[]{24, 33, 14, 16};
+        animations[7] = AnimationLoader.load("ENTITIES/GREEN LEAFER", actions[7], actionTypes[7], frameCount[7]);
+        soundDeath[7] =
+                ShrubyWay.assetManager.get("sounds/EFFECTS/MobDeath.ogg", Sound.class);
+        soundDamage[7] = ShrubyWay.assetManager.get("sounds/EFFECTS/BerryBush.wav", Sound.class);
 
     }
 

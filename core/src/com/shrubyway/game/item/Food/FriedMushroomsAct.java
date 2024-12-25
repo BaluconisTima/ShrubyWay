@@ -10,6 +10,6 @@ public class FriedMushroomsAct extends Food {
         super(eatingTime, heling);
     }
     @Override public void afterActing(Entity owner) {
-        Game.objectsList.add(new VisibleItem(new Item(1), Game.player.positionLegs()));
+        Game.objectsList.add(new VisibleItem(new Item(1), owner.positionLegs()));
     }
 }

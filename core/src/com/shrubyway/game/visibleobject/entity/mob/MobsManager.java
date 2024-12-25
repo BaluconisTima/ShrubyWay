@@ -13,13 +13,12 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class MobsManager {
-    public static int mobsNumber = 5;
+    public static int mobsNumber = 7;
     public static Constructor<? extends Mob> mobs[] = new Constructor[mobsNumber];
     private static float mobSpawnCost[] = new float[mobsNumber];
     public static Integer mobExp[] = new Integer[mobsNumber];
     public static ArrayList<Integer> dropTableItem[] = new ArrayList[mobsNumber];
     public static ArrayList<Float> dropTableChance[] = new ArrayList[mobsNumber];
-
 
     static public Integer getExp(Mob mob) {
         return mobExp[mob.id];
@@ -61,6 +60,20 @@ public class MobsManager {
         dropTableChance[4] = new ArrayList<>(Arrays.asList(0.6f, 0.1f));
         mobSpawnCost[4] = 10;
         mobExp[4] = 50;
+
+        mobs[5] = (RedLeafer.class).getDeclaredConstructor(float.class, float.class);
+        mobs[5].newInstance(0, 0);
+        dropTableItem[5] = new ArrayList<>(Arrays.asList(5, 5));
+        dropTableChance[5] = new ArrayList<>(Arrays.asList(0.6f, 0.1f));
+        mobSpawnCost[5] = 10;
+        mobExp[5] = 50;
+
+        mobs[6] = (GreenLeafer.class).getDeclaredConstructor(float.class, float.class);
+        mobs[6].newInstance(0, 0);
+        dropTableItem[6] = new ArrayList<>(Arrays.asList(3, 3));
+        dropTableChance[6] = new ArrayList<>(Arrays.asList(0.6f, 0.1f));
+        mobSpawnCost[6] = 10;
+        mobExp[6] = 50;
 
         } catch (Exception e) {
             e.printStackTrace();

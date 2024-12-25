@@ -13,7 +13,7 @@ public class YellowLeafer extends Leafer {
     public YellowLeafer(float x, float y) {
         entityID = 5;
         id = 4;
-        health = new Health(10);
+        health = new Health(8);
         speed = 8f;
         allowedMotion = true;
         attackCooldown = 3f;

@@ -7,11 +7,13 @@ import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.screen.Game;
+import com.shrubyway.game.visibleobject.VisibleObject;
+import com.shrubyway.game.visibleobject.decoration.Decoration;
+import com.shrubyway.game.visibleobject.entity.Entity;
 
-public abstract class Explosion extends Effect{
+public abstract class Explosion extends VisibleEffect {
     float power, radius, creationTime;
     Vector2 positionCenter = new Vector2();
-    public boolean damaged = false;
     Animation<TextureRegion> animation;
     static Animator animator = new Animator();
     public Explosion(float x, float y, float power, float radius) {
@@ -19,10 +21,11 @@ public abstract class Explosion extends Effect{
         position.set(x, y + 120);
         this.power = power;
         this.radius = radius;
+        this.interactive = true;
     }
 
 
-    public int getDamage(Vector2 position) {
+    private int getDamage(Vector2 position) {
         positionCenter.set(this.position.x + animation.getKeyFrame(0).getRegionWidth() / 2,
                 this.position.y - 120 + animation.getKeyFrame(0).getRegionHeight() / 2);
 
@@ -30,7 +33,7 @@ public abstract class Explosion extends Effect{
         return (int) (power * Math.max(0, (1 - Math.pow((distance / radius), 1/2f))));
     }
 
-    public Vector2 getMomentum(Vector2 position) {
+    private Vector2 getMomentum(Vector2 position) {
         positionCenter.set(this.position.x + animation.getKeyFrame(0).getRegionWidth() / 2,
                 this.position.y - 120 + animation.getKeyFrame(0).getRegionHeight() / 2);
 
@@ -40,6 +43,27 @@ public abstract class Explosion extends Effect{
         float powerMomentum = (float) (power * Math.pow(Math.max(0, (1 - distance / 1.15 / radius)), 0.5));
         return new Vector2(direction.x * powerMomentum,
                 direction.y * powerMomentum);
+    }
+
+    @Override public void apply(VisibleObject visibleObject) {
+        if (visibleObject instanceof Entity) {
+            Entity entity = (Entity) visibleObject;
+            if(!applied) {
+                int damage = getDamage(entity.positionCenter());
+                if (damage > 0) {
+                    entity.getDamageWithoutMomentum(damage, entity.positionCenter());
+                }
+            }
+            entity.addMomentum(getMomentum(entity.positionCenter()));
+            return;
+        }
+        if(visibleObject instanceof Decoration) {
+            Decoration dec = (Decoration) visibleObject;
+            if(!applied) {
+                if(getDamage(dec.positionCenter()) != 0) dec.hit(getDamage(dec.positionCenter()), dec.positionCenter());
+            }
+        }
+
     }
 
     void destroy() {

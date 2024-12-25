@@ -21,6 +21,7 @@ import com.shrubyway.game.item.Food.Food;
 import com.shrubyway.game.item.Harmonica;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ItemManager;
+import com.shrubyway.game.item.Potion.Potion;
 import com.shrubyway.game.layout.Layout;
 import com.shrubyway.game.layout.SettingsLayout;
 import com.shrubyway.game.linemaker.LineMaker;
@@ -30,7 +31,6 @@ import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.map.ScreenGrid;
 import com.shrubyway.game.myinterface.*;
 import com.shrubyway.game.overlay.Overlay;
-import com.shrubyway.game.overlay.PoppyShop;
 import com.shrubyway.game.saver.GameSaver;
 import com.shrubyway.game.shapes.Rectangle;
 import com.shrubyway.game.sound.GlobalSoundManager;
@@ -42,7 +42,7 @@ import com.shrubyway.game.visibleobject.bullet.Bullet;
 import com.shrubyway.game.visibleobject.decoration.Decoration;
 import com.shrubyway.game.visibleobject.decoration.DecorationsManager;
 import com.shrubyway.game.visibleobject.effect.DamageDisplay;
-import com.shrubyway.game.visibleobject.effect.Explosion;
+import com.shrubyway.game.visibleobject.effect.VisibleEffect;
 import com.shrubyway.game.visibleobject.entity.Entity;
 import com.shrubyway.game.visibleobject.entity.EntityManager;
 import com.shrubyway.game.visibleobject.entity.Shruby;
@@ -121,11 +121,11 @@ public class Game extends Screen implements java.io.Serializable {
         objectsList = new ObjectsList();
         event = new Event();
         map = new Map(1);
-        if(!GameSaver.checkSaveFile()) player = new Shruby(31599,31599);
-        else player = new Shruby(31599, 31599, false);
+        if(!GameSaver.checkSaveFile()) player = new Shruby(17300, 18600);
+        else player = new Shruby(17300, 18600, false);
 
         localCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        localCamera.position.set(player.positionCenter().x, player.positionCenter().y, 0);
+        localCamera.position.set(player.positionCenter().x, player.positionCenter().y + 1000, 0);
         localCamera.update();
 
         objectsList.add(player);
@@ -181,12 +181,14 @@ public class Game extends Screen implements java.io.Serializable {
           }
         }
         if(ShrubyWay.inputProcessor.isLPressed()) {
-            overlay = new PoppyShop();
+
             /*ElementPumping.fireLevel+= 20;
             ElementPumping.waterLevel+= 20;
             ElementPumping.earthLevel+= 20;
             ElementPumping.airLevel+= 20; */
-            //objectsList.add(MobsManager.newOf(4, mousePosition.x, mousePosition.y));
+            objectsList.add(MobsManager.newOf(4, mousePosition.x, mousePosition.y));
+            objectsList.add(MobsManager.newOf(5, mousePosition.x, mousePosition.y));
+            objectsList.add(MobsManager.newOf(6, mousePosition.x, mousePosition.y));
         }
 
 
@@ -206,10 +208,15 @@ public class Game extends Screen implements java.io.Serializable {
                             Item temp2 = inventory.take();
                             float heling = ((Food) ItemManager.itemActing[temp2.id]).heling;
                             heling += ElementPumping.getEatingHealAddition(ElementPumping.waterLevel);
-
                             ((Food)ItemManager.itemActing[temp]).afterActing(player);
                             player.health.heal(heling);
                             playerEating = true;
+                            ShrubyWay.inputProcessor.setSpacePressed(false);
+                        }
+                        if (ItemManager.itemActing[temp] instanceof Potion) {
+                            inventory.take();
+                            ((Potion)ItemManager.itemActing[temp]).afterActing(player);
+                            ShrubyWay.inputProcessor.setSpacePressed(false);
                         }
                         if (ItemManager.itemActing[temp] instanceof Harmonica) {
                             ShrubyWay.inputProcessor.setSpacePressed(false);
@@ -409,32 +416,18 @@ public class Game extends Screen implements java.io.Serializable {
 
        for (VisibleObject obj : temp) {
             if (!objectsList.getList().contains(obj)) continue;
-            if(obj instanceof Explosion) {
-                Explosion exp = (Explosion) obj;
-                for(VisibleObject obj2 : temp) {
-                    if(obj2 instanceof Entity) {
-                        Entity ent2 = (Entity) obj2;
-                        ((Entity) obj2).addMomentum(exp.getMomentum(ent2.positionCenter()));
-                        if(!exp.damaged) {
-                            ent2.getDamageWithoutMomentum(exp.getDamage(ent2.positionCenter()), ent2.positionCenter());
-                        }
-                    }
-                    if(obj2 instanceof Bullet) {
+            if(obj instanceof VisibleEffect) {
+                VisibleEffect visibleEffect = (VisibleEffect) obj;
+                visibleEffect.update(delta);
 
-                    }
-                    if(obj2 instanceof Decoration) {
-                        Decoration dec = (Decoration) obj2;
-                        if(!exp.damaged) {
-                            if(exp.getDamage(dec.positionCenter()) != 0) dec.hit(exp.getDamage(dec.positionCenter()), dec.positionCenter());
-                        }
-                    }
+                if (!visibleEffect.interactive) {
+                    continue;
                 }
-                exp.damaged = true;
+                for(VisibleObject obj2 : temp) {
+                    visibleEffect.apply(obj2);
+                }
+                visibleEffect.applied = true;
             } else
-              if(obj instanceof DamageDisplay) {
-                    DamageDisplay dam = (DamageDisplay) obj;
-                    dam.update(delta);
-             } else
             if (obj instanceof Bullet) {
                 Bullet bul = (Bullet) obj;
                 bul.processBullet(delta);
@@ -634,7 +627,7 @@ public class Game extends Screen implements java.io.Serializable {
 
        // TextDrawer.drawCenterBlack("Mobs: " + MobsManager.MobCount, 50, 50, 1);
     //    TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
-      //  TextDrawer.drawBlack("" + player.position, 50, 100, 1);
+        TextDrawer.drawBlack("" + player.position, 50, 100, 1);
 
         GlobalBatch.batch.setColor(1,1,1,1 - CameraEffects.getSaveEffect());
         GlobalBatch.render(ShrubyWay.assetManager.get("interface/screen.png", Texture.class),

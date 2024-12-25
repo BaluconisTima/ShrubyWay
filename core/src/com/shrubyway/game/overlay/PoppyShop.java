@@ -252,7 +252,7 @@ public class PoppyShop extends Overlay {
         itemID[4] = 24;
         itemPrice[4] = 150;
         itemDescription[4] = "You might as well give up. \n" +
-                "Duration: 10 seconds";
+                "Duration: 5 seconds";
         itemRect[4] = new Rectangle(544, 391, 150, 173, true);
 
         itemID[5] = 25;

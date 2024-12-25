@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.Animator;
 public class DecorationsManager {
-    public static int decorationNumber = 23;
+    public static int decorationNumber = 28;
     public static Class<? extends Decoration> decorations[] = new Class[decorationNumber];
     static Animation<TextureRegion> texture[] = new Animation[decorationNumber];
     static String way[] = new String[decorationNumber];
@@ -111,6 +111,25 @@ public class DecorationsManager {
         way[22] += "SHOP.png";
         texture[22] = animator.toAnimation( ShrubyWay.assetManager.get(way[22], Texture.class), 1, 0, 0);
 
+        decorations[23] = Pillar.class;
+        way[23] += "PILLAR.png";
+        texture[23] = animator.toAnimation( ShrubyWay.assetManager.get(way[23], Texture.class), 1, 0, 0);
+
+        decorations[24] = SlightlyDamagedPillar.class;
+        way[24] += "SLIGHTLY_DAMAGED_PILLAR.png";
+        texture[24] = animator.toAnimation( ShrubyWay.assetManager.get(way[24], Texture.class), 1, 0, 0);
+
+        decorations[25] = DamagedPillar.class;
+        way[25] += "DAMAGED_PILLAR.png";
+        texture[25] = animator.toAnimation( ShrubyWay.assetManager.get(way[25], Texture.class), 1, 0, 0);
+
+        decorations[26] = BrokenPillarTop.class;
+        way[26] += "BROKEN_PILLAR_TOP.png";
+        texture[26] = animator.toAnimation( ShrubyWay.assetManager.get(way[26], Texture.class), 1, 0, 0);
+
+        decorations[27] = BrokenPillarBottom.class;
+        way[27] += "BROKEN_PILLAR_BOTTOM.png";
+        texture[27] = animator.toAnimation( ShrubyWay.assetManager.get(way[27], Texture.class), 1, 0, 0);
     }
 
     public static Decoration newOf(int i){

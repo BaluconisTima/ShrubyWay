@@ -12,6 +12,7 @@ import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.effect.Effect;
+import com.shrubyway.game.effect.effecttypes.InvincibilityEffect;
 import com.shrubyway.game.effect.effecttypes.SpeedEffect;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.item.ThrowableItem;
@@ -95,26 +96,39 @@ abstract public class Entity extends InteractiveObject {
         return (getSpeed1() < 0);
     }
     float speedScale = 1f;
+    boolean invincible = false;
     private Color effectColor = Color.WHITE;
-    public void update(float delta) {
 
+    public void updateEffects(float delta) {
         speedScale = 1f;
+        invincible = false;
         for(Effect effect : effects) {
             effect.update(delta);
         }
 
-        effectColor = Color.WHITE;
+        float red = 1, green = 1, blue = 1, alpha = 1, sum = 1;
         for(Effect effect : effects) {
-            effectColor = new Color( (effect.color.r + effectColor.r) / 2,
-                    (effect.color.g + effectColor.g) / 2,
-                    (effect.color.b + effectColor.b) / 2,
-                    1);
+            float multiplier = 0.6f * (float)effect.colorStrength();
+            red += effect.color.r * multiplier;
+            green += effect.color.g * multiplier;
+            blue += effect.color.b * multiplier;
+            alpha += effect.color.a * multiplier;
+            sum += multiplier;
             if (effect instanceof SpeedEffect) {
                 speedScale *= ((SpeedEffect) effect).speed;
             }
+            if(effect instanceof InvincibilityEffect) {
+                invincible = true;
+            }
         }
 
-         tryMoveMomentum(delta);
+        effectColor = new Color(red / sum, green / sum,
+                blue / sum, alpha / sum);
+
+    }
+    public void update(float delta) {
+        updateEffects(delta);
+        tryMoveMomentum(delta);
         attacking = false;
         if(health.getHealth() <= 0) {
             die();
@@ -143,6 +157,7 @@ abstract public class Entity extends InteractiveObject {
     }
 
     public void getDamageWithoutMomentum(float damage, Vector2 hitPosition) {
+        if (invincible) return;
         if(health.getHealth() > 0 && damage != 0) {
             health.getDamage(damage, hitPosition);
             GlobalSoundManager.addSound(new
@@ -154,6 +169,7 @@ abstract public class Entity extends InteractiveObject {
     }
     protected Vector2 direction = new Vector2(0,0);
     public void getDamage(float damage, Vector2 AttackPosition, Vector2 hitPosition) {
+        if (invincible) return;
         direction.set(positionCenter().x - AttackPosition.x + (float)Math.random() * 30 - 15,
                 positionCenter().y - AttackPosition.y  + (float)Math.random() * 30 - 15);
         direction.nor();

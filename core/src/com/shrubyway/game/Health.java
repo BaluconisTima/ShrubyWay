@@ -37,7 +37,7 @@ public class Health implements java.io.Serializable {
             if(defenseLevel != null) {
                 damage = damage * ElementPumping.getDefenseMultiplier(defenseLevel);
             }
-            Game.objectsList.add(new DamageDisplay(hitPosition.x, hitPosition.y, (int)damage));
+            Game.objectsList.add(new DamageDisplay(hitPosition.x, hitPosition.y, damage));
             health -= damage;
             lastHitTime = AnimationGlobalTime.time();
     }

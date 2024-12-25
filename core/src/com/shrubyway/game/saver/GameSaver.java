@@ -56,7 +56,7 @@ public class GameSaver implements Serializable {
         Event.eventsHappened = new HashMap<Integer, Boolean>();
         Game.inventory.items = new Item[5][9];
         Game.inventory.numberOfItem = new Integer[5][9];
-        Game.player.position.set(31599, 31599);
+        Game.player.position.set(17300, 18600);
         Game.player.health = new Health(20, 0.3f);
         ElementPumping.fireLevel = 1;
         ElementPumping.waterLevel = 1;

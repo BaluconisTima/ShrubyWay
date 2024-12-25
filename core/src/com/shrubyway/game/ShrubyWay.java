@@ -42,7 +42,6 @@ public class ShrubyWay extends ApplicationAdapter {
             videoPlayer.setLooping(false);
             videoPlayer.setVolume(0);
             try {
-            System.out.println("Playing clip 0");
             videoPlayer.play(Gdx.files.internal("SCENES/SHOP/TEST1/0.webm"));
             videoPlayer.update();
             } catch (Exception e) {

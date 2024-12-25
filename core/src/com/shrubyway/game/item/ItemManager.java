@@ -4,13 +4,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.ShrubyWay;
-import com.shrubyway.game.item.Food.AgaricAct;
-import com.shrubyway.game.item.Food.Food;
-import com.shrubyway.game.item.Food.FriedMushroomsAct;
+import com.shrubyway.game.item.Food.*;
+import com.shrubyway.game.item.Potion.InvincibilityPotion;
+import com.shrubyway.game.item.Potion.PoisonPotion;
+import com.shrubyway.game.item.Potion.Potion;
+import com.shrubyway.game.item.Potion.SpeedPotion;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.effect.BerryExplosion;
 import com.shrubyway.game.visibleobject.effect.FruitExplosion;
+import com.shrubyway.game.visibleobject.effect.PotionCloud;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
 
 import java.lang.reflect.Constructor;
@@ -34,10 +37,14 @@ public class ItemManager {
             try {
                 Constructor<?> constructor = ItemDeath[id].getDeclaredConstructor(float.class, float.class);
                 return (VisibleObject) (VisibleObject) constructor.newInstance(x, y);
-
             } catch (Exception e) {
-                e.printStackTrace();
-                return null;
+                try {
+                    Constructor<?> constructor = ItemDeath[id].getDeclaredConstructor(float.class, float.class, Potion.class);
+                    return (VisibleObject) (VisibleObject) constructor.newInstance(x, y, itemActing[id]);
+                } catch (Exception e2) {
+                    e2.printStackTrace();
+                    return null;
+                }
             }
     }
 
@@ -98,8 +105,7 @@ public class ItemManager {
                 "an explerry in your lifetime, but only once.";
         ItemDeath[8] = BerryExplosion.class;
         throwingDamage[8] = 0.1f;
-
-        itemActing[8] = new Food(10, -100f);
+        itemActing[8] = new ExplerryEatingAct(6, -100f);
 
         itemName[9] = "Pine seed";
         itemDescription[9] = "A pine seed with a pointy end.";
@@ -111,7 +117,7 @@ public class ItemManager {
                 "should not give you too strong \na sense of security.";
         throwingDamage[10] = 1;
         ItemDeath[10] = FruitExplosion.class;
-        itemActing[10] = new Food(10, -100f);
+        itemActing[10] = new ExplruitEatingAct(6, -100f);
 
         itemName[11] = "Shard of the Artifact of Light";
         itemDescription[11] = "Only by assembling an artifact from \n" +
@@ -183,20 +189,20 @@ public class ItemManager {
         itemDescription[22] = "Would you like a drink of water? \n" +
                 "No? That's fine.";
         throwingDamage[22] = 2;
-        itemActing[22] = null; //TODO
-        ItemDeath[22] = null; //TODO
+        itemActing[22] = new Potion(0.0f);
+        ItemDeath[22] = null;
 
         itemName[23] = "Flask of poison";
         itemDescription[23] = "Better to throw than to drink.";
         throwingDamage[23] = 2;
-        itemActing[23] = null; //TODO
-        ItemDeath[23] = null; //TODO
+        itemActing[23] = new PoisonPotion(15f, 1f);
+        ItemDeath[23] = PotionCloud.class;
 
         itemName[24] = "Flask of invincibility potion";
         itemDescription[24] = "Better to drink than to throw.";
         throwingDamage[24] = 2;
-        itemActing[24] = null; //TODO
-        ItemDeath[24] = null; //TODO
+        itemActing[24] = new InvincibilityPotion(5f);
+        ItemDeath[24] = PotionCloud.class;
 
         itemName[25] = "Flask of slowness potion";
         itemDescription[25] = "I regret to inform you that drinking this liquid, \n" +
@@ -206,14 +212,14 @@ public class ItemManager {
                                 "of a throwing weapon can lead to beneficial results,\n" +
                                 "as the effect is not limited to you.";
         throwingDamage[25] = 2;
-        itemActing[25] = null; //PotionAct();
-        ItemDeath[25] = null; //TODO
+        itemActing[25] = new SpeedPotion(30f, 0.5f);
+        ItemDeath[25] = PotionCloud.class;
 
         itemName[26] = "Flask of speed potion";
-        itemDescription[26] = "Drink. Fast.";
+        itemDescription[26] = "Drink.";
         throwingDamage[26] = 2;
-        itemActing[26] = null; //TODO
-        ItemDeath[26] = null; //TODO
+        itemActing[26] = new SpeedPotion(60f, 1.5f);
+        ItemDeath[26] = PotionCloud.class;
 
         itemName[27] = "Bronze coin";
         itemDescription[27] = "If you see this message, something went wrong.";

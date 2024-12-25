@@ -3,8 +3,9 @@ package com.shrubyway.game.visibleobject.effect;
 import com.badlogic.gdx.graphics.Color;
 import com.shrubyway.game.myinterface.TextDrawer;
 import com.shrubyway.game.screen.Game;
+import com.shrubyway.game.visibleobject.VisibleObject;
 
-public class DamageDisplay extends Effect {
+public class DamageDisplay extends VisibleEffect {
 
     static Color color[];
     static int range[];
@@ -25,7 +26,10 @@ public class DamageDisplay extends Effect {
         range[5] = 1000000;
     }
 
-    static Color getColor(int damage) {
+    @Override
+    public void apply(VisibleObject visibleObject) {}
+
+    static Color getColor(float damage) {
         for(int i = 0; i < 5; i++) {
             if(damage >= range[i] && damage < range[i + 1]) {
                Color color1 = new Color(color[i].r + (color[i + 1].r - color[i].r) * (damage - range[i]) / (range[i + 1] - range[i]),
@@ -38,7 +42,7 @@ public class DamageDisplay extends Effect {
         return color[5];
     }
 
-    public DamageDisplay(float x, float y, int damage) {
+    public DamageDisplay(float x, float y, float damage) {
         position.set(x, y);
         this.damage = damage;
         size = 0.1f;
@@ -47,13 +51,13 @@ public class DamageDisplay extends Effect {
     }
 
 
-    int damage;
+    float damage;
     float size = 0.1f;
     float timeLeft = 1;
     boolean jumpedOut = false;
 
 
-    public void update(float delta) {
+    @Override public void update(float delta) {
         if(timeLeft > 0) {
             timeLeft -= delta;
             if(size > 1.5) {
@@ -77,6 +81,10 @@ public class DamageDisplay extends Effect {
 
     @Override
     public void render() {
-        TextDrawer.drawWithShadowColor("" + damage, position.x, position.y, size * 0.5f, getColor(damage));
+        String damageText = String.format("%.1f", this.damage);
+        if(damageText.endsWith(".0")) {
+            damageText = damageText.substring(0, damageText.length() - 2);
+        }
+        TextDrawer.drawWithShadowColor(damageText, position.x, position.y, size * 0.5f, getColor(damage));
     }
 }
