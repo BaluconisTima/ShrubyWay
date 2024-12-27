@@ -24,6 +24,10 @@ public class Save extends Decoration{
                 Math.round(position.y - 115));
         collisionBox().render();
         hitBox().render();
+        if(pointWithArrow) {
+            GlobalBatch.render(arrow.getKeyFrame(AnimationGlobalTime.time(), true), Math.round(position.x + halfTextureWidth - 45),
+                    Math.round(position.y + 150));
+        }
     }
     @Override public void setCollisionBox() {
         if(collisionBox == null)

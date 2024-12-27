@@ -3,6 +3,7 @@ package com.shrubyway.game.myinterface;
 import com.badlogic.gdx.graphics.Texture;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
+import com.shrubyway.game.screen.Game;
 
 public class TutorialHints {
 
@@ -23,6 +24,12 @@ public class TutorialHints {
 
     static public void update() {
         if(currentHint == -1) return;
+        if (Game.player.moved && TutorialHints.currentHint == 1) {
+            TutorialHints.finish();
+        }
+        if(TutorialHints.currentHint == 1 && TutorialHints.progress < 0.01f) TutorialHints.changeHint(2);
+        if(TutorialHints.currentHint == 2 && ShrubyWay.inputProcessor.isRuning()) TutorialHints.finish();
+
         if(!finished) {
             progress *= 1.2f;
             if(progress > 1) {

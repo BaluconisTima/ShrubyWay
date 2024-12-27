@@ -15,6 +15,7 @@ public class Health implements java.io.Serializable {
     private float lastHealTime;
 
     public Integer defenseLevel = null;
+    public boolean healed = false;
 
     public Health(float maxHealth) {
         this.maxHealth = maxHealth;
@@ -45,6 +46,7 @@ public class Health implements java.io.Serializable {
         return lastHitTime;
     }
     public void heal(float heal) {
+        healed = true;
         health += heal;
         lastHealTime = AnimationGlobalTime.time();
         if(health > maxHealth) health = maxHealth;

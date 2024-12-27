@@ -60,7 +60,7 @@ public abstract class Explosion extends VisibleEffect {
         if(visibleObject instanceof Decoration) {
             Decoration dec = (Decoration) visibleObject;
             if(!applied) {
-                if(getDamage(dec.positionCenter()) != 0) dec.hit(getDamage(dec.positionCenter()), dec.positionCenter());
+                if(getDamage(dec.positionCenter()) != 0) dec.hitWithMelee(getDamage(dec.positionCenter()), dec.positionCenter());
             }
         }
 

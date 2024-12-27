@@ -28,7 +28,6 @@ public class InteractiveObject extends VisibleObject {
         return collisionBox;
     }
 
-
     private void correctBody() {
         CollisionBody.setTransform((collisionBox.topLeftCorner.x + collisionBox.bottomRightCorner.x) / 2 * CollisionChecker.scale,
                 (collisionBox.topLeftCorner.y + collisionBox.bottomRightCorner.y)/2 * CollisionChecker.scale, 0);

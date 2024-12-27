@@ -25,6 +25,17 @@ public class Inventory {
     Item itemInHand = null;
     Integer numberOfItemInHand = 0;
 
+    public boolean haveItemsWithType(Class type) {
+        for(int i = 0; i < 5; i++)
+            for(int j = 0; j < 9; j++) {
+                if(items[i][j] != null)  {
+                    int id = items[i][j].id;
+                    if(type.isInstance(ItemManager.itemActing[id])) return true;
+                }
+            }
+        return false;
+    }
+
     public void clear() {
         Vector2 leftUpCorner = GlobalBatch.topLeftCorner();
        // System.out.println(GlobalBatch.topRightCorner());

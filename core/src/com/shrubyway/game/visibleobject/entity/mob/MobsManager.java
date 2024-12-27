@@ -1,7 +1,6 @@
 package com.shrubyway.game.visibleobject.entity.mob;
 
 import com.badlogic.gdx.math.Vector2;
-import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.Item;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.screen.Game;
@@ -81,8 +80,6 @@ public class MobsManager {
     }
 
     public static Mob newOf(int i, float x, float y){
-        if(MobCount == 1 && !Event.happened("Forest_Tutorial_More_Mobs")) return null;
-        MobCount++;
         try {
             return mobs[i].newInstance(x, y);
         } catch (Exception e) {
@@ -90,6 +87,8 @@ public class MobsManager {
         }
         return null;
     }
+
+    public static int MobDeathCounter = 0;
 
     public static void makeDrop(int i, float x, float y) {
         for(int j = 0; j < dropTableItem[i].size(); j++) {
@@ -101,17 +100,12 @@ public class MobsManager {
         }
     }
 
-
     private static float AccountSpawner = 0;
 
     public static void playerAddUpdate(float delta) {
         AccountSpawner += delta;
     }
-
-
     static Random random = new Random();
-
-    static public int MobCount = 0;
 
     static public void addMobNear(Vector2 playerPosition, int j) {
         float x = playerPosition.x;
@@ -132,7 +126,7 @@ public class MobsManager {
         Mob mob = newOf(j, x, y);
         if(mob != null) Game.objectsList.add(mob);
     }
-    static public void tryGenerateMob(Vector2 playerPosition) {
+   /* static public void tryGenerateMob(Vector2 playerPosition) {
         int allCount = 0;
         for(int i = 0; i < mobsNumber; i++) {
             allCount += mobSpawnCost[i];
@@ -149,7 +143,7 @@ public class MobsManager {
             }
            allCount -= mobSpawnCost[i];
         }
-    }
+    } */
 
 
 

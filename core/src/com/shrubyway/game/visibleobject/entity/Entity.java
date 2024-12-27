@@ -146,14 +146,26 @@ abstract public class Entity extends InteractiveObject {
             if(action != 3 &&
                     EntityManager.animations[entityID].get(action).get(faceDirection)[inLiquid ? 1: 0].
                             isAnimationFinished(AnimationGlobalTime.time() - animationTime)) {
-                allowedMotion = true;
+                if(!isStoped) allowedMotion = true;
                 action = 0;
                 animationTime = AnimationGlobalTime.time();
             }
         }
     }
     public boolean canAct() {
-        return (allowedMotion);
+        return (allowedMotion && !isStoped);
+    }
+
+    boolean isStoped = false;
+
+    public void stopMovment() {
+        isStoped = true;
+        allowedMotion = false;
+    }
+
+    public void AllowMovment() {
+        isStoped = false;
+        allowedMotion = true;
     }
 
     public void getDamageWithoutMomentum(float damage, Vector2 hitPosition) {

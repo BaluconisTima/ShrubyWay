@@ -50,6 +50,11 @@ public class Shruby extends Entity {
         return hitBox;
    }
 
+   @Override public void getDamageWithoutMomentum(float damage, Vector2 hitPosition) {
+        super.getDamageWithoutMomentum(damage, hitPosition);
+        tookDamage = true;
+   }
+
    Rectangle interactionBox;
 
    public Rectangle interactionBox() {
@@ -152,7 +157,8 @@ public class Shruby extends Entity {
        if(!canThrow()) return;
         super.throwItem(shootPosition, item, rotating);
         throwed = true;
-        throwTime++;
+        throwCount++;
+        lastThrowTime = AnimationGlobalTime.time();
     }
 
     public Vector2 positionItemDrop() {
@@ -160,7 +166,9 @@ public class Shruby extends Entity {
         return tempPosition;
     }
 
-    public int throwTime = 0;
+    public int throwCount = 0;
+    public boolean tookDamage = false;
+    public float lastThrowTime = 0;
     public boolean moved = false, throwed = false, attacked = false;
 
 

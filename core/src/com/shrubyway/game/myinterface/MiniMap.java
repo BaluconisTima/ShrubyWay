@@ -1,5 +1,6 @@
 package com.shrubyway.game.myinterface;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
@@ -17,6 +18,7 @@ public class MiniMap {
         if(!Event.happened("Map_Opened"))
             return;
 
+        int blockX = (int)px / 150, blockY = (int)py / 150;
         float x1 = px, y1 = py;
 
         px /= MapSettings.MAPSIZE; px *= 274;
@@ -42,6 +44,9 @@ public class MiniMap {
                 25 + 29 + px, 25 + 45 + py);
         GlobalBatch.render(ShrubyWay.assetManager.get("interface/miniMapOverlay.png", Texture.class),
                 25, 25);
+
+
+        TextDrawer.drawColor("(" + blockX + ", " + blockY + ")", 65, 363, 0.25f, new Color(0.71f, 0.58f, 0.39f, 1));
 
     }
 }

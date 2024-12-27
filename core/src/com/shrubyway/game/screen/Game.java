@@ -25,7 +25,7 @@ import com.shrubyway.game.item.Potion.Potion;
 import com.shrubyway.game.layout.Layout;
 import com.shrubyway.game.layout.SettingsLayout;
 import com.shrubyway.game.linemaker.LineMaker;
-import com.shrubyway.game.linemaker.narrator.Narrator;
+import com.shrubyway.game.linemaker.ActionLogicManager;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.map.ScreenGrid;
@@ -49,6 +49,8 @@ import com.shrubyway.game.visibleobject.entity.Shruby;
 import com.shrubyway.game.visibleobject.entity.mob.Mob;
 import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
 import com.shrubyway.game.visibleobject.visibleitem.VisibleItem;
+import com.shrubyway.game.waiters.Narrator.NarratorStart;
+import com.shrubyway.game.waiters.WaiterManager;
 
 import java.io.*;
 import java.util.List;
@@ -64,8 +66,10 @@ public class Game extends Screen implements java.io.Serializable {
 
     public static ObjectsList objectsList = new ObjectsList();
     public static Inventory inventory = new Inventory();
+    public static int lastEatenItemID = -1;
     ShapeRenderer shapeRenderer = new ShapeRenderer();
     static GameSaver gameSaver = new GameSaver();
+    static public boolean gameSaved = false;
     public static Map map;
     static public Shruby player;
     static private Layout layout;
@@ -78,9 +82,6 @@ public class Game extends Screen implements java.io.Serializable {
     static public Overlay overlay = null;
 
     Button continueButton, settingsButton, menuButton;
-
-    public static boolean mobDiedByThrow = false, playerEating = false;
-
 
     public Game() {
        init();
@@ -107,6 +108,7 @@ public class Game extends Screen implements java.io.Serializable {
                 ShrubyWay.assetManager.get("interface/m2.png", Texture.class), GlobalBatch.centerX() -
                 bWidht / 2, GlobalBatch.centerY() - bHeight / 2 - bHeight - 50);
         inventory = new Inventory();
+        lastEatenItemID = -1;
         screenGrid = new ScreenGrid();
         EntityManager.init();
         DecorationsManager.init();
@@ -115,7 +117,6 @@ public class Game extends Screen implements java.io.Serializable {
         elementPumping.init();
         lineRenderer.init();
         TutorialHints.finish();
-        Narrator.logic = null;
         overlay = null;
 
         objectsList = new ObjectsList();
@@ -125,15 +126,20 @@ public class Game extends Screen implements java.io.Serializable {
         else player = new Shruby(17300, 18600, false);
 
         localCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        localCamera.position.set(player.positionCenter().x, player.positionCenter().y + 1000, 0);
+        localCamera.position.set(player.positionCenter().x, player.positionCenter().y, 0);
         localCamera.update();
 
         objectsList.add(player);
         AnimationGlobalTime.clear();
         if(GameSaver.checkSaveFile()) {
+            gameSaved = true;
            loadGame();
         } else {
+            gameSaved = false;
             loadGameDefault();
+        }
+        if(!Event.happened("narrator_start_triggered")) {
+            WaiterManager.addWaiter(new NarratorStart());
         }
         SoundSettings.changeMusic("music/Forest Theme.mp3");
     }
@@ -210,7 +216,7 @@ public class Game extends Screen implements java.io.Serializable {
                             heling += ElementPumping.getEatingHealAddition(ElementPumping.waterLevel);
                             ((Food)ItemManager.itemActing[temp]).afterActing(player);
                             player.health.heal(heling);
-                            playerEating = true;
+                            lastEatenItemID = temp2.id;
                             ShrubyWay.inputProcessor.setSpacePressed(false);
                         }
                         if (ItemManager.itemActing[temp] instanceof Potion) {
@@ -385,29 +391,18 @@ public class Game extends Screen implements java.io.Serializable {
 
     public void globalProcessing(float delta) {
        TutorialHints.update();
-       Narrator.update(delta);
+       ActionLogicManager.update(delta);
+       WaiterManager.update(delta);
        LineMaker.update(delta);
        lineRenderer.update(delta);
 
-       if (AnimationGlobalTime.time() - lastMobUpdate > 1f && Event.happened("Forest_Tutorial_Finished")) {
-            lastMobUpdate = AnimationGlobalTime.time();
-            MobsManager.playerAddUpdate(1);
-
-                MobsManager.tryGenerateMob(player.positionLegs());
-        }
-       if(AnimationGlobalTime.time() - lastRegen > RegenCooldown * ElementPumping.getPassiveHealTimeMultiplier(ElementPumping.waterLevel)) {
-           lastRegen = AnimationGlobalTime.time();
-           player.health.heal(1f);
-       }
-
-        List<VisibleObject> temp = new CopyOnWriteArrayList<>(objectsList.getList());
+       List<VisibleObject> temp = new CopyOnWriteArrayList<>(objectsList.getList());
        MiniMap.mobs.clear();
        for(VisibleObject obj : temp) {
           if(obj instanceof Mob) {
                 MiniMap.mobs.add(((Mob) obj).position);
           }
        }
-
         map.update(player.positionLegs());
         if(player.dead()) {
               LineMaker.skip();
@@ -463,20 +458,16 @@ public class Game extends Screen implements java.io.Serializable {
                             }
                             if (to instanceof Decoration) {
                                 Decoration dec = (Decoration) to;
-                                dec.hit(from.damage(), from.attackBox().overlapCenter(to.hitBox()));
+                                if (from instanceof Bullet) {
+                                    dec.hitWithProjectile(from.damage(), from.attackBox().overlapCenter(to.hitBox()));
+                                } else
+                                dec.hitWithMelee(from.damage(), from.attackBox().overlapCenter(to.hitBox()));
                             } else
                                 if (to instanceof Entity) {
                                 Entity ent = (Entity) to;
                                 if(ent.health.getHealth() <= 0) continue;
-
                                 ent.getDamage(from.damage(),
                                         from.positionCenter(), from.attackBox().overlapCenter(to.hitBox()));
-
-                                if(ent instanceof Mob && from instanceof Bullet && ent.health.getHealth() <= 0) {
-                                   Bullet bul = (Bullet) from;
-                                   mobDiedByThrow = true;
-                                }
-
                               if(ent.health.getHealth() <= 0) {
                                 if(ent instanceof Mob) {
                                     Mob mob = (Mob) ent;
@@ -543,11 +534,15 @@ public class Game extends Screen implements java.io.Serializable {
         }
         temp.clear();
     }
-
+    public static Vector2 cameraFollowingPosition = null;
     public void cameraUpdate(float delta) {
         localCamera.position.add(new Vector3(-CameraEffects.getAddPositionExplosion().x,
                 -CameraEffects.getAddPositionExplosion().y, 0));
-        localCamera.position.lerp(new Vector3(player.positionCenter(),0), 0.1f * delta * 60f);
+        if(cameraFollowingPosition != null) {
+           localCamera.position.lerp(new Vector3(cameraFollowingPosition,0), 0.1f * delta * 60f);
+        } else {
+            localCamera.position.lerp(new Vector3(player.positionCenter(),0), 0.1f * delta * 60f);
+        }
         CameraEffects.update(delta);
         localCamera.position.add(new Vector3(CameraEffects.getAddPositionExplosion(), 0));
         localCamera.update();
@@ -625,9 +620,9 @@ public class Game extends Screen implements java.io.Serializable {
         lineRenderer.render();
 
 
-       // TextDrawer.drawCenterBlack("Mobs: " + MobsManager.MobCount, 50, 50, 1);
-    //    TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
-        TextDrawer.drawBlack("" + player.position, 50, 100, 1);
+        //TextDrawer.drawCenterBlack("Mobs: " + MobsManager.MobCount, 50, 50, 1);
+        //TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
+        //TextDrawer.drawBlack("" + player.position, 50, 100, 1);
 
         GlobalBatch.batch.setColor(1,1,1,1 - CameraEffects.getSaveEffect());
         GlobalBatch.render(ShrubyWay.assetManager.get("interface/screen.png", Texture.class),
@@ -680,7 +675,7 @@ public class Game extends Screen implements java.io.Serializable {
             overlay.render(ShrubyWay.inputProcessor.mousePosition());
         } else {
             GlobalBatch.setProjectionMatrix(localCamera);
-            map.render(player.position());
+            map.render(new Vector2(localCamera.position.x, localCamera.position.y));
             renderShadows();
             renderObjects();
             renderDamage();
@@ -706,6 +701,7 @@ public class Game extends Screen implements java.io.Serializable {
     }
 
     static public void saveGame(Boolean effect) {
+        gameSaved = true;
         com.shrubyway.game.linemaker.LineMaker.skip();
         if(effect) {
             ShrubyWay.assetManager.get("sounds/EFFECTS/save.ogg", Sound.class).play(SoundSettings.soundVolume);

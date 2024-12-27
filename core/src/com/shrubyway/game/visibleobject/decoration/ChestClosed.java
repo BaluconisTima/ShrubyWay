@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class ChestClosed extends Decoration {
     public ArrayList<Item> items;
     public ArrayList<Float> chances, c;
+    public ArrayList<Item> guaranteedItems;
 
     {
          id = 19;
@@ -30,6 +31,11 @@ public class ChestClosed extends Decoration {
          items.add(new Item(8)); chances.add(0.4f); c.add(0.75f);
 
          items.add(new Item(9)); chances.add(0.01f); c.add(0.0f);
+
+         guaranteedItems = new ArrayList<Item>();
+         guaranteedItems.add(new Item(13));
+         guaranteedItems.add(new Item(2));
+
     }
 
     @Override public void setCollisionBox() {
@@ -49,7 +55,7 @@ public class ChestClosed extends Decoration {
     }
 
     @Override public void hit(float damage, Vector2 hitPosition) {
-       lastHitTime = AnimationGlobalTime.time();
+        lastHitTime = AnimationGlobalTime.time();
     }
 
     @Override public void setInteractionBox() {
@@ -79,6 +85,7 @@ public class ChestClosed extends Decoration {
                 p *= c.get(i);
            }
         }
+        dropItems.addAll(guaranteedItems);
 
         ArrayList<Item> dropMoney = ItemManager.splitMoney(100 + (int)(Math.random() * 100));
         dropItems.addAll(dropMoney);

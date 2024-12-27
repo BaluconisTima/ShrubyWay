@@ -224,8 +224,8 @@ public class Map {
         chunks[x][y].add(visibleObject);
     }
 
-    public void render(Vector2 playerPosition) {
-        background.render(playerPosition);
+    public void render(Vector2 cameraPosition) {
+        background.render(cameraPosition);
     }
 
     public void makeStep(Vector2 step, Vector2 playerPosition) {

@@ -5,6 +5,9 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.Animator;
+import com.shrubyway.game.screen.Game;
+import com.shrubyway.game.visibleobject.VisibleObject;
+
 public class DecorationsManager {
     public static int decorationNumber = 28;
     public static Class<? extends Decoration> decorations[] = new Class[decorationNumber];
@@ -12,8 +15,17 @@ public class DecorationsManager {
     static String way[] = new String[decorationNumber];
     static Animator animator = new Animator();
 
-
-
+    public static Decoration getDecorationOnPosition(int i, int j) {
+        for(VisibleObject object : Game.objectsList.getList()) {
+            if(object instanceof Decoration) {
+                Decoration decoration = (Decoration) object;
+                if(decoration.decorationI == i && decoration.decorationJ == j) {
+                    return decoration;
+                }
+            }
+        }
+        return null;
+    }
     public static void init() {
         for(int i = 0; i < decorationNumber; i++) {
             way[i] = "Decorations/";

@@ -13,12 +13,25 @@ public class Dummy extends Decoration {
     {
         id = 21;
     }
+    public int hitCounter = 0, throwCounter = 0;
     @Override public void hit(float damage, Vector2 hitPosition) {
         super.hit(damage, hitPosition);
         GlobalSoundManager.addSound(new SoundAtPosition(ShrubyWay.assetManager.get("sounds/EFFECTS/Dummy.ogg",
                 Sound.class), position));
         health.getDamage(damage, hitPosition);
         health.heal(damage);
+    }
+
+    @Override
+    public void hitWithMelee(float damage, Vector2 hitPosition) {
+        super.hitWithMelee(damage, hitPosition);
+        hitCounter++;
+    }
+
+    @Override
+    public void hitWithProjectile(float damage, Vector2 hitPosition) {
+        super.hitWithProjectile(damage, hitPosition);
+        throwCounter++;
     }
 
     @Override

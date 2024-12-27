@@ -26,7 +26,6 @@ public class ShrubyWay extends ApplicationAdapter {
 
     static public VideoPlayer videoPlayer = null;
 
-
     @Override public void resize(int width, int height) {
         if(width == 0 || height == 0) return;
         GlobalBatch.changeScale(width, height);

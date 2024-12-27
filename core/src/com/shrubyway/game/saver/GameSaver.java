@@ -5,13 +5,19 @@ import com.shrubyway.game.Health;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.event.Event;
 import com.shrubyway.game.item.Item;
+import com.shrubyway.game.linemaker.ActionLogic;
+import com.shrubyway.game.linemaker.ActionLogicManager;
 import com.shrubyway.game.myinterface.ElementPumping;
+import com.shrubyway.game.myinterface.TutorialHints;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.visibleobject.ObjectsList;
 import com.shrubyway.game.visibleobject.entity.mob.MobsManager;
+import com.shrubyway.game.waiters.Waiter;
+import com.shrubyway.game.waiters.WaiterManager;
 
 import java.io.File;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GameSaver implements Serializable {
@@ -23,9 +29,12 @@ public class GameSaver implements Serializable {
     Health playerHealth;
     VisualObjectListSaver visualObjectListSaver;
     VisualObjectListSaver [][] chunks;
+    ArrayList<Waiter> waiters;
+
+    ArrayList<ActionLogic> ActionLogics;
 
     int fireLevel, waterLevel, earthLevel, airLevel;
-    int MobCount;
+    int MobDeathCounter;
     float localExp, lastRegen, time;
 
     int PlayerMoney = 0;
@@ -44,9 +53,11 @@ public class GameSaver implements Serializable {
        earthLevel = ElementPumping.earthLevel;
        airLevel = ElementPumping.airLevel;
        localExp = ElementPumping.localExp;
-       MobCount = MobsManager.MobCount;
        lastRegen = Game.lastRegen;
        PlayerMoney = Game.player.money;
+       ActionLogics = ActionLogicManager.activeLogics;
+       MobDeathCounter = MobsManager.MobDeathCounter;
+       waiters = WaiterManager.waiters;
        time = AnimationGlobalTime.time();
     }
 
@@ -63,10 +74,13 @@ public class GameSaver implements Serializable {
         ElementPumping.earthLevel = 1;
         ElementPumping.airLevel = 1;
         ElementPumping.localExp = 0;
-        MobsManager.MobCount = 0;
         Game.player.money = 0;
         Game.lastRegen = 0;
+        WaiterManager.waiters = new ArrayList<Waiter>();
+        ActionLogicManager.activeLogics = new ArrayList<ActionLogic>();
+        MobDeathCounter = 0;
         Game.overlay = null;
+        TutorialHints.currentHint = -1;
     }
 
     public void loadGameFiles() {
@@ -87,10 +101,13 @@ public class GameSaver implements Serializable {
         ElementPumping.earthLevel = earthLevel;
         ElementPumping.airLevel = airLevel;
         ElementPumping.localExp = localExp;
-        MobsManager.MobCount = MobCount;
         Game.lastRegen = lastRegen;
         AnimationGlobalTime.setTime(time);
         Game.player.money = PlayerMoney;
+        ActionLogicManager.activeLogics = ActionLogics;
+        WaiterManager.waiters = waiters;
+        MobsManager.MobDeathCounter = MobDeathCounter;
+        TutorialHints.currentHint = -1;
     }
 
     static public boolean checkSaveFile() {

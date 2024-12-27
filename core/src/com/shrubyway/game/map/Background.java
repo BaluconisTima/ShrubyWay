@@ -148,12 +148,12 @@ public class Background implements Serializable {
             sound.setVolume(tileSound[i], Math.max(0, 0.7f * (1 - nearestTile[i]) * SoundSettings.soundVolume));
         }
     }
-    public void render(Vector2 playerPosition) {
+    public void render(Vector2 cameraPosition) {
         int x = 0;
-        x += playerPosition.x;
+        x += cameraPosition.x;
         x /= MapSettings.TYLESIZE;
         int y = 0;
-        y += playerPosition.y;
+        y += cameraPosition.y;
         y /= MapSettings.TYLESIZE;
 
         for (int d = 0; d < 2; d++)

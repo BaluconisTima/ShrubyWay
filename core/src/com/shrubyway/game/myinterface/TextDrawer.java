@@ -129,6 +129,15 @@ public class TextDrawer {
         fontBlack.getData().setScale(0.5f);
     }
 
+    static public void drawColor(String text, float x, float y, float scale, Color c) {
+        fontWhite.getData().setScale(scale * GlobalBatch.scale);
+        fontWhite.setColor(c);
+        fontWhite.draw(GlobalBatch.batch, text, Math.round(x) * GlobalBatch.scale, Math.round(y) * GlobalBatch.scale);
+        fontWhite.setColor(1, 1, 1, 1);
+        fontWhite.getData().setScale(0.5f);
+        fontBlack.getData().setScale(0.5f);
+    }
+
     static public void drawWithShadow(String text, float x, float y, float scale, float alpha) {
         fontWhite.getData().setScale(scale * GlobalBatch.scale);
         fontWhite.setColor(1, 1, 1, alpha);

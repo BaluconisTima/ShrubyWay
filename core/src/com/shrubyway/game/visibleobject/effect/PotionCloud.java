@@ -1,5 +1,6 @@
 package com.shrubyway.game.visibleobject.effect;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -10,6 +11,8 @@ import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
 import com.shrubyway.game.item.Potion.Potion;
 import com.shrubyway.game.screen.Game;
+import com.shrubyway.game.sound.GlobalSoundManager;
+import com.shrubyway.game.sound.SoundAtPosition;
 import com.shrubyway.game.visibleobject.VisibleObject;
 import com.shrubyway.game.visibleobject.entity.Entity;
 
@@ -24,6 +27,9 @@ public class PotionCloud extends VisibleEffect {
         position.set(x-150, y-150);
         this.potion = potion;
         creationTime = AnimationGlobalTime.time();
+        GlobalSoundManager.addSound(new SoundAtPosition(ShrubyWay.assetManager.get("sounds/EFFECTS/poof.wav",
+                Sound.class),
+                new Vector2(x, y)));
         animation = animator.toAnimation(ShrubyWay.assetManager.get("effects/EffectCloud.png", Texture.class),
                 10, 0, 0);
         this.interactive = true;

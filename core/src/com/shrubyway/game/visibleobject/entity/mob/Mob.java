@@ -23,8 +23,8 @@ public abstract class Mob extends Entity {
 
     @Override public void die() {
         if(action == 3) return;
-        MobsManager.MobCount--;
         MobsManager.makeDrop(id, positionLegs().x, positionLegs().y);
+        MobsManager.MobDeathCounter++;
         super.die();
         action = 3;
     }
