@@ -63,6 +63,7 @@ public class GameSaver implements Serializable {
 
 
      public void loadDefaultSettings() {
+        Game.map.clearMobTotalCost();
         Event.eventHashMap = new HashMap<String, Integer>();
         Event.eventsHappened = new HashMap<Integer, Boolean>();
         Game.inventory.items = new Item[5][9];
@@ -84,6 +85,7 @@ public class GameSaver implements Serializable {
     }
 
     public void loadGameFiles() {
+        Game.map.clearMobTotalCost();
         Event.eventHashMap = eventHashMap;
         Event.eventsHappened = eventsHappened;
         Game.inventory.items = items;

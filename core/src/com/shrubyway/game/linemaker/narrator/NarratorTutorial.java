@@ -82,6 +82,7 @@ public class NarratorTutorial extends NarratorActionLogic {
         if(!Event.happened("Water_opened")) {
             Event.cast("Water_opened");
         }
+        Event.cast("Mob_spawning_allowed");
         TutorialHints.finish();
         ActionLogicManager.remove(this);
         ActionLogicManager.add(new NarratorPostTutorial());
@@ -313,9 +314,9 @@ public class NarratorTutorial extends NarratorActionLogic {
                     saveSpot.pointWithArrow = false;
                     MobsManager.MobDeathCounter = 0;
                     if(waitLine(28, 16, 0.3f)) {
-                        MobsManager.addMobNear(Game.player.positionCenter(), 0);
-                        MobsManager.addMobNear(Game.player.positionCenter(), 1);
-                        MobsManager.addMobNear(Game.player.positionCenter(), 0);
+                        MobsManager.addMobNearWithoutLimits(Game.player.positionCenter(), 0);
+                        MobsManager.addMobNearWithoutLimits(Game.player.positionCenter(), 1);
+                        MobsManager.addMobNearWithoutLimits(Game.player.positionCenter(), 0);
                     };
                 }
                 break;
@@ -343,6 +344,7 @@ public class NarratorTutorial extends NarratorActionLogic {
             case 22:
                 if(waitLine(34, 22, 0.3f)) {
                     Event.cast("Forest_Tutorial_Finished");
+                    Event.cast("Mob_spawning_allowed");
                     ActionLogicManager.remove(this);
                     ActionLogicManager.add(new NarratorPostTutorial());
                 }

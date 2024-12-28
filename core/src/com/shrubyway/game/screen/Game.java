@@ -181,20 +181,15 @@ public class Game extends Screen implements java.io.Serializable {
 
 
       if(ShrubyWay.inputProcessor.isCPressed()) {
-          for(int i = 0; i < ItemManager.itemNumber; i++) {
-              objectsList.add(new VisibleItem(new Item(i), player.positionCenter().x,
-                      player.positionCenter().y));
-          }
+          MobsManager.addMobNearWithoutLimits(player.positionCenter(), 1);
         }
         if(ShrubyWay.inputProcessor.isLPressed()) {
-
-            /*ElementPumping.fireLevel+= 20;
-            ElementPumping.waterLevel+= 20;
-            ElementPumping.earthLevel+= 20;
-            ElementPumping.airLevel+= 20; */
-            objectsList.add(MobsManager.newOf(4, mousePosition.x, mousePosition.y));
-            objectsList.add(MobsManager.newOf(5, mousePosition.x, mousePosition.y));
-            objectsList.add(MobsManager.newOf(6, mousePosition.x, mousePosition.y));
+           /* for(int i = 0; i < ItemManager.itemNumber; i++) {
+                objectsList.add(new VisibleItem(new Item(i), player.positionCenter().x,
+                        player.positionCenter().y));
+            }
+            player.money += 100;
+            ElementPumping.addExp(10000); */
         }
 
 

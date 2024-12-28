@@ -9,6 +9,8 @@ public class MapSettings {
     static public final int TILENUMBER = 256;
     static public final float soundDistance = 1200;
 
+    static public final int CHUNKSIZE = 16;
+
     static public final int MAPSIZE = TYLESIZE * TILENUMBER;
 
 

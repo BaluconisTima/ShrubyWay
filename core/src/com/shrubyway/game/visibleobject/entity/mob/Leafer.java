@@ -28,6 +28,7 @@ public class Leafer extends Mob {
     }
 
     public void Leafer_idiot_ai(float windDistance, float scareDistance, float delta, Vector2 playerPosition) {
+        if(dead()) return;
         checkTime -= delta;
         lastThrowTime -= delta;
 
