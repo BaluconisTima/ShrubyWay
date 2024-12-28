@@ -188,8 +188,8 @@ public class Game extends Screen implements java.io.Serializable {
                 objectsList.add(new VisibleItem(new Item(i), player.positionCenter().x,
                         player.positionCenter().y));
             }
-            player.money += 100;
-            ElementPumping.addExp(10000); */
+            player.money += 100;*/
+            ElementPumping.addExp(10000);
         }
 
 
