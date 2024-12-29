@@ -184,11 +184,11 @@ public class Game extends Screen implements java.io.Serializable {
           MobsManager.addMobNearWithoutLimits(player.positionCenter(), 1);
         }
         if(ShrubyWay.inputProcessor.isLPressed()) {
-           /* for(int i = 0; i < ItemManager.itemNumber; i++) {
+            for(int i = 0; i < ItemManager.itemNumber; i++) {
                 objectsList.add(new VisibleItem(new Item(i), player.positionCenter().x,
                         player.positionCenter().y));
             }
-            player.money += 100;*/
+            player.money += 100;
             ElementPumping.addExp(10000);
         }
 

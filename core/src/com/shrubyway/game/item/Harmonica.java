@@ -9,7 +9,7 @@ public class Harmonica extends ItemActing {
     int soundCount = 6;
     Sound sound = null;
     Boolean soundPlaying = false;
-    static float soundCooldown[] = {2.5f, 1.5f, 3.5f, 4.5f, 5.5f, 3.5f};
+    static float soundCooldown[] = {2.1f, 1.61f, 3.8f, 4.6f, 5.2f, 3.52f};
 
     public Harmonica() {
         actingAnimation = 5;
