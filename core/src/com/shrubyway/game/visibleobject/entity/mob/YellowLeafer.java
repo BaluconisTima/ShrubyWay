@@ -14,9 +14,10 @@ public class YellowLeafer extends Leafer {
         entityID = 5;
         id = 4;
         health = new Health(8);
-        speed = 8f;
+        speed = 6.3f;
         allowedMotion = true;
         attackCooldown = 3f;
+        power = 1f;
         action = 0;
         damage = 0f;
         regionWidth = EntityManager.animations[entityID].get(0).get(0)[0].getKeyFrame(0).getRegionWidth();

@@ -22,8 +22,8 @@ public class HealthBar {
 
        for(int i = 0; i < 10; i++) {
            GlobalBatch.render(base, topRight.x - 77 * (i + 1) - 10, topRight.y - 100);
-          if(x > i * 2) GlobalBatch.render(bar, topRight.x - 77 * (i + 1) - 10, topRight.y - 100);
-           else if(x > i * 2 + 1) {
+          if(x > i * 2 + 1) GlobalBatch.render(bar, topRight.x - 77 * (i + 1) - 10, topRight.y - 100);
+           else if(x > i * 2) {
               GlobalBatch.render(halfbar, topRight.x - 77 * (i + 1) - 10 + 38, topRight.y - 100);
           }
        }

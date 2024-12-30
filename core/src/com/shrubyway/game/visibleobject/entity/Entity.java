@@ -41,6 +41,8 @@ abstract public class Entity extends InteractiveObject {
     public byte faceDirection = 0;
     protected int action = 0;
     protected boolean inLiquid = false;
+
+    protected float waterOverlayScale = 1f;
     protected Vector2 momentum = new Vector2(0, 0);
     protected float speed = 10f;
     protected boolean isRunning = false;
@@ -284,17 +286,20 @@ abstract public class Entity extends InteractiveObject {
 
 
     protected static Animation<TextureRegion> WaterOverlay;
+    protected static float waterWidth = 180, waterHeight = 46;
     protected void renderWaterOverlay() {
           if(WaterOverlay == null) {
+
               WaterOverlay = Animator.toAnimation(
                       ShrubyWay.assetManager.get("effects/water_overlay.png", Texture.class),14, 0, 0);
-
+              waterHeight = WaterOverlay.getKeyFrame(0).getRegionHeight();
+              waterWidth = WaterOverlay.getKeyFrame(0).getRegionWidth();
           }
         if(this instanceof Mob)
             GlobalBatch.batch.setColor(1, 1, 1, alpha);
 
         GlobalBatch.render(WaterOverlay.getKeyFrame(AnimationGlobalTime.time(), true),
-                positionLegs().x - 90, positionLegs().y - 23);
+                positionCenter().x - 90 * waterOverlayScale, positionLegs().y - 23, waterWidth * waterOverlayScale, waterHeight);
         GlobalBatch.batch.setColor(1, 1, 1, 1);
     }
 
@@ -317,13 +322,14 @@ abstract public class Entity extends InteractiveObject {
     protected float animationTime = 0f;
     protected float lastAttackTime;
 
-    public void attack(Vector2 direction) {
+
+    public void attack(Vector2 direction, Vector2 relativePosition) {
         if(!allowedMotion && action != 2) return;
         float attackCooldown = 0.5f * ElementPumping.getAttackCooldownMultiplier(damageLevel);
 
         if((AnimationGlobalTime.time() - lastAttackTime) > attackCooldown) {
             Vector2 directionTemp =
-                    new Vector2(direction.x - positionCenter().x, direction.y - positionCenter().y);
+                    new Vector2(direction.x - relativePosition.x, direction.y - relativePosition.y);
             changeAnimationsFor(directionTemp, 2);
             attacking = true;
             animationTime = AnimationGlobalTime.time();

@@ -14,17 +14,19 @@ public class Leafer extends Mob {
     Vector2 targetPosition = null;
     Vector2 tempLen = new Vector2();
 
+    float power = 1;
+
     @Override
-    public void attack(Vector2 direction) {
+    public void attack(Vector2 direction, Vector2 relativePosition) {
         if(AnimationGlobalTime.time() - lastAttackTime < attackCooldown) return;
         lastAttackTime = AnimationGlobalTime.time();
         Vector2 directionTemp =
-                new Vector2(direction.x - positionCenter().x, direction.y - positionCenter().y);
+                new Vector2(direction.x - relativePosition.x, direction.y - relativePosition.y);
         changeAnimationsFor(directionTemp, 2);
         animationTime = AnimationGlobalTime.time();
         allowedMotion = false;
         action = 2;
-        Game.objectsList.add(new Wind(directionTemp, positionCenter(), this, 1f, 100));
+        Game.objectsList.add(new Wind(directionTemp, relativePosition, this, power, 100 * power));
     }
 
     public void Leafer_idiot_ai(float windDistance, float scareDistance, float delta, Vector2 playerPosition) {
@@ -57,12 +59,10 @@ public class Leafer extends Mob {
                         }
                     }
                 } else {
-                   // walk around
                     targetPosition = new Vector2(positionLegs().x + (float) (Math.random() * 800 - 400),
                             positionLegs().y + (float) (Math.random() * 800 - 400));
                 }
             }
-
         }
         tempLen.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
         if(tempLen.len() < scareDistance && health.getHealth() < health.getMaxHealth() * 0.3 + 1) {
@@ -92,7 +92,7 @@ public class Leafer extends Mob {
                 tryMoveAi(delta);
                 return;
             } else {
-                    attack(targetEntity.positionLegs());
+                    attack(targetEntity.positionLegs(), positionLegs());
                     mood *= 0.9;
                     mood = Math.max(0.01f, mood);
                     if(Math.random() > mood) {

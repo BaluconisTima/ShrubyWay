@@ -10,7 +10,7 @@ import java.util.Arrays;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EntityManager {
-    static int entityCount = 8;
+    static int entityCount = 9;
     static String actions[][] = new String[entityCount][];
     static boolean looping[][] = new boolean[entityCount][];
     static CopyOnWriteArrayList<String>[] actionTypes[] = new CopyOnWriteArrayList[entityCount][];
@@ -133,6 +133,18 @@ public class EntityManager {
                 ShrubyWay.assetManager.get("sounds/EFFECTS/MobDeath.ogg", Sound.class);
         soundDamage[7] = ShrubyWay.assetManager.get("sounds/EFFECTS/BerryBush.wav", Sound.class);
 
+        actions[8] = new String[]{"AFK", "WALK", "ATTACK", "DEATH"};
+        looping[8] = new boolean[]{true, true, false, false};
+        actionTypes[8] = new CopyOnWriteArrayList[]{
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN", "UP", "LEFT", "RIGHT")),
+                new CopyOnWriteArrayList<>(Arrays.asList("DOWN")) };
+        frameCount[8] = new int[]{33, 32, 17, 18};
+        animations[8] = AnimationLoader.load("ENTITIES/BOULDER", actions[8], actionTypes[8], frameCount[8]);
+        soundDeath[8] =
+                ShrubyWay.assetManager.get("sounds/EFFECTS/MobDeath.ogg", Sound.class);
+        soundDamage[8] = ShrubyWay.assetManager.get("sounds/EFFECTS/BerryBush.wav", Sound.class);
     }
 
 

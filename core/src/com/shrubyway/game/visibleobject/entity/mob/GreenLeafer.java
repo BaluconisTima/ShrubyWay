@@ -16,7 +16,8 @@ public class GreenLeafer extends Leafer {
         health = new Health(6);
         speed = 6.3f;
         allowedMotion = true;
-        attackCooldown = 2.5f;
+        attackCooldown = 2.4f;
+        power = 0.8f;
         action = 0;
         damage = 0f;
         regionWidth = EntityManager.animations[entityID].get(0).get(0)[0].getKeyFrame(0).getRegionWidth();
@@ -26,9 +27,9 @@ public class GreenLeafer extends Leafer {
     }
     @Override public Rectangle hitBox() {
         if(hitBox == null) hitBox = new Rectangle(0,0,0,0);
-        hitBox.change(position.x + 150,
+        hitBox.change(position.x + 135,
                 position.y + 40,
-                80, 100);
+                90, 100);
         return hitBox;
     }
     @Override public Rectangle attackBox() {

@@ -29,7 +29,7 @@ public class Explerry extends Mob{
         target.set(x - regionWidth / 2, y);
     }
 
-    @Override public void attack(Vector2 direction) {
+    @Override public void attack(Vector2 direction, Vector2 relativePosition) {
         die();
     }
 

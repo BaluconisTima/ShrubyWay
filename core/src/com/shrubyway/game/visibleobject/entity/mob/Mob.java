@@ -106,7 +106,7 @@ public abstract class Mob extends Entity {
         tempDirection.set(playerPosition.x - positionLegs().x,
                 playerPosition.y - positionLegs().y);
         if(tempDirection.len() < attackDistance) {
-            attack(target);
+            attack(playerPosition, positionLegs());
         }
     }
     protected void longRangeAi(float shootDistance, float scareDistance, Vector2 playerPosition, Item bullet, float delta) {
@@ -136,7 +136,7 @@ public abstract class Mob extends Entity {
                 tempDirection.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
                 if (lastThrowTime + throwCooldown <= AnimationGlobalTime.time() && tempDirection.len() < shootDistance
                         && tempDirection.len() > scareDistance * 0.7 && canThrow()) {
-                    tempDirection.set(playerPosition.x - positionCenter().x, playerPosition.y - positionCenter().y);
+                    tempDirection.set(playerPosition.x - positionLegs().x, playerPosition.y - positionLegs().y);
                     throwItem(playerPosition, bullet, true);
                     tempDirection.nor();
                     animationTime = AnimationGlobalTime.time();

@@ -71,7 +71,7 @@ public class Rectangle implements java.io.Serializable {
     }
 
     public void render() {
-     // GlobalBatch.render(ShrubyWay.assetManager.get("TEST.png", Texture.class), topLeftCorner.x, topLeftCorner.y, bottomRightCorner.x - topLeftCorner.x, bottomRightCorner.y - topLeftCorner.y);
+      //GlobalBatch.render(ShrubyWay.assetManager.get("TEST.png", Texture.class), topLeftCorner.x, topLeftCorner.y, bottomRightCorner.x - topLeftCorner.x, bottomRightCorner.y - topLeftCorner.y);
     }
     public void render(float r, float g, float b, float a) {
         GlobalBatch.batch.setColor(r, g, b, a);

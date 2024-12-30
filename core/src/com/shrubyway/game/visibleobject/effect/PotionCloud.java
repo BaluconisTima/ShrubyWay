@@ -45,7 +45,7 @@ public class PotionCloud extends VisibleEffect {
                     this.position.y + animation.getKeyFrame(0).getRegionHeight() / 2);
 
             float distance = positionCenter.dst(entity.positionCenter());
-            if(distance < 150)
+            if(distance < 200)
                 potion.ApplyEffect(entity);
         }
 

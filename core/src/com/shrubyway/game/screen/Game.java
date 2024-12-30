@@ -181,7 +181,10 @@ public class Game extends Screen implements java.io.Serializable {
 
 
       if(ShrubyWay.inputProcessor.isCPressed()) {
-          MobsManager.addMobNearWithoutLimits(player.positionCenter(), 1);
+          for(int i = 7; i < 8; i++) {
+              objectsList.add(MobsManager.newOf(i, player.positionCenter().x + 200,
+                      player.positionCenter().y + 200 * i));
+          }
         }
         if(ShrubyWay.inputProcessor.isLPressed()) {
             for(int i = 0; i < ItemManager.itemNumber; i++) {
@@ -272,7 +275,7 @@ public class Game extends Screen implements java.io.Serializable {
                 !inventory.checkClick(ShrubyWay.inputProcessor.mousePosition())
         && !elementPumping.leftClick(ShrubyWay.inputProcessor.mousePosition())) {
             if (leftClick) {
-                player.attack(mousePosition);
+                player.attack(mousePosition, player.positionCenter());
             }
             if (rightClick) {
                 if (player.canThrow()) {

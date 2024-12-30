@@ -92,8 +92,8 @@ public class Shruby extends Entity {
     }
 
     @Override
-    public void attack(Vector2 direction) {
-        super.attack(direction);
+    public void attack(Vector2 direction, Vector2 relativePosition) {
+        super.attack(direction, relativePosition);
         if(attacking) attacked = true;
     }
 

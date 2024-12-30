@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class MobsManager {
-    public static int mobsNumber = 7;
+    public static int mobsNumber = 8;
     public static Constructor<? extends Mob> mobs[] = new Constructor[mobsNumber];
     public static float mobSpawnCost[] = new float[mobsNumber];
     public static Integer mobExp[] = new Integer[mobsNumber];
@@ -83,6 +83,14 @@ public class MobsManager {
         mobSpawnCost[6] = 9;
         mobExp[6] = 50;
         spawnTileTypes[6] = new ArrayList<>(Arrays.asList(6));
+
+        mobs[7] = (Boulder.class).getDeclaredConstructor(float.class, float.class);
+        mobs[7].newInstance(0, 0);
+        dropTableItem[7] = new ArrayList<>(Arrays.asList(0, 0));
+        dropTableChance[7] = new ArrayList<>(Arrays.asList(0.9f, 0.1f));
+        mobSpawnCost[7] = 15;
+        mobExp[7] = 250;
+        spawnTileTypes[7] = new ArrayList<>(Arrays.asList(1, 3, 7, 9));
 
         } catch (Exception e) {
             e.printStackTrace();

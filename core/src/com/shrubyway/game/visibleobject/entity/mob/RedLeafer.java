@@ -17,6 +17,7 @@ public class RedLeafer extends Leafer {
         speed = 6.3f;
         allowedMotion = true;
         attackCooldown = 4f;
+        power = 1.2f;
         action = 0;
         damage = 0f;
         regionWidth = EntityManager.animations[entityID].get(0).get(0)[0].getKeyFrame(0).getRegionWidth();
