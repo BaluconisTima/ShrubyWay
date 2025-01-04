@@ -9,6 +9,7 @@ import com.badlogic.gdx.video.VideoPlayerCreator;
 import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.saver.SettingsSaver;
+import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.screen.LoadingScreen;
 import com.shrubyway.game.screen.Screen;
 import com.shrubyway.game.sound.SoundSettings;
@@ -27,12 +28,17 @@ public class ShrubyWay extends ApplicationAdapter {
     static public VideoPlayer videoPlayer = null;
 
     @Override public void resize(int width, int height) {
-        if(width == 0 || height == 0) return;
+        if(width == 0 || height == 0) {
+            if(screen instanceof Game) {
+                ((Game) screen).pause();
+            }
+            return;
+        }
         GlobalBatch.changeScale(width, height);
     }
 
     @Override public void create() {
-        GlobalBatch.changeScale(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        GlobalBatch.changeScale((int)GlobalBatch.screenWidth, (int)GlobalBatch.screenHeight);
         Gdx.gl.glTexParameterf(GL20.GL_TEXTURE_2D, GL20.GL_TEXTURE_MIN_FILTER, GL20.GL_LINEAR);
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

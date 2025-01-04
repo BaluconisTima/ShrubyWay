@@ -25,6 +25,8 @@ public class Inventory {
     Item itemInHand = null;
     Integer numberOfItemInHand = 0;
 
+    float localScaleX = -1, localScaleY = -1;
+
     public boolean haveItemsWithType(Class type) {
         for(int i = 0; i < 5; i++)
             for(int j = 0; j < 9; j++) {
@@ -36,26 +38,33 @@ public class Inventory {
         return false;
     }
 
-    public void clear() {
+    private void updateBoxes() {
+        if(localScaleX == GlobalBatch.scaleX && localScaleY == GlobalBatch.scaleY) return;
         Vector2 leftUpCorner = GlobalBatch.topLeftCorner();
-       // System.out.println(GlobalBatch.topRightCorner());
-        float scale = GlobalBatch.scale;
         for(int i = 0; i < 9; i++) {
-            buttons[0][i] = new Rectangle((27 + 79.1f * i) * scale,(leftUpCorner.y - 70 - 28 + 7) * scale,
-                    (70) * scale,70 * scale);
+            if(buttons[0][i] == null) buttons[0][i] = new Rectangle(0,0,0,0);
+            buttons[0][i].set((27 + 79.1f * i),(leftUpCorner.y - 90),
+                    70,70);
         }
         for(int j = 1; j < 5; j++) {
             for(int i = 0; i < 9; i++) {
-                buttons[j][i] = new Rectangle((27 + 79.1f * i) * scale,(leftUpCorner.y - 70 - 55 - 79.1f * j) * scale,
-                        70 * scale,70 * scale);
+                if(buttons[j][i] == null) buttons[j][i] = new Rectangle(0,0,0,0);
+                buttons[j][i].set((27 + 79.1f * i),
+                        (leftUpCorner.y - 70 - 53 - 79.1f * j),
+                        70,70);
             }
         }
+    }
+
+    public void clear() {
+       updateBoxes();
         for(int i = 0; i < 5; i++)
             for(int j = 0; j < 9; j++) {
                 items[i][j] = null;
                 numberOfItem[i][j] = 0;
             }
     }
+
     {
         clear();
     }
@@ -85,6 +94,7 @@ public class Inventory {
     }
 
     public void render(Vector2 mousePosition) {
+        updateBoxes();
         Vector2 leftUpCorner = GlobalBatch.topLeftCorner();
 
         GlobalBatch.render(base,0,leftUpCorner.y - 1080);
@@ -143,13 +153,13 @@ public class Inventory {
 
     public boolean checkClick(Vector2 point) {
         if(!opened) {
-            if(point.x <= 750 && point.y >= 970) {
+            if(point.x <= 740 && point.y >= 970) {
                 changeOpened();
                 return true;
             }
             return false;
         }
-        if(point.x <= 750 && point.y >= 620) return true;
+        if(point.x <= 740 && point.y >= 620) return true;
         changeOpened();
         return false;
     }

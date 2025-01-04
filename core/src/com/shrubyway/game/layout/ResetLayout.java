@@ -21,11 +21,11 @@ public class ResetLayout extends Layout{
         if (resetButton == null)
             resetButton = new Button(ShrubyWay.assetManager.get("interface/reset1.png", Texture.class),
                     ShrubyWay.assetManager.get("interface/reset2.png", Texture.class),
-                    350, GlobalBatch.centerY() - 300);
+                    GlobalBatch.centerX() - 650, GlobalBatch.centerY() - 300);
         if (cancelButton == null)
             cancelButton = new Button(ShrubyWay.assetManager.get("interface/cancel.png", Texture.class),
                     ShrubyWay.assetManager.get("interface/cancel2.png", Texture.class),
-                    GlobalBatch.topRightCorner().x - 350 -
+                    GlobalBatch.centerX() + 650 -
                             ShrubyWay.assetManager.get("interface/cancel.png", Texture.class).getWidth(),
                      GlobalBatch.centerY() - 300);
     }
@@ -36,7 +36,17 @@ public class ResetLayout extends Layout{
         close();
     }
 
+    float localScaleX = -1, localScaleY = -1;
+
     @Override public void update(Vector2 mousePos) {
+        if(localScaleX != GlobalBatch.scaleX || localScaleY != GlobalBatch.scaleY) {
+            resetButton.set(GlobalBatch.centerX() - 650, GlobalBatch.centerY() - 300);
+            cancelButton.set(GlobalBatch.centerX() + 650 -
+                            ShrubyWay.assetManager.get("interface/cancel.png", Texture.class).getWidth(),
+                    GlobalBatch.centerY() - 300);
+            localScaleX = GlobalBatch.scaleX;
+            localScaleY = GlobalBatch.scaleY;
+        }
         super.update(mousePos);
         if(ShrubyWay.inputProcessor.isMouseLeft()) {
             if(resetButton.rectangle.checkPoint(mousePos)) reset();

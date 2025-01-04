@@ -22,7 +22,7 @@ public class Layout {
         if(window == null) window = ShrubyWay.assetManager.get("interface/layout_window.png", Texture.class);
     }
     public void render(Vector2 mousePos) {
-        GlobalBatch.render(background, 0, 0);
+        GlobalBatch.render(background, 0, 0, GlobalBatch.topRightCorner().x, GlobalBatch.topRightCorner().y);
         GlobalBatch.render(window, GlobalBatch.centerX() - window.getWidth()/2, GlobalBatch.centerY() - window.getHeight()/2);
     }
 

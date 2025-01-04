@@ -5,7 +5,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -24,8 +23,8 @@ import com.shrubyway.game.item.ItemManager;
 import com.shrubyway.game.item.Potion.Potion;
 import com.shrubyway.game.layout.Layout;
 import com.shrubyway.game.layout.SettingsLayout;
-import com.shrubyway.game.linemaker.LineMaker;
 import com.shrubyway.game.linemaker.ActionLogicManager;
+import com.shrubyway.game.linemaker.LineMaker;
 import com.shrubyway.game.map.Map;
 import com.shrubyway.game.map.MapSettings;
 import com.shrubyway.game.map.ScreenGrid;
@@ -67,7 +66,6 @@ public class Game extends Screen implements java.io.Serializable {
     public static ObjectsList objectsList = new ObjectsList();
     public static Inventory inventory = new Inventory();
     public static int lastEatenItemID = -1;
-    ShapeRenderer shapeRenderer = new ShapeRenderer();
     static GameSaver gameSaver = new GameSaver();
     static public boolean gameSaved = false;
     public static Map map;
@@ -92,7 +90,7 @@ public class Game extends Screen implements java.io.Serializable {
         objectsList.getList().clear();
         GlobalBatch.batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         GlobalBatch.batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
-                Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+                GlobalBatch.screenWidth, GlobalBatch.screenHeight));
         soundClick = ShrubyWay.assetManager.get("sounds/EFFECTS/Click.ogg", Sound.class);
 
         float bWidht = ShrubyWay.assetManager.get("interface/c1.png", Texture.class).getWidth(),
@@ -125,7 +123,7 @@ public class Game extends Screen implements java.io.Serializable {
         if(!GameSaver.checkSaveFile()) player = new Shruby(17300, 18600);
         else player = new Shruby(17300, 18600, false);
 
-        localCamera = new OrthographicCamera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        localCamera = new OrthographicCamera(GlobalBatch.screenWidth, GlobalBatch.screenHeight);
         localCamera.position.set(player.positionCenter().x, player.positionCenter().y, 0);
         localCamera.update();
 
@@ -168,12 +166,15 @@ public class Game extends Screen implements java.io.Serializable {
     }
 
     boolean leftClick = false, rightClick = false;
+    Vector2 mouseScreenPos = new Vector2(0,0);
 
     public void playerInputWorking(float delta) {
         mousePosition.set(ShrubyWay.inputProcessor.mousePosition().x
-                + localCamera.position.x - Gdx.graphics.getWidth() / 2,
+                + localCamera.position.x - GlobalBatch.screenWidth / 2,
                 ShrubyWay.inputProcessor.mousePosition().y
-                        + localCamera.position.y - Gdx.graphics.getHeight() / 2);
+                        + localCamera.position.y - GlobalBatch.screenHeight / 2);
+        mouseScreenPos.set((int)(ShrubyWay.inputProcessor.mousePosition().x / GlobalBatch.getScale()),
+                (int)(ShrubyWay.inputProcessor.mousePosition().y)/ GlobalBatch.getScale());
 
         if(ShrubyWay.inputProcessor.isXPressed()) {
             LineMaker.skip();
@@ -181,18 +182,18 @@ public class Game extends Screen implements java.io.Serializable {
 
 
       if(ShrubyWay.inputProcessor.isCPressed()) {
-          for(int i = 7; i < 8; i++) {
+         /*for(int i = 7; i < 8; i++) {
               objectsList.add(MobsManager.newOf(i, player.positionCenter().x + 200,
                       player.positionCenter().y + 200 * i));
-          }
+          } */
         }
         if(ShrubyWay.inputProcessor.isLPressed()) {
-            for(int i = 0; i < ItemManager.itemNumber; i++) {
+            /*for(int i = 0; i < ItemManager.itemNumber; i++) {
                 objectsList.add(new VisibleItem(new Item(i), player.positionCenter().x,
                         player.positionCenter().y));
             }
-            player.money += 100;
-            ElementPumping.addExp(10000);
+            player.money += 100;*/
+            ElementPumping.addExp(100);
         }
 
 
@@ -272,7 +273,7 @@ public class Game extends Screen implements java.io.Serializable {
 
 
         if ((leftClick || rightClick) &&
-                !inventory.checkClick(ShrubyWay.inputProcessor.mousePosition())
+                !inventory.checkClick(mouseScreenPos)
         && !elementPumping.leftClick(ShrubyWay.inputProcessor.mousePosition())) {
             if (leftClick) {
                 player.attack(mousePosition, player.positionCenter());
@@ -355,11 +356,11 @@ public class Game extends Screen implements java.io.Serializable {
         }
         if (leftClick) {
             leftClick = false;
-            inventory.leftClick(ShrubyWay.inputProcessor.mousePosition());
+            inventory.leftClick(mouseScreenPos);
         }
         if (rightClick) {
             rightClick = false;
-            inventory.rightClick(ShrubyWay.inputProcessor.mousePosition());
+            inventory.rightClick(mouseScreenPos);
             ShrubyWay.inputProcessor.setMouseRight(false);
         }
 
@@ -606,38 +607,52 @@ public class Game extends Screen implements java.io.Serializable {
     public void renderInterface() {
         player.interactionBox().render();
         GlobalBatch.batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
-                Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
+                GlobalBatch.screenWidth, GlobalBatch.screenHeight));
 
         HealthBar.render(player.health);
-        Vector2 mousePos = new Vector2(ShrubyWay.inputProcessor.mousePosition().x, ShrubyWay.inputProcessor.mousePosition().y);
-        mousePos.x /= GlobalBatch.scale; mousePos.y /= GlobalBatch.scale;
-        inventory.render(mousePos);
+        inventory.render(mouseScreenPos);
         MiniMap.render(map.lvl, player.positionLegs().x, player.positionLegs().y);
-        elementPumping.render(ShrubyWay.inputProcessor.mousePosition());
+        elementPumping.render(ShrubyWay.inputProcessor.mousePosition(), mouseScreenPos);
         TutorialHints.render();
         lineRenderer.render();
 
 
         //TextDrawer.drawCenterBlack("Mobs: " + MobsManager.MobCount, 50, 50, 1);
         //TextDrawer.drawBlack("" +Gdx.graphics.getFramesPerSecond(), 50, 50, 1);
-        //TextDrawer.drawBlack("" + player.position, 50, 100, 1);
+        //TextDrawer.drawBlack("" + mouseScreenPos, 50, 100, 1);
 
         GlobalBatch.batch.setColor(1,1,1,1 - CameraEffects.getSaveEffect());
         GlobalBatch.render(ShrubyWay.assetManager.get("interface/screen.png", Texture.class),
                 0, 0);
         GlobalBatch.batch.setColor(1,1,1,1);
     }
+
+    float lastScaleX = -1, lastScaleY = -1;
     public void renderPause() {
         if (gamePaused) {
             GlobalBatch.render(ShrubyWay.assetManager.get("interface/shadow.png", Texture.class),
-                    0, 0);
+                    0, 0, GlobalBatch.topRightCorner().x, GlobalBatch.topRightCorner().y);
+            if(lastScaleX != GlobalBatch.scaleX || lastScaleY != GlobalBatch.scaleY) {
+                lastScaleX = GlobalBatch.scaleX;
+                lastScaleY = GlobalBatch.scaleY;
+                float bWidht = ShrubyWay.assetManager.get("interface/c1.png", Texture.class).getWidth(),
+                bHeight = ShrubyWay.assetManager.get("interface/c1.png", Texture.class).getHeight();
+                continueButton.set(GlobalBatch.centerX() - bWidht / 2, GlobalBatch.centerY() - bHeight / 2 + bHeight + 50);
+                settingsButton.set(GlobalBatch.centerX() - bWidht / 2, GlobalBatch.centerY() - bHeight / 2);
+                menuButton.set(GlobalBatch.centerX() -
+                        bWidht / 2, GlobalBatch.centerY() - bHeight / 2 - bHeight - 50);
+                continueButton.update();
+                settingsButton.update();
+                menuButton.update();
+            }
+
             if(menuButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()) && layout == null) {
                 menuButton.renderSellected();
             } else menuButton.render();
-            if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())&& layout == null) {
+            if(settingsButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()) && layout == null) {
                 settingsButton.renderSellected();
             } else settingsButton.render();
-            if(continueButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())&& layout == null) {
+            if(continueButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()) && layout == null) {
                 continueButton.renderSellected();
             } else continueButton.render();
 
@@ -672,6 +687,8 @@ public class Game extends Screen implements java.io.Serializable {
             else
             overlay.render(ShrubyWay.inputProcessor.mousePosition());
         } else {
+            localCamera.viewportWidth = GlobalBatch.screenWidth;
+            localCamera.viewportHeight = GlobalBatch.screenHeight;
             GlobalBatch.setProjectionMatrix(localCamera);
             map.render(new Vector2(localCamera.position.x, localCamera.position.y));
             renderShadows();

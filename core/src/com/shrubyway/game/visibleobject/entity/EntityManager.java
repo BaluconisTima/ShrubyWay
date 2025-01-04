@@ -144,7 +144,7 @@ public class EntityManager {
         animations[8] = AnimationLoader.load("ENTITIES/BOULDER", actions[8], actionTypes[8], frameCount[8]);
         soundDeath[8] =
                 ShrubyWay.assetManager.get("sounds/EFFECTS/MobDeath.ogg", Sound.class);
-        soundDamage[8] = ShrubyWay.assetManager.get("sounds/EFFECTS/BerryBush.wav", Sound.class);
+        soundDamage[8] = ShrubyWay.assetManager.get("sounds/EFFECTS/Boulder.ogg", Sound.class);
     }
 
 

@@ -23,6 +23,8 @@ public class Menu extends Screen {
     static private Layout layout;
     static Button playButton, settingsButton, resetButton, exitButton, achivementsButton;
 
+    static float lastScale = -1;
+
     static Vector2 topLeftCorner = GlobalBatch.topLeftCorner(),
             bottomRightCorner = GlobalBatch.bottomRightCorner(),
             topRightCorner = GlobalBatch.topRightCorner(),
@@ -42,6 +44,32 @@ public class Menu extends Screen {
             eyesPositions[i] = new Vector2();
             eyesPositions[i].x = (float) ((bottomRightCorner.x - topLeftCorner.x) / 7 * (i % 8) + topLeftCorner.x + 70 + 100 * ((i / 8) % 2) + (Math.random() * 100 - 50));
             eyesPositions[i].y = (float) ((topLeftCorner.y - bottomRightCorner.y) / 7 * (i / 8) + bottomRightCorner.y + 550 + (Math.random() * 100 - 50));
+        }
+    }
+
+    float localScaleX = -1, localScaleY = -1, localScale = -1;
+
+    void updateCorners() {
+        if(localScale != lastScale || (centerX == 0 || centerY == 0) || localScaleX != GlobalBatch.scaleX || localScaleY != GlobalBatch.scaleY) {
+            topLeftCorner = GlobalBatch.topLeftCorner();
+            bottomRightCorner = GlobalBatch.bottomRightCorner();
+            topRightCorner = GlobalBatch.topRightCorner();
+            bottomLeftCorner = GlobalBatch.bottomLeftCorner();
+            centerX = GlobalBatch.centerX();
+            centerY = GlobalBatch.centerY();
+            for(int i = 0; i < eyesCount; i++) {
+                eyesPositions[i].x = (float) ((bottomRightCorner.x - topLeftCorner.x) / 7 * (i % 8) + topLeftCorner.x + 70 + 100 * ((i / 8) % 2) + (Math.random() * 100 - 50));
+                eyesPositions[i].y = (float) ((topLeftCorner.y - bottomRightCorner.y) / 7 * (i / 8) + bottomRightCorner.y + 550 + (Math.random() * 100 - 50));
+            }
+            lastScale = localScale;
+            localScaleX = GlobalBatch.scaleX;
+            localScaleY = GlobalBatch.scaleY;
+
+            playButton.set(centerX - 272, 45);
+            settingsButton.set(centerX - 680, 65);
+            resetButton.set(centerX + 680 - 347, 65);
+            exitButton.set(topLeftCorner.x + 30, topLeftCorner.y - 150);
+            achivementsButton.set(topRightCorner.x - 170, topRightCorner.y - 145);
         }
     }
 
@@ -84,6 +112,7 @@ public class Menu extends Screen {
 
 
     @Override public void updateScreen() {
+        updateCorners();
         if(layout != null) {
             layout.update(ShrubyWay.inputProcessor.mousePosition());
             if(layout.isClosed()) layout = null;
@@ -117,7 +146,7 @@ public class Menu extends Screen {
 
     @Override public void renderScreen() {
         ScreenUtils.clear(1, 1, 1, 1);
-        GlobalBatch.render(Background, 0, 0);
+        GlobalBatch.render(Background, 0, 0, GlobalBatch.topRightCorner().x, GlobalBatch.topRightCorner().y);
 
         GlobalBatch.batch.setColor(1, 1, 1, 0.4f);
         long speed2 = 1000;
@@ -132,7 +161,7 @@ public class Menu extends Screen {
         long speed = 700;
         long y = System.currentTimeMillis() % (int)(6.28 * speed);
         GlobalBatch.render(menuLight, centerX - menuLight.getWidth() / 2, -700f + (float)Math.sin((float)y / speed) * 100f);
-        GlobalBatch.render(Shruby, 0, 10);
+        GlobalBatch.render(Shruby, centerX - Shruby.getWidth()/2, 10);
 
         if(playButton.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()) && layout == null)
             playButton.renderSellected();
@@ -157,19 +186,6 @@ public class Menu extends Screen {
 
         if(layout != null) layout.render(ShrubyWay.inputProcessor.mousePosition());
 
-    }
-
-    @Override public void dispose() {
-        /*Background.dispose();
-        logo.dispose();
-        Shruby.dispose();
-        menuLight.dispose();
-        eyes.getKeyFrames()[0].getTexture().dispose();
-        playButton.dispose();
-        settingsButton.dispose();
-        exitButton.dispose();
-        achivementsButton.dispose();
-        resetButton.dispose(); */
     }
 
 }

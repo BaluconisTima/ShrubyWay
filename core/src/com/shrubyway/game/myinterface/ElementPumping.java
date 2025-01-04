@@ -1,5 +1,6 @@
 package com.shrubyway.game.myinterface;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -22,7 +23,8 @@ public class ElementPumping {
      public static float localExp = 0;
      static Diamond fire, water, earth, air;
 
-    static float scale = GlobalBatch.scale;
+    static float localScale = GlobalBatch.getScale();
+    static Vector2 lastScreenSize;
 
     static Sound levelUp = ShrubyWay.assetManager.get("sounds/EFFECTS/levelUp.ogg", Sound.class);
     static long lastSound = 0;
@@ -30,6 +32,19 @@ public class ElementPumping {
 
 
 
+    static public void updateBoxes() {
+        localScale = GlobalBatch.getScale();
+        lastScreenSize = new Vector2(GlobalBatch.screenWidth, GlobalBatch.screenHeight);
+
+        corner = GlobalBatch.bottomRightCorner();
+
+        float centerX = corner.x + 10 - ElementBase.getWidth() / 2.0f;
+        float centerY = corner.y + -10 + ElementBase.getHeight() / 2.0f;
+        fire = new Diamond(centerX * localScale, (centerY + 100)  * localScale, 75 * localScale);
+        water = new Diamond(centerX * localScale, (centerY - 100) * localScale, 75 * localScale);
+        earth = new Diamond((centerX - 100) * localScale, centerY * localScale, 75 * localScale);
+        air = new Diamond((centerX + 100) * localScale, centerY * localScale, 75 * localScale);
+    }
 
      static public void init() {
           // lastSound = levelUp.play(SoundSettings.soundVolume);
@@ -42,22 +57,14 @@ public class ElementPumping {
             localExp = 0;
             progress = 0;
 
-            ElementBase = ShrubyWay.assetManager.get("interface/ElementBase.png", Texture.class);
-            Elements = ShrubyWay.assetManager.get("interface/Elements.png", Texture.class);
-            FireElement = ShrubyWay.assetManager.get("interface/elementFire.png", Texture.class);
-            WaterElement = ShrubyWay.assetManager.get("interface/elementWater.png", Texture.class);
-            EarthElement = ShrubyWay.assetManager.get("interface/elementEarth.png", Texture.class);
-            AirElement = ShrubyWay.assetManager.get("interface/elementWind.png", Texture.class);
+            if(ElementBase == null) ElementBase = ShrubyWay.assetManager.get("interface/ElementBase.png", Texture.class);
+            if(Elements == null) Elements = ShrubyWay.assetManager.get("interface/Elements.png", Texture.class);
+            if(FireElement == null) FireElement = ShrubyWay.assetManager.get("interface/elementFire.png", Texture.class);
+            if(WaterElement == null) WaterElement = ShrubyWay.assetManager.get("interface/elementWater.png", Texture.class);
+            if(EarthElement == null) EarthElement = ShrubyWay.assetManager.get("interface/elementEarth.png", Texture.class);
+            if(AirElement == null) AirElement = ShrubyWay.assetManager.get("interface/elementWind.png", Texture.class);
 
-            corner = GlobalBatch.bottomRightCorner();
-
-         float centerX = corner.x + 10 - ElementBase.getWidth() / 2.0f;
-            float centerY = corner.y + -10 + ElementBase.getHeight() / 2.0f;
-            fire = new Diamond(centerX * scale, (centerY + 100)  * scale, 75 * scale);
-            water = new Diamond(centerX * scale, (centerY - 100) * scale, 75 * scale);
-            earth = new Diamond((centerX - 100) * scale, centerY * scale, 75 * scale);
-            air = new Diamond((centerX + 100) * scale, centerY * scale, 75 * scale);
-
+            updateBoxes();
      }
 
      public static int getNextLevelCost() {
@@ -236,12 +243,14 @@ public class ElementPumping {
        }
 
 
-     public void render(Vector2 mouseOnScreenPosition) {
-
+     public void render(Vector2 mouseOnScreenPosition, Vector2 mousePosition) {
          Game.player.health.defenseLevel = earthLevel;
          Game.player.damageLevel = fireLevel;
          Game.player.throwLevel = airLevel;
 
+         if(localScale != GlobalBatch.getScale() || !lastScreenSize.equals(new Vector2(GlobalBatch.screenWidth, GlobalBatch.screenHeight))) {
+             updateBoxes();
+         }
 
          progressUpdate();
         // if(Event.happened("Pumping_Opened"))
@@ -331,9 +340,8 @@ public class ElementPumping {
                              z2 = decimalFormat.format(ElementPumping.getThrowDamageAddition(ElementPumping.airLevel + 1));
 
                      String text = "Throw Cooldown: " + x1 + " -> " + x2 + " \n" +
-                             "Speed multiplier: " + y1 + " -> " + y2 + "\n" +
                              "Bonus damage: " + z1 + " -> " + z2 + "\n";
-                     TextDrawer.drawWithShadowColor(text, mouseOnScreenPosition.x * scale - 400, mouseOnScreenPosition.y * scale + 100, 0.4f,
+                     TextDrawer.drawWithShadowColor(text, mousePosition.x - 400, mousePosition.y + 100, 0.4f,
                              new Color((float) 0.9, (float) 0.9, 1, 1));
                  }
                  if (water.contains(mouseOnScreenPosition) && Event.happened("Water_opened")) {
@@ -351,7 +359,7 @@ public class ElementPumping {
                                      + x1 + " -> " + x2 + " \n" +
                                      "Eating Speed multiplier: " + y1 + " -> " + y2 + "\n" +
                                      "Bonus regeneration: " + z1 + " -> " + z2 + "\n";
-                     TextDrawer.drawWithShadowColor(text, mouseOnScreenPosition.x * scale - 500, mouseOnScreenPosition.y * scale + 100, 0.4f,
+                     TextDrawer.drawWithShadowColor(text, mousePosition.x - 500, mousePosition.y + 100, 0.4f,
                              new Color(0, (float) 0.81, 1, 1));
                  }
                  if (earth.contains(mouseOnScreenPosition) && Event.happened("Earth_opened")) {
@@ -360,7 +368,7 @@ public class ElementPumping {
 
 
                      String text = "Damage mitigation: " + x1 + " -> " + x2 + "\n";
-                     TextDrawer.drawWithShadowColor(text, mouseOnScreenPosition.x * scale - 400, mouseOnScreenPosition.y * scale + 50, 0.4f,
+                     TextDrawer.drawWithShadowColor(text, mousePosition.x - 400, mousePosition.y + 50, 0.4f,
                              new Color((float) 0.5, (float) 0.5, (float) 0.5, 1));
                  }
                  if (fire.contains(mouseOnScreenPosition) && Event.happened("Fire_opened")) {
@@ -371,7 +379,7 @@ public class ElementPumping {
 
                      String text = "Melee damage: " + x1 + " -> " + x2 + "\n" +
                              "Attack cooldown: " + y1 + " -> " + y2 + "\n";
-                     TextDrawer.drawWithShadowColor(text, mouseOnScreenPosition.x * scale - 400, mouseOnScreenPosition.y * scale + 100, 0.4f,
+                     TextDrawer.drawWithShadowColor(text, mousePosition.x - 400, mousePosition.y + 100, 0.4f,
                              new Color(1, (float) 0.5, (float) 0, 1));
                  }
              }

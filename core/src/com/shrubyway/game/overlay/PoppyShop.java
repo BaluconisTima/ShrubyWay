@@ -33,8 +33,12 @@ public class PoppyShop extends Overlay {
 
     static String[] itemDescription = new String[itemsInShop];
     static Rectangle[] itemRect = new Rectangle[itemsInShop];
+
+    static Rectangle[] RealItemRect = new Rectangle[itemsInShop];
     static Button sell, exit;
     static Animation<TextureRegion> open, close;
+
+    static Vector2 mouseScreenPos = new Vector2(0, 0);
 
 
     private void playClip(int clipNumber) {
@@ -95,7 +99,7 @@ public class PoppyShop extends Overlay {
         if(exit.rectangle.checkPoint(mousePos)) exit();
 
         for(int i = 0; i < itemsInShop; i++) {
-            if(itemRect[i].checkPoint(mousePos)) {
+            if(RealItemRect[i].checkPoint(mouseScreenPos)) {
                 if (itemPrice[i] != null) {
                     if (Game.player.money >= itemPrice[i]) {
                         last_bad_click = -1;
@@ -163,11 +167,32 @@ public class PoppyShop extends Overlay {
 
     static final float inf = 1000000000;
     static float openTime = -inf, closeTime = -inf;
+    Vector2 centerOffset = new Vector2(0, 0);
+    float scaleX = 0, scaleY = 0;
     @Override public void render(Vector2 mousePos) {
         if(ShrubyWay.videoPlayer == null) ShrubyWay.videoPlayer= VideoPlayerCreator.createVideoPlayer();
 
+        if(scaleX != GlobalBatch.scaleX || scaleY != GlobalBatch.scaleY) {
+            scaleX = GlobalBatch.scaleX;
+            scaleY = GlobalBatch.scaleY;
+            centerOffset.set(GlobalBatch.screenWidth / 2f - 960 * GlobalBatch.getScale(), GlobalBatch.screenHeight / 2f - 540 * GlobalBatch.getScale());
+            centerOffset.scl(1/GlobalBatch.getScale());
+
+            for(int i = 0; i < itemsInShop; i++) {
+                if(RealItemRect[i] == null) {
+                    RealItemRect[i] = new Rectangle(0,0,0,0);
+                }
+                RealItemRect[i].set(itemRect[i].topLeftCorner.x + centerOffset.x,
+                        itemRect[i].topLeftCorner.y + centerOffset.y,
+                        itemRect[i].bottomRightCorner.x - itemRect[i].topLeftCorner.x,
+                        itemRect[i].bottomRightCorner.y - itemRect[i].topLeftCorner.y);
+            }
+
+        }
+
         Texture frame = ShrubyWay.videoPlayer.getTexture();
-        if(frame != null) GlobalBatch.render(frame, 0, 0);
+
+        if(frame != null) GlobalBatch.render(frame, centerOffset.x, centerOffset.y);
 
         GlobalBatch.render(ShrubyWay.assetManager.get("interface/shoppanel.png", Texture.class), 260, 26);
         TextDrawer.drawCenterWhite(Game.player.money + " M.", 715, 100, 1);
@@ -175,28 +200,32 @@ public class PoppyShop extends Overlay {
         exit.render(mousePos);
 
         for(int i = 0; i < itemsInShop; i++) {
-            if (itemRect[i].checkPoint(mousePos)) {
-                TextDrawer.drawWithShadow(ItemManager.itemName[itemID[i]], mousePos.x, mousePos.y - 50, 0.7f);
-                TextDrawer.drawWithShadowColor(itemDescription[i], mousePos.x, mousePos.y - 100, 0.4f, new Color(119f/256,136f/256,153f/256, 1));
+            if (RealItemRect[i].checkPoint(mouseScreenPos)) {
+                TextDrawer.drawWithShadow(ItemManager.itemName[itemID[i]], mouseScreenPos.x, mouseScreenPos.y - 50, 0.7f);
+                TextDrawer.drawWithShadowColor(itemDescription[i], mouseScreenPos.x, mouseScreenPos.y - 100, 0.4f, new Color(119f/256,136f/256,153f/256, 1));
             }
+            RealItemRect[i].render();
         }
 
         if(openTime >= 0) {
             TextureRegion frameOpen = open.getKeyFrame(openTime);
-            GlobalBatch.render(frameOpen, 0, 0);
+            GlobalBatch.render(frameOpen, centerOffset.x, centerOffset.y);
             if(open.isAnimationFinished(openTime)) {
                 openTime = -inf;
             }
         }
         if(closeTime >= 0) {
             TextureRegion frameClose = close.getKeyFrame(closeTime);
-            GlobalBatch.render(frameClose, 0, 0);
+            GlobalBatch.render(frameClose, centerOffset.x, centerOffset.y);
         }
 
     }
     @Override public void update(float delta) {
         ShrubyWay.videoPlayer.setVolume(SoundSettings.soundVolume);
         ShrubyWay.videoPlayer.update();
+        mouseScreenPos.set((int)(ShrubyWay.inputProcessor.mousePosition().x / GlobalBatch.getScale()),
+                (int)(ShrubyWay.inputProcessor.mousePosition().y)/ GlobalBatch.getScale());
+
         if(openTime > -inf) {
             openTime += delta;
         }

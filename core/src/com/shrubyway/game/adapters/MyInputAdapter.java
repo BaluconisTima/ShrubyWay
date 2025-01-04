@@ -1,8 +1,9 @@
 package com.shrubyway.game.adapters;
-import com.badlogic.gdx.Gdx;
+
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
+import com.shrubyway.game.GlobalBatch;
 
 public class MyInputAdapter extends InputAdapter {
     private boolean leftPressed, rightPressed, upPressed, downPressed,
@@ -60,13 +61,13 @@ public class MyInputAdapter extends InputAdapter {
     }
     @Override
     public boolean mouseMoved(int screenX, int screenY) {
-        mousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
+        mousePosition.set(screenX, GlobalBatch.screenHeight - screenY);
         return false;
     }
 
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        mousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
+        mousePosition.set(screenX, GlobalBatch.screenHeight - screenY);
         if (button == Input.Buttons.LEFT) {
             mouseLeft = true;
             mouseLeft2 = true;
@@ -78,12 +79,12 @@ public class MyInputAdapter extends InputAdapter {
 
 
     @Override public boolean touchDragged (int screenX, int screenY, int pointer) {
-        mousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
+        mousePosition.set(screenX, GlobalBatch.screenHeight - screenY);
         return true;
     }
     @Override
     public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        mousePosition.set(screenX, Gdx.graphics.getHeight() - screenY);
+        mousePosition.set(screenX, GlobalBatch.screenHeight - screenY);
         if (button == Input.Buttons.LEFT) {
             mouseLeft = false;
             mouseLeft2 = false;

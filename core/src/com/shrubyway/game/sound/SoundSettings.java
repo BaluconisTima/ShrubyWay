@@ -46,7 +46,6 @@ public class SoundSettings {
 
     public static void update() {
         if(currentMusic != null) music.setVolume(musicVolume);
-
     }
 
 

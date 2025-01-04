@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.myinterface.TextDrawer;
+import com.shrubyway.game.shapes.Rectangle;
 
 import java.util.ArrayList;
 
@@ -23,7 +24,6 @@ public class LoadingScreen extends Screen{
         phrases.add("Shruby is not a bush");
         phrases.add("Shruby is probably not a shrub(?)");
         phrases.add("Shruby is not a stem");
-
         phrases.add("Music can bring back strange memories");
         phrases.add("Don't eat fly agarics!");
         phrases.add("Pump the elements evenly");
@@ -34,10 +34,7 @@ public class LoadingScreen extends Screen{
         phrases.add("You are playing an early version of the game");
         phrases.add("The old willow tree holds treasures.");
         phrases.add("You are not the first hero");
-
         phrases.add("Also try BFDI: Branches!");
-
-
     }
     static int phraseOfday = 0;
 
@@ -53,6 +50,8 @@ public class LoadingScreen extends Screen{
         ShrubyWay.assetManager.load("interface/loadingStatus.png", Texture.class);
         ShrubyWay.assetManager.load("interface/SWlogo.png", Texture.class);
         ShrubyWay.assetManager.load("interface/phrase.png", Texture.class);
+        logo = ShrubyWay.assetManager.get("TEST.png", Texture.class);
+
 
 
         background = ShrubyWay.assetManager.get("interface/SWbackgound.png", Texture.class);
@@ -87,16 +86,20 @@ public class LoadingScreen extends Screen{
         loadingStatus = maxStatus;
     }
 
+    Rectangle centerTest = new Rectangle(0, 0, 0, 0, false);
+
     @Override public void renderScreen() {
         float centerX = GlobalBatch.centerX(), centerY = GlobalBatch.centerY();
 
-        GlobalBatch.render(background, 0, 0);
+        GlobalBatch.render(background, 0, 0, GlobalBatch.topRightCorner().x, GlobalBatch.topRightCorner().y * 2f);
         GlobalBatch.render(logo, centerX - logo.getWidth()/2, centerY + 80);
         GlobalBatch.render(loadingBar, centerX - loadingBar.getWidth()/2, centerY - loadingBar.getHeight()/2);
+
         GlobalBatch.render(new TextureRegion(loadStatus, 0, 0, loadingStatus * loadStatus.getWidth() / 100,
                 loadStatus.getHeight()), centerX - loadingBar.getWidth()/2 + 36, centerY + 30 - loadingBar.getHeight()/2);
-        GlobalBatch.render(phrase, 454, centerY - 270);
-        TextDrawer.drawCenterWhite(phrases.get(phraseOfday), 1920 / 2, centerY - 270 + 80, 0.7f);
+        GlobalBatch.render(phrase, centerX - phrase.getWidth()/2, centerY - 270);
+        TextDrawer.drawCenterWhite(phrases.get(phraseOfday), centerX, centerY - 270 + 80, 0.7f);
+
     }
 
 

@@ -26,9 +26,16 @@ public class Slider {
                 base.getWidth() + 40, base.getHeight());
     }
 
+    public void set(float x_center, float y_center) {
+        position = new Vector2(x_center - base.getWidth()/2, y_center - base.getHeight()/2);
+        rectangle = new Rectangle(position.x - 20, position.y,
+                base.getWidth() + 40, base.getHeight());
+        scale = -1;
+    }
+
     public void update() {
-        if(scale != GlobalBatch.scale) {
-            scale = GlobalBatch.scale;
+        if(scale != GlobalBatch.getScale()) {
+            scale = GlobalBatch.getScale();
             rectangle = new Rectangle((position.x - 20) * scale, (position.y - 20) * scale,
                     (base.getWidth() + 40) * scale, (base.getHeight()+40) * scale);
         }

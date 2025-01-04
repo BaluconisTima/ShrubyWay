@@ -41,7 +41,23 @@ task dist(type: Jar) {
     with jar
 }
 
+task distMac(type: Jar) {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    manifest {
+        attributes(
+                'Main-Class': project.mainClassName,
+                'XstartOnFirstThread': '-XstartOnFirstThread'
+        )
+    }
+    dependsOn configurations.runtimeClasspath
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+    with jar
+}
+
 dependencies {
+    implementation 'com.badlogicgames.gdx:gdx:1.12.0'
     implementation 'com.badlogicgames.gdx:gdx:1.12.0'
     implementation 'com.badlogicgames.gdx:gdx:1.12.0'
     implementation 'com.badlogicgames.gdx:gdx:1.12.0'

@@ -6,15 +6,28 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class GlobalBatch {
     public static SpriteBatch batch;
-    static public float scale = 1f;
+    static private float scale = 1f;
+    static public float scaleX, scaleY;
+    public static ShaderProgram shader;
+
+    static public int screenWidth = 1920, screenHeight = 1080;
     static void changeScale(int width, int height) {
-       scale = (float) width / 1920;
-        scale = Math.min(scale, (float) height / 1080);
+       scaleX = (float) width / 1920;
+       scaleY = (float) height / 1080;
+       scale = Math.min(scaleX, scaleY);
+       screenWidth = width;
+       screenHeight = height;
+    }
+
+    static public float getScale() {
+        return scale;
     }
     public static void create() {
         batch = new SpriteBatch();
@@ -27,15 +40,29 @@ public class GlobalBatch {
         batch.dispose();
         scale = 1f;
     }
+
+    public static void setShader(ShaderProgram _shader) {
+        //shader = _shader;
+    }
+
+    public static void unsetShader() {
+        shader = null;
+        batch.setShader(null);
+    }
+
     public static void begin() {
         ScreenUtils.clear(0, 0, 0, 1);
+        if(shader != null && batch.getShader() != shader) {
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+            batch.setShader(shader);
+        }
+        GlobalBatch.batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
+                screenWidth, screenHeight));
         batch.begin();
     }
     public static void end() {
         batch.end();
     }
-
-
 
     public static void setProjectionMatrix(OrthographicCamera camera) {
         camera.position.scl(scale);
@@ -86,9 +113,9 @@ public class GlobalBatch {
                 Math.round(width * scale), Math.round(height * scale));
     }
 
-    public static void render(TextureRegion texture, float x, float y) {
-        batch.draw(texture, Math.round(x * scale), Math.round(y * scale),
-                Math.round(texture.getRegionWidth() * scale), Math.round(texture.getRegionHeight() * scale));
+    public static void render(TextureRegion textureRegion, float x, float y) {
+        batch.draw(textureRegion, Math.round(x * scale), Math.round(y * scale),
+                Math.round(textureRegion.getRegionWidth() * scale), Math.round(textureRegion.getRegionHeight() * scale));
     }
     public static void render(TextureRegion texture, float x, float y, float scl) {
         batch.draw(texture, Math.round(x * scale * scl), Math.round(y * scale * scl),
@@ -101,26 +128,37 @@ public class GlobalBatch {
     }
 
 
+    static private Vector2 topLeftCorner = new Vector2(0 , 0),
+                           topRightCorner = new Vector2(0, 0),
+                            bottomLeftCorner = new Vector2(0 , 0),
+                            bottomRightCorner = new Vector2(0, 0),
+                            center = new Vector2(0, 0);
+
     static public Vector2 topLeftCorner() {
-        return new Vector2(0 , Gdx.graphics.getHeight() / scale);
+        topLeftCorner.set(0 , screenHeight / scale);
+        return topLeftCorner;
     }
     static public Vector2 topRightCorner() {
-        return new Vector2(Gdx.graphics.getWidth() / scale, Gdx.graphics.getHeight() / scale);
+        topRightCorner.set(screenWidth / scale, screenHeight / scale);
+        return topRightCorner;
     }
     static public Vector2 bottomLeftCorner() {
-        return new Vector2(0 , 0);
+        bottomLeftCorner.set(0 , 0);
+        return bottomLeftCorner;
     }
     static public Vector2 bottomRightCorner() {
-        return new Vector2(Gdx.graphics.getWidth() / scale, 0);
+        bottomRightCorner.set(screenWidth / scale, 0);
+        return bottomRightCorner;
     }
     static public Vector2 center() {
-        return new Vector2(Gdx.graphics.getWidth() / scale / 2, Gdx.graphics.getHeight() / scale / 2);
+        center.set(screenHeight / scaleX / 2, screenWidth / scaleY / 2);
+        return center;
     }
     static public float centerX() {
-        return Gdx.graphics.getWidth() / scale / 2;
+        return screenWidth / scale / 2;
     }
     static public float centerY() {
-        return Gdx.graphics.getHeight() / scale / 2;
+        return screenHeight / scale / 2;
     }
 
 

@@ -56,7 +56,17 @@ public class SettingsLayout extends Layout {
         close();
     }
 
+    float localScaleX = -1, localScaleY = -1;
+
     @Override public void update(Vector2 mousePos) {
+        if(localScaleX != GlobalBatch.scaleX || localScaleY != GlobalBatch.scaleY) {
+            soundSlider.set(GlobalBatch.centerX(), GlobalBatch.centerY() + 85);
+            musicSlider.set(GlobalBatch.centerX(), GlobalBatch.centerY() - 165);
+            doneButton.set(GlobalBatch.centerX() - ShrubyWay.assetManager.get("interface/done.png", Texture.class).getWidth()/2,
+                    GlobalBatch.centerY() - 390);
+            localScaleX = GlobalBatch.scaleX;
+            localScaleY = GlobalBatch.scaleY;
+        }
         super.update(mousePos);
         if(ShrubyWay.inputProcessor.isMouseLeft()) {
             if (doneButton.rectangle.checkPoint(mousePos)) done();

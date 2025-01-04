@@ -1,6 +1,5 @@
 package com.shrubyway.game.shapes;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Vector2;
 import com.shrubyway.game.GlobalBatch;
 
@@ -15,12 +14,17 @@ public class Rectangle implements java.io.Serializable {
     }
     public Rectangle(float x, float y, float width, float height, boolean realCoordinates) {
         if(realCoordinates) {
-            topLeftCorner.set(x, Gdx.graphics.getHeight() - y - height);
+            topLeftCorner.set(x, 1080 - y - height);
             bottomRightCorner.set(topLeftCorner.x + width, topLeftCorner.y + height);
         } else {
             topLeftCorner.set(x, y);
             bottomRightCorner.set(x + width, y + height);
         }
+    }
+
+    public void set(float x, float y, float width, float height) {
+        topLeftCorner.set(x, y);
+        bottomRightCorner.set(x + width, y + height);
     }
     public void change(float x, float y, float width, float height) {
         topLeftCorner.set(x, y);
@@ -71,7 +75,7 @@ public class Rectangle implements java.io.Serializable {
     }
 
     public void render() {
-      //GlobalBatch.render(ShrubyWay.assetManager.get("TEST.png", Texture.class), topLeftCorner.x, topLeftCorner.y, bottomRightCorner.x - topLeftCorner.x, bottomRightCorner.y - topLeftCorner.y);
+     // GlobalBatch.render(ShrubyWay.assetManager.get("TEST.png", Texture.class), topLeftCorner.x, topLeftCorner.y, bottomRightCorner.x - topLeftCorner.x, bottomRightCorner.y - topLeftCorner.y);
     }
     public void render(float r, float g, float b, float a) {
         GlobalBatch.batch.setColor(r, g, b, a);

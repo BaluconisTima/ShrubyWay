@@ -21,10 +21,11 @@ public class GameOver extends Screen {
         if(sign == null) sign = ShrubyWay.assetManager.get("interface/gameOver.png", Texture.class);
         if(sound == null) sound = ShrubyWay.assetManager.get("sounds/EFFECTS/Click.ogg", Sound.class);
         if(tryAgain == null) tryAgain = new Button(ShrubyWay.assetManager.get("interface/SwTryAgainButton2.png", Texture.class),
-                ShrubyWay.assetManager.get("interface/SwTryAgainButton.png", Texture.class), 250, 300) {
+                ShrubyWay.assetManager.get("interface/SwTryAgainButton.png", Texture.class), GlobalBatch.bottomLeftCorner().x + 300, 300) {
         };
         if(exitButton == null) exitButton = new Button(ShrubyWay.assetManager.get("interface/SWmainMenu.png.png", Texture.class),
-                ShrubyWay.assetManager.get("interface/SWmainMenuSel.png", Texture.class), 1050, 300) {
+                ShrubyWay.assetManager.get("interface/SWmainMenuSel.png", Texture.class), GlobalBatch.bottomRightCorner().x - 300 -
+                ShrubyWay.assetManager.get("interface/SWmainMenu.png.png", Texture.class).getWidth(), 300) {
         };
     }
 
@@ -38,6 +39,13 @@ public class GameOver extends Screen {
     }
 
     @Override public void updateScreen() {
+        if(lastScaleX != GlobalBatch.scaleX || lastScaleY != GlobalBatch.scaleY) {
+            lastScaleX = GlobalBatch.scaleX;
+            lastScaleY = GlobalBatch.scaleY;
+            tryAgain.set(GlobalBatch.bottomLeftCorner().x + 300, 300);
+            exitButton.set(GlobalBatch.bottomRightCorner().x - 300 -
+                    ShrubyWay.assetManager.get("interface/SWmainMenu.png.png", Texture.class).getWidth(), 300);
+        }
         if(ShrubyWay.inputProcessor.isMouseLeft()) {
             if(tryAgain.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition())) {
                 sound.play(SoundSettings.soundVolume);
@@ -50,9 +58,11 @@ public class GameOver extends Screen {
         }
     }
 
+    float lastScaleX = 1, lastScaleY = 1;
+
     @Override public void renderScreen() {
         ScreenUtils.clear(1, 1, 1, 1);
-        GlobalBatch.render(Background, 0, 0);
+        GlobalBatch.render(Background, 0, 0, GlobalBatch.topRightCorner().x, GlobalBatch.topRightCorner().y);
         GlobalBatch.render(sign, GlobalBatch.centerX() - sign.getWidth() / 2, GlobalBatch.centerY());
 
         if(tryAgain.rectangle.checkPoint(ShrubyWay.inputProcessor.mousePosition()))
