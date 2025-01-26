@@ -6,10 +6,10 @@ import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.myinterface.Button;
 import com.shrubyway.game.myinterface.Slider;
+import com.shrubyway.game.saver.GameSaver;
 import com.shrubyway.game.saver.SettingsSaver;
 import com.shrubyway.game.sound.SoundSettings;
 
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -34,16 +34,7 @@ public class SettingsLayout extends Layout {
     }
 
     private void done() {
-
-        String userHome = System.getenv("APPDATA");
-        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SETTINGS.txt";
-
-        File shrubyDirectory = new File(userHome, "ShrubyWay");
-        if (!shrubyDirectory.exists()) {
-            shrubyDirectory.mkdirs();
-        }
-
-
+        String filePath = GameSaver.saveLocation() + "SETTINGS.txt";
         try (FileOutputStream fileOutputStream = new FileOutputStream(filePath);
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
             SettingsSaver soundSaver = new SettingsSaver();

@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.shrubyway.game.animation.AnimationGlobalTime;
 
 public class GlobalBatch {
     public static SpriteBatch batch;
@@ -53,9 +54,11 @@ public class GlobalBatch {
     public static void begin() {
         ScreenUtils.clear(0, 0, 0, 1);
         if(shader != null && batch.getShader() != shader) {
-            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
             batch.setShader(shader);
         }
+        if(shader != null)
+        shader.setUniformf("u_time", AnimationGlobalTime.time());
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         GlobalBatch.batch.setProjectionMatrix(new Matrix4().setToOrtho2D(0, 0,
                 screenWidth, screenHeight));
         batch.begin();

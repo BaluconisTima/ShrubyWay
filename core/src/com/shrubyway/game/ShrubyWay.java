@@ -8,13 +8,13 @@ import com.badlogic.gdx.video.VideoPlayer;
 import com.badlogic.gdx.video.VideoPlayerCreator;
 import com.shrubyway.game.adapters.MyInputAdapter;
 import com.shrubyway.game.animation.AnimationGlobalTime;
+import com.shrubyway.game.saver.GameSaver;
 import com.shrubyway.game.saver.SettingsSaver;
 import com.shrubyway.game.screen.Game;
 import com.shrubyway.game.screen.LoadingScreen;
 import com.shrubyway.game.screen.Screen;
 import com.shrubyway.game.sound.SoundSettings;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -61,8 +61,7 @@ public class ShrubyWay extends ApplicationAdapter {
 
         SettingsSaver soundSaver = new SettingsSaver();
         if(SettingsSaver.checkFile()) {
-            String userHome = System.getenv("APPDATA");
-            String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SETTINGS.txt";
+            String filePath = GameSaver.saveLocation() + "SETTINGS.txt";
             try (FileInputStream fileInputStream = new FileInputStream(filePath);
                  ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {
                 soundSaver = (SettingsSaver) objectInputStream.readObject();

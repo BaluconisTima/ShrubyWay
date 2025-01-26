@@ -20,8 +20,7 @@ public class SettingsSaver implements Serializable {
     }
 
     static public boolean checkFile() {
-        String userHome = System.getenv("APPDATA");
-        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SETTINGS.txt";
+        String filePath = GameSaver.saveLocation() + "SETTINGS.txt";
         File file = new File(filePath);
         return file.exists();
     }

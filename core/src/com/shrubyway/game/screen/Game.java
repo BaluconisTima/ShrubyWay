@@ -723,13 +723,7 @@ public class Game extends Screen implements java.io.Serializable {
             CameraEffects.save();
         }
         gameSaver.saveGameFiles();
-        String userHome = System.getenv("APPDATA");
-        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE.txt";
-
-        File shrubyDirectory = new File(userHome, "ShrubyWay");
-        if (!shrubyDirectory.exists()) {
-            shrubyDirectory.mkdirs();
-        }
+        String filePath = GameSaver.saveLocation() + "SAVE.txt";
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(filePath);
              ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
@@ -740,8 +734,7 @@ public class Game extends Screen implements java.io.Serializable {
     }
 
     void loadGame() {
-        String userHome = System.getenv("APPDATA");
-        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE.txt";
+        String filePath = GameSaver.saveLocation() + "SAVE.txt";
 
         try (FileInputStream fileInputStream = new FileInputStream(filePath);
              ObjectInputStream objectInputStream = new ObjectInputStream(fileInputStream)) {

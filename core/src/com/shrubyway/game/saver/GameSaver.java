@@ -112,17 +112,30 @@ public class GameSaver implements Serializable {
         TutorialHints.currentHint = -1;
     }
 
+    static public String saveLocation() {
+        String location = "";
+        if(System.getProperty("os.name").contains("Windows")) {
+            location = System.getenv("APPDATA");
+        } else {
+            location = System.getenv("HOME");
+        }
+        location += File.separator + "ShrubyWay" + File.separator;
+        File file = new File(location);
+        if(!file.exists()) {
+            file.mkdirs();
+        }
+        return location;
+    }
+
     static public boolean checkSaveFile() {
-        String userHome = System.getenv("APPDATA");
-        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE.txt";
+        String filePath = saveLocation() +  "SAVE.txt";
         File file = new File(filePath);
         return file.exists();
     }
 
     static public void resetSave() {
         if(!checkSaveFile()) return;
-        String userHome = System.getenv("APPDATA");
-        String filePath = userHome + File.separator + "ShrubyWay" + File.separator + "SAVE.txt";
+        String filePath = saveLocation() + "SAVE.txt";
         File file = new File(filePath);
         file.delete();
     }
