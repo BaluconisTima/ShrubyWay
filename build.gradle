@@ -1,3 +1,7 @@
+tasks.withType(JavaCompile) {
+    options.release = 8
+}
+
 buildscript {
     repositories {
         mavenLocal()
