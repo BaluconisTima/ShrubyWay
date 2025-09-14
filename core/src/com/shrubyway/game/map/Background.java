@@ -1,6 +1,7 @@
 package com.shrubyway.game.map;
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -9,6 +10,7 @@ import com.shrubyway.game.GlobalBatch;
 import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationGlobalTime;
 import com.shrubyway.game.animation.Animator;
+import com.shrubyway.game.noise.NoiseGenerator;
 import com.shrubyway.game.sound.SoundSettings;
 
 import java.io.IOException;
@@ -16,11 +18,14 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Scanner;
 
+import static java.lang.Math.abs;
+
 public class Background implements Serializable {
 
     public char backgroundMap[][] = new char[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
-    private int level;
+    private float backgroundNoise[][] = new float[MapSettings.TILENUMBER][MapSettings.TILENUMBER];
 
+    private int level;
 
     Animation<TextureRegion> tile[][];
     String stepSoundWay[] = new String[MapSettings.TILETYPES];
@@ -45,6 +50,16 @@ public class Background implements Serializable {
         stepSoundWay[10] = "sounds/STEPS/10";
     }
 
+    Color shadowColor = new Color(0.4f, 0.4f, 0.8f, 0.5f),
+            lightColor = new Color(0.9f, 0.8f, 0.2f, 1);
+
+
+    Color getCurrectLightColor(float light) {
+        if (light < 0.5) {
+           return shadowColor;
+        }
+        return lightColor;
+    }
 
     private void animationsLoader() {
         tile = new Animation[MapSettings.TILETYPES][2];
@@ -54,6 +69,11 @@ public class Background implements Serializable {
                 Texture texture = ShrubyWay.assetManager.get( way + "0001.png", Texture.class);
                 tile[i][j] = Animator.toAnimation(texture, texture.getWidth() / texture.getHeight(), 0, 0);
             }
+    }
+
+    private void noiseGenerator() {
+        backgroundNoise = NoiseGenerator.generate_perlin_noise(
+                MapSettings.TILENUMBER, MapSettings.TILENUMBER, level, 8, 0.9f);
     }
 
     private void tileMapLoader() {
@@ -92,6 +112,7 @@ public class Background implements Serializable {
     public Background(int levelNew) {
         level = levelNew;
         animationsLoader();
+        noiseGenerator();
         tileMapLoader();
         soundLoader();
     }
@@ -159,15 +180,21 @@ public class Background implements Serializable {
         for (int d = 0; d < 2; d++)
             for (int i = x - MapSettings.visibleDistanceX; i < x + MapSettings.visibleDistanceX; i++)
                 for (int j = y - MapSettings.visibleDistanceY; j < y + MapSettings.visibleDistanceY; j++) {
-                    if (Math.abs(i + j) % 2 != d) continue;
+                    if (abs(i + j) % 2 != d) continue;
                     int i2 = (i + MapSettings.TILENUMBER) % MapSettings.TILENUMBER,
                     j2 = (j + MapSettings.TILENUMBER) % MapSettings.TILENUMBER;
                     int tile = backgroundMap[i2][j2] - '0';
                     TextureRegion tempTexture = this.tile[tile][d].getKeyFrame(AnimationGlobalTime.time(), true);
+                    Color lightColor = getCurrectLightColor(backgroundNoise[i2][j2]);
+                    float strength = abs(1f/2 - backgroundNoise[i2][j2]) * lightColor.a;
+                    strength = strength * 1.5f;
+                    GlobalBatch.setUpColor(lightColor, strength);
+
                     GlobalBatch.render(tempTexture, (i * MapSettings.TYLESIZE) - 25,
                             (j * MapSettings.TYLESIZE) - 25,
                             200,
                             200);
+                    GlobalBatch.resetStandardBatchSettings();
                 }
     }
 

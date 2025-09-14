@@ -1,6 +1,7 @@
 package com.shrubyway.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -32,11 +33,25 @@ public class GlobalBatch {
     }
     public static void create() {
         batch = new SpriteBatch();
+        resetStandardBatchSettings();
+    }
+
+    public static void resetStandardBatchSettings() {
         batch.enableBlending();
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         batch.setBlendFunction(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        batch.setColor(1f, 1f, 1f, 1f);
     }
+
+
+    public static void setUpColor(Color color, float strength) {
+        batch.setColor((1f + color.r * strength) / (1f + strength),
+                (1f + color.g * strength) / (1f + strength),
+                (1f + color.b * strength) / (1f + strength),
+                1.0f);
+    }
+
     public static void dispose() {
         batch.dispose();
         scale = 1f;
