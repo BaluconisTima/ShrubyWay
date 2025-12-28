@@ -7,10 +7,11 @@ import com.shrubyway.game.ShrubyWay;
 import com.shrubyway.game.animation.AnimationLoader;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class EntityManager {
-    static int entityCount = 9;
+    static int entityCount = 10;
     static String actions[][] = new String[entityCount][];
     static boolean looping[][] = new boolean[entityCount][];
     static CopyOnWriteArrayList<String>[] actionTypes[] = new CopyOnWriteArrayList[entityCount][];
@@ -145,6 +146,20 @@ public class EntityManager {
         soundDeath[8] =
                 ShrubyWay.assetManager.get("sounds/EFFECTS/MobDeath.ogg", Sound.class);
         soundDamage[8] = ShrubyWay.assetManager.get("sounds/EFFECTS/Boulder.ogg", Sound.class);
+
+        actions[9] = new String[]{"AFK", "APPEAR", "ATTACK", "DEATH", "RUN"};
+        looping[9] = new boolean[]{true, false, false, false, false};
+        actionTypes[9] = new CopyOnWriteArrayList[]{
+                new CopyOnWriteArrayList<>(Collections.singletonList("DOWN")),
+                new CopyOnWriteArrayList<>(Collections.singletonList("DOWN")),
+                new CopyOnWriteArrayList<>(Collections.singletonList("DOWN")),
+                new CopyOnWriteArrayList<>(Collections.singletonList("DOWN")),
+                new CopyOnWriteArrayList<>(Collections.singletonList("DOWN"))};
+        frameCount[9] = new int[]{30, 39, 42, 19, 12};
+        animations[9] = AnimationLoader.load("ENTITIES/CHANTERELLEY", actions[9], actionTypes[9], frameCount[9]);
+        soundDeath[9] =
+                ShrubyWay.assetManager.get("sounds/EFFECTS/MobDeath.ogg", Sound.class);
+        soundDamage[9] = ShrubyWay.assetManager.get("sounds/EFFECTS/AgaricDamage.ogg", Sound.class);
     }
 
 

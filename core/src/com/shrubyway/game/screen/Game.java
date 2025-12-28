@@ -193,6 +193,8 @@ public class Game extends Screen implements java.io.Serializable {
                         player.positionCenter().y));
             }
             player.money += 100;*/
+            MobsManager.addMob(new Vector2(player.positionCenter().x + 200,
+                    player.positionCenter().y + 200), 8);
             ElementPumping.addExp(100);
         }
 

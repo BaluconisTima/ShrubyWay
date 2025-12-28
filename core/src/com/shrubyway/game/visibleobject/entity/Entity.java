@@ -55,6 +55,7 @@ abstract public class Entity extends InteractiveObject {
     protected char lastTile = '0';
     protected Boolean allowedMotion = false;
     static Sound soundAttack;
+    protected boolean fixedToGround = false;
 
     protected float loopedAnimationTime = (float)Math.random() * 1000.0f;
 
@@ -130,7 +131,9 @@ abstract public class Entity extends InteractiveObject {
     }
     public void update(float delta) {
         updateEffects(delta);
-        tryMoveMomentum(delta);
+        if(!fixedToGround) {
+            tryMoveMomentum(delta);
+        }
         attacking = false;
         if(health.getHealth() <= 0) {
             die();
@@ -318,7 +321,7 @@ abstract public class Entity extends InteractiveObject {
      action = 3;
     }
 
-    public float attackCooldown = 0.5f;
+    public float attackCooldown = 0.3f;
     protected float animationTime = 0f;
     protected float lastAttackTime;
 

@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 public class MobsManager {
-    public static int mobsNumber = 8;
+    public static int mobsNumber = 9;
     public static Constructor<? extends Mob> mobs[] = new Constructor[mobsNumber];
     public static float mobSpawnCost[] = new float[mobsNumber];
     public static Integer mobExp[] = new Integer[mobsNumber];
@@ -91,6 +91,14 @@ public class MobsManager {
         mobSpawnCost[7] = 15;
         mobExp[7] = 250;
         spawnTileTypes[7] = new ArrayList<>(Arrays.asList(1, 3, 7, 9));
+
+        mobs[8] = (Chanterelley.class).getDeclaredConstructor(float.class, float.class);
+        mobs[8].newInstance(0, 0);
+        dropTableItem[8] = new ArrayList<>();
+        dropTableChance[8] = new ArrayList<>();
+        mobSpawnCost[8] = 13;
+        mobExp[8] = 300;
+        spawnTileTypes[8] = new ArrayList<>(Arrays.asList(1, 3, 7, 9));
 
         } catch (Exception e) {
             e.printStackTrace();
